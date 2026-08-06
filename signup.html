@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATSOCA Elite Partner Registration | Sign Up</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body style="margin: 0; padding: 0; min-height: 100vh; background: var(--bg-main);">
+
+  <!-- Instant Sign Up Handler -->
+  <script>
+    window.handleSignUp = function() {
+      localStorage.setItem('atsoca_logged_in', 'true');
+      localStorage.setItem('atsoca_active_role', 'Elite Member');
+      window.location.href = 'index.html';
+    };
+  </script>
+
+  <!-- Dedicated Full-Screen Sign Up Portal Page -->
+  <div id="signup-screen" class="login-screen-overlay" style="display: flex;">
+    <div class="login-split-container">
+      <!-- Left Column: Official ATSOCA Branding Showcase -->
+      <div class="login-brand-side">
+        <div class="login-brand-wrapper">
+          <img src="assets/logo.png" alt="ATSOCA Learning & Consultancy OPC" class="login-hero-logo">
+          <div class="login-brand-badge-box">
+            <span class="login-badge-pill"><i class="fas fa-shield-alt"></i> Official Partner Portal 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Sign Up Form Card -->
+      <div class="login-form-side">
+        <div class="login-card-inner" id="signup-card-inner">
+          <div class="login-card-header">
+            <span class="signup-badge"><i class="fas fa-user-check"></i> NEW PARTNER REGISTRATION</span>
+            <h2 class="login-portal-title">JOIN ATSOCA ELITE</h2>
+            <p class="login-portal-subtitle">Create a new partner account to access referral rewards & matrix portal</p>
+          </div>
+
+          <form id="signup-standalone-form" class="login-form" onsubmit="event.preventDefault(); if(window.handleSignUp) window.handleSignUp(); return false;">
+            <div id="signup-error-alert" class="signup-alert-danger hidden" style="display: none;"></div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label><i class="fas fa-user"></i> FULL NAME *</label>
+                <input type="text" class="form-control" id="signup-name" placeholder="e.g. Juan Dela Cruz" required>
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-envelope"></i> EMAIL ADDRESS *</label>
+                <input type="email" class="form-control" id="signup-email" placeholder="e.g. juan.delacruz@atsoca.ph" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-phone"></i> PHONE / VIBER *</label>
+              <input type="text" class="form-control" id="signup-phone" placeholder="e.g. 0917 123 4567" required>
+            </div>
+
+
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label><i class="fas fa-lock"></i> PASSWORD *</label>
+                <input type="password" class="form-control" id="signup-password" placeholder="Min. 6 characters" required>
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-lock"></i> CONFIRM PASSWORD *</label>
+                <input type="password" class="form-control" id="signup-confirm-password" placeholder="Repeat password" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-ticket-alt"></i> REFERRAL CODE (OPTIONAL)</label>
+              <input type="text" class="form-control" id="signup-sponsor" placeholder="e.g. ATS-REF-101">
+            </div>
+
+            <div class="form-group signup-terms-check">
+              <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+                <input type="checkbox" id="signup-terms" required>
+                <span>I agree to ATSOCA Partner Portal Terms & Matrix Rules</span>
+              </label>
+            </div>
+
+            <div class="login-btn-stack">
+              <button type="button" class="login-btn-navy" id="btn-submit-signup" onclick="if(window.handleSignUp) window.handleSignUp();">
+                <i class="fas fa-user-check"></i> COMPLETE SIGN UP
+              </button>
+              <a href="index.html" class="btn-link-signin" id="btn-goto-login" style="text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> ALREADY HAVE AN ACCOUNT? SIGN IN
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign Up JavaScript Logic Module -->
+  <script type="module" src="js/signup.js"></script>
+</body>
+</html>

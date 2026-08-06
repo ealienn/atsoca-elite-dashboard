@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATSOCA Elite Dashboard | Real-Time Portal & Memo 1 Matrix</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- Left Navigation Drawer / Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand-box">
+          <img src="assets/logo_white.png" alt="ATSOCA Logo" class="brand-logo-img">
+          <span class="brand-name-atsoca">ATSOCA</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">CORE</div>
+        <a href="javascript:void(0);" class="nav-item active" data-tab="overview" onclick="window.switchTab('overview'); return false;">
+          <i class="fas fa-file-alt"></i> Overview
+        </a>
+        <a href="javascript:void(0);" class="nav-item" data-tab="invites" onclick="window.switchTab('invites'); return false;">
+          <i class="fas fa-paper-plane"></i> Invites
+        </a>
+        <a href="javascript:void(0);" class="nav-item" data-tab="enrollments" onclick="window.switchTab('enrollments'); return false;">
+          <i class="fas fa-credit-card"></i> Payments
+        </a>
+        <a href="javascript:void(0);" class="nav-item" data-tab="analytics" onclick="window.switchTab('analytics'); return false;">
+          <i class="fas fa-chart-bar"></i> Analytics
+        </a>
+
+        <div class="nav-section-title">MATRIX</div>
+        <a href="javascript:void(0);" class="nav-item" data-tab="units" onclick="window.switchTab('units'); return false;">
+          <i class="fas fa-star"></i> Units
+        </a>
+        <a href="javascript:void(0);" class="nav-item" data-tab="level-tracker" onclick="window.switchTab('level-tracker'); return false;">
+          <i class="fas fa-layer-group"></i> Tiers
+        </a>
+        <a href="javascript:void(0);" class="nav-item" data-tab="leaderboard" onclick="window.switchTab('leaderboard'); return false;">
+          <i class="fas fa-trophy"></i> Leaderboard
+        </a>
+        <a href="javascript:void(0);" class="nav-item" data-tab="referral-fees" onclick="window.switchTab('referral-fees'); return false;">
+          <i class="fas fa-users"></i> Referrals
+        </a>
+        <a href="javascript:void(0);" class="nav-item" data-tab="releases" onclick="window.switchTab('releases'); return false;">
+          <i class="fas fa-coins"></i> Fees
+        </a>
+
+        <div id="admin-nav-group" class="admin-nav-group">
+          <div class="nav-section-title">ADMIN</div>
+          <a href="javascript:void(0);" class="nav-item" data-tab="notifications" onclick="window.switchTab('notifications'); return false;">
+            <i class="fas fa-bell"></i> Notifications
+          </a>
+          <a href="javascript:void(0);" class="nav-item" data-tab="public-enrollments" onclick="window.switchTab('public-enrollments'); return false;">
+            <i class="fas fa-user-friends"></i> Enrollments
+          </a>
+          <a href="javascript:void(0);" class="nav-item" data-tab="reports" onclick="window.switchTab('reports'); return false;">
+            <i class="fas fa-file-invoice"></i> Reports
+          </a>
+          <a href="javascript:void(0);" class="nav-item" data-tab="admin" onclick="window.switchTab('admin'); return false;">
+            <i class="fas fa-cog"></i> System
+          </a>
+        </div>
+      </nav>
+
+      <!-- Sidebar User Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user-box" id="sidebar-user-box-click" style="cursor: pointer;" title="Click to open Profile Settings">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" id="current-user-avatar" class="sidebar-user-avatar" alt="Profile Picture">
+          <div>
+            <div class="user-box-name" id="current-user-name">Active User</div>
+            <div class="user-box-role" id="current-user-role">Partner Account</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <main class="main-wrapper">
+      <!-- Top Sticky Navigation Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <h1 class="header-elite-title">ELITE DASHBOARD</h1>
+        </div>
+
+        <div class="header-right">
+          <!-- Active Role Selector Pill -->
+          <div class="role-selector-wrapper">
+            <label><i class="fas fa-user"></i> Active Role:</label>
+            <select class="role-select" id="header-role-select">
+              <option value="Elite Member">Elite Member</option>
+              <option value="Elite Manager">Elite Manager</option>
+              <option value="Finance">Finance</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+
+            <!-- Member Switcher (Visible in Elite Member Mode) -->
+            <select class="role-select" id="header-member-select" style="margin-left: 8px; border-left: 1px solid var(--border-color); padding-left: 8px;">
+              <option value="ELITE-101">Ellaine Joyce (Bronze)</option>
+            </select>
+
+            <!-- Quick Add Profile Button -->
+            <button class="btn-mock-sky" id="btn-header-add-profile" style="margin-left: 8px; padding: 5px 12px; font-size: 0.78rem;">
+              <i class="fas fa-user-plus"></i> + Add Profile
+            </button>
+          </div>
+
+          <!-- Theme Switcher Button -->
+          <button class="header-btn" id="btn-theme-toggle" title="Toggle Light / Dark Mode" aria-label="Toggle Light / Dark Mode">
+            <i class="fas fa-moon" id="theme-toggle-icon"></i>
+          </button>
+
+          <!-- Notification Drawer Toggle Button -->
+          <button class="header-btn" id="btn-notif-toggle" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="btn-dot" id="notif-badge-dot"></span>
+          </button>
+
+          <!-- Sign Out Logout Button -->
+          <button class="header-btn" id="btn-logout" title="Sign Out of Portal" aria-label="Sign Out">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Dynamic Content Container -->
+      <div class="content-container" id="content-mount">
+        <!-- Top Welcome Banner Card -->
+        <div class="welcome-banner-card">
+          <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            Welcome back, Ellaine Joyce!
+            <span style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fef08a; font-size: 0.82rem; padding: 4px 12px; border-radius: 20px; font-weight: 600;">
+              <i class="fas fa-ticket-alt"></i> Partner Code: ATS-REF-101
+            </span>
+          </div>
+          <div class="welcome-actions">
+            <button class="btn-mock-sky" id="btn-quick-invite">
+              <i class="fas fa-paper-plane"></i> Submit Invite
+            </button>
+            <button class="btn-mock-green" id="btn-quick-release">
+              <i class="fas fa-hand-holding-usd"></i> Request Release
+            </button>
+          </div>
+        </div>
+
+        <!-- 1. Top Stat Cards (Grid 4) -->
+        <div class="mock-grid-4">
+          <div class="mock-stat-card">
+            <div class="mock-stat-content">
+              <div class="mock-stat-title">TOTAL INVITES SUBMITTED</div>
+              <div class="mock-stat-number">7</div>
+              <div class="mock-stat-sub">Monthly: 7</div>
+            </div>
+            <div class="mock-icon-sky">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+          </div>
+
+          <div class="mock-stat-card">
+            <div class="mock-stat-content">
+              <div class="mock-stat-title">VERIFIED</div>
+              <div class="mock-stat-number">5</div>
+              <div class="mock-stat-sub">Verified</div>
+            </div>
+            <div class="mock-icon-sky">
+              <i class="fas fa-check"></i>
+            </div>
+          </div>
+
+          <div class="mock-stat-card">
+            <div class="mock-stat-content">
+              <div class="mock-stat-title">ENROLLED</div>
+              <div class="mock-stat-number">5</div>
+              <div class="mock-stat-sub">Active</div>
+            </div>
+            <div class="mock-icon-sky">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+          </div>
+
+          <div class="mock-stat-card">
+            <div class="mock-stat-content">
+              <div class="mock-stat-title">TOTAL UNITS</div>
+              <div class="mock-stat-number">42</div>
+              <div class="mock-stat-sub">1 Unit = ₱4,500</div>
+            </div>
+            <div class="mock-icon-sky">
+              <i class="fas fa-award"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Middle Row (2 Columns) -->
+        <div class="mock-grid-2">
+          <div class="mock-card-panel">
+            <div class="mock-panel-header">
+              <h3 class="mock-panel-title">LEVEL AND TIER PROGRESS</h3>
+              <span class="tier-badge tier-Bronze">
+                <i class="fas fa-award"></i> Bronze Tier
+              </span>
+            </div>
+
+            <div class="tier-metric-row">
+              <div class="metric-inner-box">
+                <div class="metric-box-label">Monthly Units:</div>
+                <div class="metric-box-value">18</div>
+              </div>
+              <div class="metric-inner-box">
+                <div class="metric-box-label">Units Needed:</div>
+                <div class="metric-box-value">9</div>
+              </div>
+              <div class="trophy-container">
+                <i class="fas fa-trophy trophy-gold-icon"></i>
+              </div>
+            </div>
+
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: 84%;"></div>
+              </div>
+              <div class="progress-percent-label">84%</div>
+            </div>
+            <div class="tier-next-subtext">
+              Bronze &rarr; Silver
+            </div>
+          </div>
+
+          <div class="mock-card-panel">
+            <div class="mock-panel-header">
+              <h3 class="mock-panel-title">EARNINGS BREAKDOWN</h3>
+            </div>
+
+            <div class="earnings-grid-2x2">
+              <div class="earning-inner-box">
+                <span>Available: ₱28,400</span>
+              </div>
+
+              <div class="earning-inner-box">
+                <span>Pending Review: ₱12,500</span>
+              </div>
+
+              <div class="earning-inner-box">
+                <span>Released Payouts: ₱84,500</span>
+              </div>
+
+              <div class="earning-inner-box">
+                <span>Total Referral Earnings: ₱125,400</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Bottom Card: RECENT INVITES -->
+        <div class="mock-card-panel">
+          <div class="mock-panel-header" style="margin-bottom: 16px;">
+            <h3 class="mock-panel-title">RECENT INVITES | ENROLLMENT STATUS</h3>
+          </div>
+
+          <div class="table-responsive">
+            <table class="custom-table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Invite Name</th>
+                  <th>School / Company</th>
+                  <th>Training Type</th>
+                  <th>Date Submitted</th>
+                  <th>Verification</th>
+                  <th>Enrollment Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Mark Anthony Ramos</strong></td>
+                  <td>De La Salle University System</td>
+                  <td>Executive Leadership & Governance</td>
+                  <td>2026-07-23</td>
+                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                  <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Engr. Jay</strong></td>
+                  <td>PUP</td>
+                  <td>Data Privacy Officer (DPO) Training</td>
+                  <td>2026-07-27</td>
+                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                  <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Engr. Jay</strong></td>
+                  <td>PUP</td>
+                  <td>Project Management Professional Seminar</td>
+                  <td>2026-07-26</td>
+                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                  <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Engr. Jay</strong></td>
+                  <td>PUP</td>
+                  <td>Data Privacy Officer (DPO) Training</td>
+                  <td>2026-07-26</td>
+                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                  <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Engr. Sophia</strong></td>
+                  <td>PUP</td>
+                  <td>Healthcare Safety & Compliance Masterclass</td>
+                  <td>2026-07-27</td>
+                  <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Pending</span></td>
+                  <td><span class="status-pill status-NotEnrolled"><i class="fas fa-times-circle"></i> Not Enrolled</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Floating Curved Notification Center Popover Card -->
+    <div class="notifications-drawer" id="notifications-drawer">
+      <div class="notif-panel-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="notif-bell-badge">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div>
+            <div class="notif-panel-title">Notification Center</div>
+            <div class="notif-panel-sub" id="notif-unread-count">Real-Time Audit Alerts</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="notif-icon-btn" id="btn-mark-all-read-header" title="Mark All as Read">
+            <i class="fas fa-check-double"></i>
+          </button>
+          <button class="notif-icon-btn" id="btn-close-notif-drawer" title="Close Panel">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <div class="notif-filter-bar">
+        <button class="notif-tab active" data-filter="all">All</button>
+        <button class="notif-tab" data-filter="unread">Unread</button>
+        <button class="notif-tab" data-filter="Fee">Fees</button>
+        <button class="notif-tab" data-filter="Invite">Invites</button>
+      </div>
+
+      <div id="drawer-notif-content" class="notif-scroll-body">
+        <!-- Notification list rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Global Modal: Add New Member Profile -->
+    <div class="modal-overlay" id="global-modal-add-member">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-plus" style="color: var(--accent-blue);"></i> Create New Member Profile</h3>
+          <button class="modal-close" id="global-close-modal-member">&times;</button>
+        </div>
+        <form id="global-form-add-member">
+          <div class="form-group">
+            <label>Member Full Name</label>
+            <input type="text" class="form-control" id="global-mem-name" required placeholder="e.g. Maria Clara Santos">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" class="form-control" id="global-mem-email" required placeholder="e.g. maria.clara@atsoca.ph">
+          </div>
+          <div class="form-group">
+            <label>Initial Total Units</label>
+            <input type="number" class="form-control" id="global-mem-units" required value="25" min="0" placeholder="e.g. 25 (Bronze: 1-50, Gold: 101-150)">
+          </div>
+          <div class="form-group">
+            <label>System Role</label>
+            <select class="form-control" id="global-mem-role">
+              <option value="Elite Member">Elite Member</option>
+              <option value="Elite Manager">Elite Manager</option>
+            </select>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary" id="global-cancel-add-member">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create Profile</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Security Modal: Password Verification for Account Switching -->
+    <div class="modal-overlay" id="security-auth-modal">
+      <div class="modal-content" style="max-width: 440px; border: 2px solid #002355;">
+        <div class="modal-header">
+          <h3><i class="fas fa-shield-alt" style="color: #002355;"></i> Security Verification Required</h3>
+          <button class="modal-close" id="security-close-modal">&times;</button>
+        </div>
+        <form id="security-form-auth">
+          <div style="margin-bottom: 16px; font-size: 0.85rem; color: #475569; line-height: 1.4;">
+            <p style="margin: 0 0 8px 0;">For your security, switching active account role or partner access requires password authorization.</p>
+            <div style="background: #f1f5f9; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #002355; font-size: 0.85rem;" id="security-target-account-label">
+              Switching Access To: Elite Manager
+            </div>
+          </div>
+
+          <div id="security-error-alert" class="signup-alert-danger hidden" style="display: none; margin-bottom: 14px;"></div>
+
+          <div class="form-group">
+            <label><i class="fas fa-lock"></i> ACCOUNT PASSWORD *</label>
+            <input type="password" class="form-control" id="security-auth-password" required placeholder="Enter password (e.g. 12345)">
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary" id="security-cancel-btn">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="background: #002355; border-color: #001636; color: #ffffff;">
+              <i class="fas fa-key"></i> Confirm & Switch
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Interactive User Profile Edit Drawer (Triggered from Sidebar User Box) -->
+    <div class="modal-overlay" id="modal-edit-user-profile">
+      <div class="modal-content" style="max-width: 680px; width: 90%; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-circle" style="color: var(--accent-blue);"></i> Edit Account Profile & Settings</h3>
+          <button class="modal-close" id="close-modal-user-profile">&times;</button>
+        </div>
+        <div id="modal-user-profile-body">
+          <!-- Dynamic Profile Edit Form Mounts Here -->
+        </div>
+      </div>
+    <!-- Modal: Submit New Invite -->
+    <div class="modal-overlay" id="modal-add-invite">
+      <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header">
+          <h3><i class="fas fa-paper-plane" style="color: var(--accent-cyan);"></i> Submit New Invite</h3>
+          <button class="modal-close" id="close-modal-add-invite">&times;</button>
+        </div>
+        <form id="form-submit-new-invite">
+          <div class="form-group">
+            <label>Referrer Email Address</label>
+            <input type="email" class="form-control" id="invite-referrer-email" required readonly style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">
+          </div>
+          <div class="form-group">
+            <label>Participant / Invite Full Name *</label>
+            <input type="text" class="form-control" id="invite-participant-name" required placeholder="e.g. Engr. Mark Anthony Ramos">
+          </div>
+          <div class="form-group">
+            <label>School / Organization / Company *</label>
+            <input type="text" class="form-control" id="invite-school-company" required placeholder="e.g. De La Salle University System / PUP">
+          </div>
+          <div class="form-group">
+            <label>Training Program / Course Type *</label>
+            <select class="form-control" id="invite-training-type" required>
+              <option value="Executive Leadership & Governance">Executive Leadership & Governance</option>
+              <option value="Data Privacy Officer (DPO) Training">Data Privacy Officer (DPO) Training</option>
+              <option value="Project Management Professional Seminar">Project Management Professional Seminar</option>
+              <option value="COSH SO2">COSH SO2</option>
+              <option value="BOSH SO2">BOSH SO2</option>
+              <option value="Healthcare Safety & Compliance Masterclass">Healthcare Safety & Compliance Masterclass</option>
+              <option value="Advanced ISO 9001 Auditor Certification">Advanced ISO 9001 Auditor Certification</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Expected Training Date *</label>
+            <input type="date" class="form-control" id="invite-training-date" required>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Invite</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Request Referral Fee Release -->
+    <div class="modal-overlay" id="modal-release-request">
+      <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header">
+          <h3><i class="fas fa-hand-holding-usd" style="color: var(--accent-emerald);"></i> Submit Referral Fee Release Request</h3>
+          <button class="modal-close" id="close-modal-release-request">&times;</button>
+        </div>
+        <form id="form-submit-release-request">
+          <div class="form-group">
+            <label>Partner / Referrer Email Address</label>
+            <input type="email" class="form-control" id="release-referrer-email" required readonly style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">
+          </div>
+          <div class="form-group">
+            <label>Amount Requested (₱) *</label>
+            <input type="number" class="form-control" id="release-amount" required min="100" step="100" placeholder="e.g. 28400">
+          </div>
+          <div class="form-group">
+            <label>Preferred Disbursement Method *</label>
+            <select class="form-control" id="release-disbursement-method" required>
+              <option value="GCash (0917-***-8821)">GCash Mobile Wallet</option>
+              <option value="Bank Transfer (BDO - 0048-****-1192)">BDO Unibank Transfer</option>
+              <option value="Bank Transfer (BPI - 1920-****-44)">BPI Bank Transfer</option>
+              <option value="Maya Wallet">Maya Mobile Wallet</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Notes / Request Remarks</label>
+            <input type="text" class="form-control" id="release-notes" placeholder="e.g. Submitted for July 2nd Half Referral Fee Earnings">
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+            <button type="submit" class="btn btn-emerald"><i class="fas fa-paper-plane"></i> Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  <!-- Global Instant Sign In & Default Active Dashboard Script -->
+  <script>
+    window.switchTab = function(tabKey) {
+      var navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(function(item) {
+        if (item.getAttribute('data-tab') === tabKey) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      var titleMap = {
+        'overview': 'Dashboard Overview',
+        'public-enrollments': 'Public Enrollment Monitoring',
+        'invites': 'Invite Monitoring',
+        'enrollments': 'Enrollment & Payment Tracking',
+        'analytics': 'Invite Analytics & Recruitment Performance',
+        'units': 'Unit Monitoring & Conversion',
+        'level-tracker': 'Elite Level Tracker',
+        'leaderboard': 'Partner Leaderboard & Rank Tracking',
+        'referral-fees': 'Referral Fee Monitoring (Memo 1 Matrix)',
+        'releases': 'Referral Fee Release Workflow',
+        'notifications': 'Notification Center',
+        'reports': 'Downloadable Reports Engine',
+        'admin': 'Administrator Console'
+      };
+
+      var titleElem = document.querySelector('#page-title');
+      if (titleElem) {
+        titleElem.innerText = titleMap[tabKey] || 'ATSOCA Elite Dashboard';
+      }
+
+      var mount = document.querySelector('#content-mount');
+      if (!mount) return;
+
+      if (window.app && typeof window.app.renderActiveTab === 'function') {
+        try {
+          window.app.currentTab = tabKey;
+          window.app.renderActiveTab();
+          if (mount.children && mount.children.length > 0) {
+            return;
+          }
+        } catch (e) {
+          console.warn('App Controller switchTab fallback:', e);
+        }
+      }
+
+      switch(tabKey) {
+        case 'overview':
+          mount.innerHTML = `
+            <div class="welcome-banner-card">
+              <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                Welcome back, Ellaine Joyce!
+                <span style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fef08a; font-size: 0.82rem; padding: 4px 12px; border-radius: 20px; font-weight: 600;">
+                  <i class="fas fa-ticket-alt"></i> Partner Code: ATS-REF-101
+                </span>
+              </div>
+              <div class="welcome-actions">
+                <button class="btn-mock-sky" id="btn-quick-invite" onclick="window.switchTab('invites');">
+                  <i class="fas fa-paper-plane"></i> Submit Invite
+                </button>
+                <button class="btn-mock-green" id="btn-quick-release" onclick="window.switchTab('releases');">
+                  <i class="fas fa-hand-holding-usd"></i> Request Release
+                </button>
+              </div>
+            </div>
+
+            <div class="mock-grid-4">
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">TOTAL INVITES SUBMITTED</div>
+                  <div class="mock-stat-number">7</div>
+                  <div class="mock-stat-sub">Monthly: 7</div>
+                </div>
+                <div class="mock-icon-sky">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">VERIFIED</div>
+                  <div class="mock-stat-number">5</div>
+                  <div class="mock-stat-sub">Verified</div>
+                </div>
+                <div class="mock-icon-sky">
+                  <i class="fas fa-check"></i>
+                </div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">ENROLLED</div>
+                  <div class="mock-stat-number">5</div>
+                  <div class="mock-stat-sub">Active</div>
+                </div>
+                <div class="mock-icon-sky">
+                  <i class="fas fa-graduation-cap"></i>
+                </div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">TOTAL UNITS</div>
+                  <div class="mock-stat-number">42</div>
+                  <div class="mock-stat-sub">1 Unit = ₱4,500</div>
+                </div>
+                <div class="mock-icon-sky">
+                  <i class="fas fa-award"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="mock-grid-2">
+              <div class="mock-card-panel">
+                <div class="mock-panel-header">
+                  <h3 class="mock-panel-title">LEVEL AND TIER PROGRESS</h3>
+                  <span class="tier-badge tier-Bronze">
+                    <i class="fas fa-award"></i> Bronze Tier
+                  </span>
+                </div>
+
+                <div class="tier-metric-row">
+                  <div class="metric-inner-box">
+                    <div class="metric-box-label">Monthly Units:</div>
+                    <div class="metric-box-value">18</div>
+                  </div>
+                  <div class="metric-inner-box">
+                    <div class="metric-box-label">Units Needed:</div>
+                    <div class="metric-box-value">9</div>
+                  </div>
+                  <div class="trophy-container">
+                    <i class="fas fa-trophy trophy-gold-icon"></i>
+                  </div>
+                </div>
+
+                <div class="progress-bar-wrapper">
+                  <div class="progress-bar-track">
+                    <div class="progress-bar-fill" style="width: 84%;"></div>
+                  </div>
+                  <div class="progress-percent-label">84%</div>
+                </div>
+                <div class="tier-next-subtext">
+                  Bronze &rarr; Silver
+                </div>
+              </div>
+
+              <div class="mock-card-panel">
+                <div class="mock-panel-header">
+                  <h3 class="mock-panel-title">EARNINGS BREAKDOWN</h3>
+                </div>
+
+                <div class="earnings-grid-2x2">
+                  <div class="earning-inner-box">
+                    <span>Available: ₱28,400</span>
+                  </div>
+
+                  <div class="earning-inner-box">
+                    <span>Pending Review: ₱12,500</span>
+                  </div>
+
+                  <div class="earning-inner-box">
+                    <span>Released Payouts: ₱84,500</span>
+                  </div>
+
+                  <div class="earning-inner-box">
+                    <span>Total Referral Earnings: ₱125,400</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mock-card-panel">
+              <div class="mock-panel-header" style="margin-bottom: 16px;">
+                <h3 class="mock-panel-title">RECENT INVITES | ENROLLMENT STATUS</h3>
+              </div>
+
+              <div class="table-responsive">
+                <table class="custom-table" style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>Invite Name</th>
+                      <th>School / Company</th>
+                      <th>Training Type</th>
+                      <th>Date Submitted</th>
+                      <th>Verification</th>
+                      <th>Enrollment Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Mark Anthony Ramos</strong></td>
+                      <td>De La Salle University System</td>
+                      <td>Executive Leadership & Governance</td>
+                      <td>2026-07-23</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Engr. Jay</strong></td>
+                      <td>PUP</td>
+                      <td>Data Privacy Officer (DPO) Training</td>
+                      <td>2026-07-27</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Engr. Jay</strong></td>
+                      <td>PUP</td>
+                      <td>Project Management Professional Seminar</td>
+                      <td>2026-07-26</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Engr. Jay</strong></td>
+                      <td>PUP</td>
+                      <td>Data Privacy Officer (DPO) Training</td>
+                      <td>2026-07-26</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Engr. Sophia</strong></td>
+                      <td>PUP</td>
+                      <td>Healthcare Safety & Compliance Masterclass</td>
+                      <td>2026-07-27</td>
+                      <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Pending</span></td>
+                      <td><span class="status-pill status-NotEnrolled"><i class="fas fa-times-circle"></i> Not Enrolled</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+        case 'invites':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <div>
+                  <h2>Invite Monitoring</h2>
+                </div>
+                <button class="btn btn-primary" onclick="alert('Submit New Invite Form Opened');"><i class="fas fa-plus-circle"></i> Submit New Invite</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
+                <div class="card-title">Submitted Invites Log</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Invite ID</th>
+                      <th>Invite Name</th>
+                      <th>School / Company</th>
+                      <th>Training Type</th>
+                      <th>Training Date</th>
+                      <th>Date Submitted</th>
+                      <th>Verification Status</th>
+                      <th>Enrollment Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>INV-2026-003</strong></td>
+                      <td><strong>Mark Anthony Ramos</strong></td>
+                      <td>De La Salle University System</td>
+                      <td>Executive Leadership & Governance</td>
+                      <td>2026-08-24</td>
+                      <td>2026-07-23</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>INV-2026-004</strong></td>
+                      <td><strong>Engr. Jay</strong></td>
+                      <td>PUP</td>
+                      <td>Data Privacy Officer (DPO) Training</td>
+                      <td>2026-08-28</td>
+                      <td>2026-07-27</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>INV-2026-005</strong></td>
+                      <td><strong>Engr. Jay</strong></td>
+                      <td>PUP</td>
+                      <td>Project Management Professional Seminar</td>
+                      <td>2026-08-26</td>
+                      <td>2026-07-26</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>INV-2026-006</strong></td>
+                      <td><strong>Engr. Jay</strong></td>
+                      <td>PUP</td>
+                      <td>Data Privacy Officer (DPO) Training</td>
+                      <td>2026-08-27</td>
+                      <td>2026-07-26</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>INV-2026-007</strong></td>
+                      <td><strong>Engr. Sophia</strong></td>
+                      <td>PUP</td>
+                      <td>Healthcare Safety & Compliance Masterclass</td>
+                      <td>2026-08-27</td>
+                      <td>2026-07-27</td>
+                      <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Pending</span></td>
+                      <td><span class="status-pill status-NotEnrolled"><i class="fas fa-times-circle"></i> Not Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>INV-2026-008</strong></td>
+                      <td><strong>Engr. Sophia</strong></td>
+                      <td>PUP</td>
+                      <td>Healthcare Safety & Compliance Masterclass</td>
+                      <td>2026-08-26</td>
+                      <td>2026-07-26</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>INV-2026-012</strong></td>
+                      <td><strong>Engr. Jay</strong></td>
+                      <td>PUP</td>
+                      <td>Advanced ISO 9001 Auditor Certification</td>
+                      <td>2026-08-27</td>
+                      <td>2026-07-28</td>
+                      <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Pending</span></td>
+                      <td><span class="status-pill status-NotEnrolled"><i class="fas fa-times-circle"></i> Not Enrolled</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'enrollments':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div>
+                <h2>Enrollment & Payment Tracking</h2>
+              </div>
+            </div>
+
+            <div class="grid-3">
+              <div class="card stat-card">
+                <div class="stat-info">
+                  <span>TOTAL REFERRAL INVESTMENT FEES</span>
+                  <div class="stat-value">₱7,700.00</div>
+                  <div class="stat-sub">Sum of Gross Fees</div>
+                </div>
+              </div>
+              <div class="card stat-card">
+                <div class="stat-info">
+                  <span>PAYMENTS COLLECTED</span>
+                  <div class="stat-value" style="color: var(--accent-emerald);">₱6,100.00</div>
+                  <div class="stat-sub">Basis for Units & Referral %</div>
+                </div>
+              </div>
+              <div class="card stat-card">
+                <div class="stat-info">
+                  <span>OUTSTANDING BALANCE</span>
+                  <div class="stat-value" style="color: var(--accent-rose);">₱1,600.00</div>
+                  <div class="stat-sub">Pending Student Collections</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><i class="fas fa-receipt" style="color: var(--accent-cyan);"></i> Referral Payment Ledger</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Enrollment ID</th>
+                      <th>Participant Name</th>
+                      <th>School / Company</th>
+                      <th>Training Date</th>
+                      <th>Investment Fee</th>
+                      <th>Payment Made</th>
+                      <th>Outstanding Balance</th>
+                      <th>Units Credit</th>
+                      <th>Payment Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>ENR-8801</strong></td>
+                      <td><strong>Engr. Robert Tan</strong></td>
+                      <td>Meralco Industrial Engineering</td>
+                      <td>2026-08-12</td>
+                      <td>₱4,500.00</td>
+                      <td style="color: var(--accent-emerald); font-weight: 600;">₱4,500.00</td>
+                      <td>₱0.00</td>
+                      <td><span class="unit-badge"><i class="fas fa-star"></i> 1 Units</span></td>
+                      <td><span class="status-pill status-FullyPaid"><i class="fas fa-check-double"></i> Fully Paid</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>ENR-8802</strong></td>
+                      <td><strong>Dr. Sofia Garcia</strong></td>
+                      <td>St. Luke Medical Center</td>
+                      <td>2026-08-18</td>
+                      <td>₱3,200.00</td>
+                      <td style="color: var(--accent-emerald); font-weight: 600;">₱1,600.00</td>
+                      <td style="color: var(--accent-rose); font-weight: 600;">₱1,600.00</td>
+                      <td><span class="unit-badge"><i class="fas fa-star"></i> 0.71 Units</span></td>
+                      <td><span class="status-pill status-Partial"><i class="fas fa-adjust"></i> Partial</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'analytics':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Invite Analytics & Recruitment Metrics</h2>
+              </div>
+            </div>
+
+            <div class="mock-grid-4">
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">MONTHLY INVITES (JULY 2026)</div>
+                  <div class="mock-stat-number">7</div>
+                  <div class="mock-stat-sub">Recent activity this month</div>
+                </div>
+                <div class="mock-icon-sky"><i class="fas fa-calendar-alt"></i></div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">TOTAL INVITES CUMULATIVE</div>
+                  <div class="mock-stat-number">7</div>
+                  <div class="mock-stat-sub">All-time invitations</div>
+                </div>
+                <div class="mock-icon-sky" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);"><i class="fas fa-paper-plane"></i></div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">VERIFIED INVITES</div>
+                  <div class="mock-stat-number">5</div>
+                  <div class="mock-stat-sub" style="color: var(--accent-cyan);"><i class="fas fa-check"></i> Verification Rate: 71%</div>
+                </div>
+                <div class="mock-icon-sky" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;"><i class="fas fa-user-check"></i></div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">ENROLLED INVITES</div>
+                  <div class="mock-stat-number">5</div>
+                  <div class="mock-stat-sub" style="color: var(--accent-amber);"><i class="fas fa-graduation-cap"></i> Conversion Rate: 71%</div>
+                </div>
+                <div class="mock-icon-sky" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);"><i class="fas fa-graduation-cap"></i></div>
+              </div>
+            </div>
+
+            <div class="mock-grid-2">
+              <div class="mock-card-panel">
+                <div class="mock-panel-header">
+                  <h3 class="mock-panel-title"><i class="fas fa-filter" style="color: var(--accent-sky);"></i> Recruitment Funnel Breakdown</h3>
+                </div>
+                <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 180px; padding-top: 20px;">
+                  <div style="text-align: center; width: 28%;">
+                    <div style="background: #3b82f6; height: 140px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #fff;">7</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">Total Submissions</div>
+                  </div>
+                  <div style="text-align: center; width: 28%;">
+                    <div style="background: #10b981; height: 100px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #fff;">5</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">Verified by Mgr</div>
+                  </div>
+                  <div style="text-align: center; width: 28%;">
+                    <div style="background: #8b5cf6; height: 100px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #fff;">5</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">Enrolled Participants</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mock-card-panel">
+                <div class="mock-panel-header">
+                  <h3 class="mock-panel-title"><i class="fas fa-chart-line" style="color: var(--accent-sky);"></i> Monthly Recruitment & Unit Trend</h3>
+                </div>
+                <div style="height: 180px; display: flex; flex-direction: column; justify-content: flex-end; padding-top: 10px;">
+                  <div style="display: flex; justify-content: flex-end; gap: 16px; margin-bottom: 12px; font-size: 0.75rem;">
+                    <span style="color: #3b82f6;"><i class="fas fa-minus"></i> Invites Submitted</span>
+                    <span style="color: #f59e0b;"><i class="fas fa-minus"></i> Units Accumulated</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                    <span>Mar 2026</span><span>Apr 2026</span><span>May 2026</span><span>Jun 2026</span><span>Jul 2026 (Current)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'units':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <h2>Unit Monitoring & Conversion</h2>
+                <span style="background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; color: #fef08a; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                  <i class="fas fa-calculator"></i> 1 Unit = ₱4,500.00 Net Fee
+                </span>
+              </div>
+            </div>
+
+            <div class="mock-grid-3">
+              <div class="mock-stat-card" style="border-left: 4px solid var(--accent-amber);">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">MONTHLY UNITS EARNED</div>
+                  <div class="mock-stat-number">18 Units</div>
+                  <div class="mock-stat-sub">Current month accumulation</div>
+                </div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">TOTAL ACCUMULATED UNITS</div>
+                  <div class="mock-stat-number" style="color: var(--accent-emerald);">42 Units</div>
+                  <div class="mock-stat-sub">All-time lifetime balance</div>
+                </div>
+                <div class="mock-icon-sky" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);"><i class="fas fa-award"></i></div>
+              </div>
+
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">NEXT ELITE LEVEL</div>
+                  <div class="mock-stat-number" style="color: #60a5fa;">Silver</div>
+                  <div class="mock-stat-sub">Requires 9 additional units</div>
+                </div>
+                <div class="mock-icon-sky" style="background: rgba(96, 165, 250, 0.15); color: #60a5fa;"><i class="fas fa-arrow-up"></i></div>
+              </div>
+            </div>
+
+            <div class="mock-card-panel" style="margin-bottom: 24px;">
+              <div class="mock-panel-header">
+                <h3 class="mock-panel-title"><i class="fas fa-star" style="color: var(--accent-amber);"></i> Tier Elevation Track (Bronze Rank)</h3>
+                <span class="tier-badge tier-Bronze"><i class="fas fa-award"></i> Bronze</span>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Current Units: <strong>42</strong> <span style="float: right;">Next Level Target: <strong>51 Units</strong></span></div>
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width: 84%;"></div>
+                </div>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px;">84% achieved toward next level upgrade.</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><i class="fas fa-list-alt" style="color: var(--accent-sky);"></i> Unit Conversion Credit History</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Enrollment ID</th>
+                      <th>Participant</th>
+                      <th>Course / Program</th>
+                      <th>Net Investment Fee</th>
+                      <th>Verified Payment Made</th>
+                      <th>Unit Conversion Formula</th>
+                      <th>Units Earned</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>ENR-8801</strong></td>
+                      <td><strong>Engr. Robert Tan</strong></td>
+                      <td>Advanced ISO 9001 Auditor Certification</td>
+                      <td>₱4,500.00</td>
+                      <td style="color: var(--accent-emerald); font-weight: 600;">₱4,500.00</td>
+                      <td style="font-size: 0.82rem; color: var(--text-secondary);">₱4,500.00 ÷ ₱4,500</td>
+                      <td><span class="unit-badge"><i class="fas fa-star"></i> +1 Units</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>ENR-8802</strong></td>
+                      <td><strong>Dr. Sofia Garcia</strong></td>
+                      <td>Healthcare Safety & Compliance Masterclass</td>
+                      <td>₱3,200.00</td>
+                      <td style="color: var(--accent-emerald); font-weight: 600;">₱1,600.00</td>
+                      <td style="font-size: 0.82rem; color: var(--text-secondary);">₱1,600.00 ÷ ₱4,500</td>
+                      <td><span class="unit-badge"><i class="fas fa-star"></i> +0.71 Units</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'level-tracker':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <h2>Elite Level Tracker</h2>
+                <span class="tier-badge tier-Bronze" style="padding: 8px 18px; font-size: 0.9rem;">
+                  <i class="fas fa-crown"></i> Your Current Rank: Bronze
+                </span>
+              </div>
+            </div>
+
+            <div class="mock-grid-3">
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">ACCUMULATED UNITS</div>
+                  <div class="mock-stat-number" style="color: var(--accent-amber);">42 Units</div>
+                </div>
+              </div>
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">TIER UNIT RANGE</div>
+                  <div class="mock-stat-number" style="color: #60a5fa;">1 - 50</div>
+                </div>
+              </div>
+              <div class="mock-stat-card">
+                <div class="mock-stat-content">
+                  <div class="mock-stat-title">NEXT MILESTONE TIER</div>
+                  <div class="mock-stat-number" style="color: var(--accent-emerald);">Silver</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><i class="fas fa-layer-group" style="color: var(--accent-cyan);"></i> Official Memo 1: Atsoca Elite Tier Thresholds</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Elite Level Rank</th>
+                      <th>Required Unit Range</th>
+                      <th>Equivalent Investment Net Fee Range</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="matrix-active-row">
+                      <td><span class="tier-badge tier-Bronze"><i class="fas fa-award"></i> Bronze</span></td>
+                      <td><strong>1–50 Units</strong></td>
+                      <td>₱4,500 – ₱225,000</td>
+                      <td><span class="status-pill status-Verified"><i class="fas fa-user-check"></i> Active Rank</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="tier-badge tier-Silver"><i class="fas fa-award"></i> Silver</span></td>
+                      <td><strong>51–100 Units</strong></td>
+                      <td>₱229,500 – ₱450,000</td>
+                      <td><span style="color: var(--text-secondary);"><i class="fas fa-lock"></i> Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="tier-badge tier-Gold"><i class="fas fa-award"></i> Gold</span></td>
+                      <td><strong>101–150 Units</strong></td>
+                      <td>₱454,500 – ₱675,000</td>
+                      <td><span style="color: var(--text-secondary);"><i class="fas fa-lock"></i> Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="tier-badge tier-Platinum"><i class="fas fa-award"></i> Platinum</span></td>
+                      <td><strong>151–200 Units</strong></td>
+                      <td>₱679,500 – ₱900,000</td>
+                      <td><span style="color: var(--text-secondary);"><i class="fas fa-lock"></i> Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="tier-badge tier-Diamond"><i class="fas fa-award"></i> Diamond</span></td>
+                      <td><strong>201–350 Units</strong></td>
+                      <td>₱904,500 – ₱1,575,000</td>
+                      <td><span style="color: var(--text-secondary);"><i class="fas fa-lock"></i> Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="tier-badge tier-Associate"><i class="fas fa-award"></i> Associate</span></td>
+                      <td><strong>351–1500 Units</strong></td>
+                      <td>₱1,579,500 – ₱6,750,000</td>
+                      <td><span style="color: var(--text-secondary);"><i class="fas fa-lock"></i> Locked</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="tier-badge tier-AssociateManager"><i class="fas fa-award"></i> Associate Manager</span></td>
+                      <td><strong>1501–1501+ Units</strong></td>
+                      <td>₱6,754,500 – Above ₱6.75M</td>
+                      <td><span style="color: var(--text-secondary);"><i class="fas fa-lock"></i> Locked</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'leaderboard':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <h2>Partner Leaderboard & Rank Tracking</h2>
+            </div>
+            <div class="card">
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Partner Name</th>
+                      <th>Level</th>
+                      <th>Total Units</th>
+                      <th>Monthly Units</th>
+                      <th>Released Fees</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="matrix-active-row">
+                      <td><strong>#1</strong></td>
+                      <td><strong>Ellaine Joyce (You)</strong></td>
+                      <td>Bronze Tier</td>
+                      <td>42</td>
+                      <td>18</td>
+                      <td>₱84,500.00</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'referral-fees':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <h2>Referral Fee Monitoring</h2>
+                <span class="tier-badge tier-Bronze" style="padding: 6px 14px;"><i class="fas fa-percentage"></i> Applicable Tier Rate: Bronze</span>
+              </div>
+            </div>
+
+            <div class="mock-grid-2" style="margin-bottom: 24px;">
+              <div class="mock-card-panel">
+                <div class="mock-panel-header">
+                  <h3 class="mock-panel-title">Memo 1: Atsoca Elite Matrix 2026</h3>
+                </div>
+                <div class="table-responsive">
+                  <table class="custom-table matrix-table">
+                    <thead>
+                      <tr>
+                        <th>ELITE LEVEL</th>
+                        <th>≤ ₱1,999</th>
+                        <th>₱2,000–2,499</th>
+                        <th>₱2,500–2,999</th>
+                        <th>≥ ₱3,000</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="matrix-active-row">
+                        <td><strong>Bronze</strong></td>
+                        <td>8%</td>
+                        <td>10%</td>
+                        <td>12%</td>
+                        <td class="highlight">16%</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Silver</strong></td>
+                        <td>8%</td>
+                        <td>10%</td>
+                        <td>13%</td>
+                        <td>17%</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Gold</strong></td>
+                        <td>8%</td>
+                        <td>10%</td>
+                        <td>14%</td>
+                        <td>18%</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Platinum</strong></td>
+                        <td>8%</td>
+                        <td>10%</td>
+                        <td>15%</td>
+                        <td>19%</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Diamond</strong></td>
+                        <td>9%</td>
+                        <td>12%</td>
+                        <td>16%</td>
+                        <td>20%</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Associate</strong></td>
+                        <td>10%</td>
+                        <td>13%</td>
+                        <td>17%</td>
+                        <td>21%</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Associate Manager</strong></td>
+                        <td>11%</td>
+                        <td>14%</td>
+                        <td>19%</td>
+                        <td>23%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="mock-card-panel">
+                <div class="mock-panel-header">
+                  <h3 class="mock-panel-title"><i class="fas fa-calculator" style="color: var(--accent-cyan);"></i> Live Fee Calculator Simulator</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                  <div>
+                    <label style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase;">Select Elite Level Rank</label>
+                    <select class="form-control" style="width: 100%; margin-top: 4px;">
+                      <option selected>Bronze</option>
+                      <option>Silver</option>
+                      <option>Gold</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase;">Net Investment Fee Amount (₱)</label>
+                    <input type="number" class="form-control" value="4500" style="width: 100%; margin-top: 4px;">
+                  </div>
+                  <div style="background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); margin-top: 8px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.82rem;">
+                      <span style="color: var(--text-secondary);">APPLICABLE FEE BRACKET:</span>
+                      <span style="color: var(--accent-cyan); font-weight: 600;">> ₱3,000</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-top: 4px;">
+                      <span style="color: var(--text-secondary);">MATRIX PERCENTAGE RATE:</span>
+                      <span style="color: var(--accent-cyan); font-weight: 600;">16%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                      <span>Calculated Referral Fee:</span>
+                      <span style="color: var(--accent-amber);">₱720.00</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><i class="fas fa-file-invoice-dollar" style="color: var(--accent-emerald);"></i> Verified Referrals Fee Statement</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Enrollment ID</th>
+                      <th>Participant Name</th>
+                      <th>Course / Program</th>
+                      <th>Payment Made (Basis)</th>
+                      <th>Applicable Level</th>
+                      <th>Fee Bracket</th>
+                      <th>Referral %</th>
+                      <th>Computed Referral Fee</th>
+                      <th>Referral Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>ENR-8801</strong></td>
+                      <td><strong>Engr. Robert Tan</strong></td>
+                      <td>Advanced ISO 9001 Auditor Certification</td>
+                      <td style="color: var(--accent-emerald); font-weight: 600;">₱4,500.00</td>
+                      <td><span class="tier-badge tier-Bronze">Bronze</span></td>
+                      <td>> ₱3,000</td>
+                      <td><strong>16%</strong></td>
+                      <td style="color: var(--accent-amber); font-weight: 700;">₱720.00</td>
+                      <td><span class="status-pill status-FullyPaid">Available for Release</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>ENR-8802</strong></td>
+                      <td><strong>Dr. Sofia Garcia</strong></td>
+                      <td>Healthcare Safety & Compliance Masterclass</td>
+                      <td style="color: var(--accent-emerald); font-weight: 600;">₱1,600.00</td>
+                      <td><span class="tier-badge tier-Bronze">Bronze</span></td>
+                      <td>≤ ₱1,999</td>
+                      <td><strong>8%</strong></td>
+                      <td style="color: var(--accent-amber); font-weight: 700;">₱128.00</td>
+                      <td><span class="status-pill status-Partial">Pending Full Payment</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'releases':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <h2>Referral Fee Release Workflow</h2>
+                <button class="btn btn-emerald" onclick="alert('Submit Payout Request Form Opened');"><i class="fas fa-paper-plane"></i> Submit Payout Request</button>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 24px; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; position: relative;">
+                <div style="text-align: center; z-index: 2; width: 22%;">
+                  <div style="width: 42px; height: 42px; border-radius: 50%; background: #3b82f6; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 700;">1</div>
+                  <div style="font-weight: 600; font-size: 0.85rem;">Eligible Fee</div>
+                  <div style="font-size: 0.72rem; color: var(--text-secondary);">Verified Payments</div>
+                </div>
+                <div style="text-align: center; z-index: 2; width: 22%;">
+                  <div style="width: 42px; height: 42px; border-radius: 50%; background: #f59e0b; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 700;">2</div>
+                  <div style="font-weight: 600; font-size: 0.85rem;">Submit Request</div>
+                  <div style="font-size: 0.72rem; color: var(--text-secondary);">Online Dashboard Form</div>
+                </div>
+                <div style="text-align: center; z-index: 2; width: 22%;">
+                  <div style="width: 42px; height: 42px; border-radius: 50%; background: #8b5cf6; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 700;">3</div>
+                  <div style="font-weight: 600; font-size: 0.85rem;">Finance Review</div>
+                  <div style="font-size: 0.72rem; color: var(--text-secondary);">Audit & Approval</div>
+                </div>
+                <div style="text-align: center; z-index: 2; width: 22%;">
+                  <div style="width: 42px; height: 42px; border-radius: 50%; background: #10b981; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 700;">4</div>
+                  <div style="font-weight: 600; font-size: 0.85rem;">Release Payout</div>
+                  <div style="font-size: 0.72rem; color: var(--text-secondary);">Disbursement Sent</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><i class="fas fa-history" style="color: var(--accent-cyan);"></i> Payout Release History & Requests</div>
+              </div>
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>REQUEST REFERENCE #</th>
+                      <th>DATE REQUESTED</th>
+                      <th>AMOUNT REQUESTED</th>
+                      <th>DISBURSEMENT METHOD</th>
+                      <th>PROCESSING STATUS</th>
+                      <th>DATE RELEASED</th>
+                      <th>NOTES / REMARKS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>ATS-RF-9041</strong></td>
+                      <td>2026-07-15</td>
+                      <td style="color: var(--accent-emerald); font-weight: 700;">₱15,400.00</td>
+                      <td>GCash (0917-***-8821)</td>
+                      <td><span class="status-pill status-Enrolled"><i class="fas fa-check-circle"></i> Released</span></td>
+                      <td style="color: var(--accent-emerald); font-weight: 600;">2026-07-18</td>
+                      <td style="font-size: 0.8rem; color: var(--text-secondary);">Batch #4 Referral Fee Release Processed by Finance</td>
+                    </tr>
+                    <tr>
+                      <td><strong>ATS-RF-9888</strong></td>
+                      <td>2026-07-24</td>
+                      <td style="color: var(--accent-emerald); font-weight: 700;">₱8,600.00</td>
+                      <td>Bank Transfer (BDO - 0048-****-1192)</td>
+                      <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Finance Review</span></td>
+                      <td>Pending</td>
+                      <td style="font-size: 0.8rem; color: var(--text-secondary);">Submitted for July 2nd Half Earnings</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'releases':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Referral Fee Release Workflow</h2>
+                <button class="btn btn-emerald" onclick="alert('Submit Payout Request Form Opened');"><i class="fas fa-paper-plane"></i> Submit Payout Request</button>
+              </div>
+            </div>
+            <div class="grid-3">
+              <div class="card stat-card">
+                <div class="stat-info">
+                  <span>AVAILABLE FOR RELEASE</span>
+                  <div class="stat-value" style="color: var(--accent-emerald);">₱28,400.00</div>
+                </div>
+              </div>
+              <div class="card stat-card">
+                <div class="stat-info">
+                  <span>PENDING REVIEW</span>
+                  <div class="stat-value" style="color: var(--accent-amber);">₱12,500.00</div>
+                </div>
+              </div>
+              <div class="card stat-card">
+                <div class="stat-info">
+                  <span>RELEASED PAYOUTS</span>
+                  <div class="stat-value" style="color: var(--accent-cyan);">₱84,500.00</div>
+                </div>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'notifications':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <h2>Notification Center</h2>
+            </div>
+            <div class="card">
+              <p><i class="fas fa-check-circle" style="color: var(--accent-emerald);"></i> <strong>Invite Verified:</strong> Mark Anthony Ramos has been verified by Elite Manager.</p>
+              <p><i class="fas fa-user-check" style="color: var(--accent-cyan);"></i> <strong>Enrollment Confirmed:</strong> Engr. Jay completed enrollment in PUP Data Privacy Officer (DPO) Training.</p>
+              <p><i class="fas fa-coins" style="color: var(--accent-amber);"></i> <strong>Referral Fee Available:</strong> ₱28,400 is ready for release request.</p>
+            </div>
+          `;
+          break;
+
+        case 'public-enrollments':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <h2>Public Enrollment Monitoring (Finance & Admin)</h2>
+            </div>
+            <div class="card">
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Participant Name</th>
+                      <th>School / Company</th>
+                      <th>Training Date</th>
+                      <th>Referrer</th>
+                      <th>Payment Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Engr. Robert Tan</strong></td>
+                      <td>Meralco Industrial Engineering</td>
+                      <td>2026-08-12</td>
+                      <td>Ellaine Joyce</td>
+                      <td><span class="status-pill status-FullyPaid">Fully Paid</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Dr. Sofia Garcia</strong></td>
+                      <td>St. Luke Medical Center</td>
+                      <td>2026-08-18</td>
+                      <td>Ellaine Joyce</td>
+                      <td><span class="status-pill status-Partial">Partial</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'reports':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <h2>Downloadable Reports Engine</h2>
+              <p>Export reports to Excel (.csv) or PDF formats</p>
+            </div>
+            <div class="grid-3">
+              <div class="card" style="text-align: center; padding: 24px;">
+                <i class="fas fa-file-excel" style="font-size: 2.5rem; color: var(--accent-emerald); margin-bottom: 12px;"></i>
+                <h3>Invite Report</h3>
+                <button class="btn btn-primary" onclick="alert('Exporting Invite Report to CSV...');" style="margin-top: 12px;">Download CSV</button>
+              </div>
+              <div class="card" style="text-align: center; padding: 24px;">
+                <i class="fas fa-file-pdf" style="font-size: 2.5rem; color: var(--accent-rose); margin-bottom: 12px;"></i>
+                <h3>Enrollment Report</h3>
+                <button class="btn btn-primary" onclick="alert('Exporting Enrollment Report to CSV...');" style="margin-top: 12px;">Download CSV</button>
+              </div>
+              <div class="card" style="text-align: center; padding: 24px;">
+                <i class="fas fa-file-invoice-dollar" style="font-size: 2.5rem; color: var(--accent-amber); margin-bottom: 12px;"></i>
+                <h3>Referral Fee Report</h3>
+                <button class="btn btn-primary" onclick="alert('Exporting Referral Fee Report to CSV...');" style="margin-top: 12px;">Download CSV</button>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'admin':
+          mount.innerHTML = `
+            <div class="card" style="margin-bottom: 24px;">
+              <h2>Administrator Console</h2>
+            </div>
+            <div class="card">
+              <h3>System Configuration & Management Accounts</h3>
+              <p>Logged in as: <strong>System Admin</strong></p>
+            </div>
+          `;
+          break;
+
+        default:
+          location.reload();
+          break;
+      }
+    };
+
+    if (localStorage.getItem('atsoca_logged_in') === null) {
+      localStorage.setItem('atsoca_logged_in', 'true');
+    }
+
+    window.handleSignIn = function(role, targetEmail) {
+      var emailInput = document.getElementById('login-email');
+      var rawEmail = targetEmail || (emailInput ? emailInput.value.trim() : '');
+      var emailVal = rawEmail ? rawEmail.toLowerCase() : 'ellaine.joyce@atsoca.ph';
+      var activeRole = role || (emailVal.includes('admin') ? 'Administrator' : (emailVal.includes('manager') ? 'Elite Manager' : (emailVal.includes('finance') ? 'Finance' : 'Elite Member')));
+
+      localStorage.setItem('atsoca_logged_in', 'true');
+      localStorage.setItem('atsoca_active_role', activeRole);
+      
+      var ls = document.getElementById('login-screen');
+      if (ls) {
+        ls.classList.add('hidden');
+        ls.style.display = 'none';
+        ls.style.setProperty('display', 'none', 'important');
+      }
+
+      if (window.app && typeof window.app.updateProfileWidget === 'function') {
+        window.app.updateProfileWidget();
+        window.app.renderActiveTab();
+      }
+    };
+
+    if (localStorage.getItem('atsoca_logged_in') !== 'false') {
+      var sTag = document.createElement('style');
+      sTag.id = 'login-hide-style';
+      sTag.innerHTML = '#login-screen { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
+      document.head.appendChild(sTag);
+    }
+  </script>
+
+  <!-- Full-Screen Split Login Portal Screen -->
+  <div id="login-screen" class="login-screen-overlay hidden" style="display: none;">
+    <div class="login-split-container">
+      <!-- Left Column: Big Official ATSOCA Branding Showcase -->
+      <div class="login-brand-side">
+        <div class="login-brand-wrapper">
+          <img src="assets/logo.png" alt="ATSOCA Learning & Consultancy OPC" class="login-hero-logo">
+          <div class="login-brand-badge-box">
+            <span class="login-badge-pill"><i class="fas fa-shield-alt"></i> Official Partner Portal 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Form Card -->
+      <div class="login-form-side">
+        <div class="login-card-inner" id="login-card-inner">
+          <div class="login-card-header">
+            <h2 class="login-portal-title">ELITE PORTAL</h2>
+            <p class="login-portal-subtitle">Access your partner portal and referral matrix accounts</p>
+          </div>
+
+          <form id="login-form" class="login-form" onsubmit="event.preventDefault(); window.handleSignIn(); return false;">
+            <div id="login-error-alert" class="signup-alert-danger hidden" style="display: none; margin-bottom: 14px;"></div>
+
+            <div class="form-group">
+              <label><i class="fas fa-envelope"></i> EMAIL ADDRESS</label>
+              <input type="email" class="form-control" id="login-email" placeholder="e.g. ellaine.joyce@atsoca.ph" value="ellaine.joyce@atsoca.ph" required>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-lock"></i> PASSWORD</label>
+              <input type="password" class="form-control" id="login-password" value="12345" placeholder="Enter password (default: 12345)">
+            </div>
+
+            <div class="login-btn-stack">
+              <button type="button" class="login-btn-navy" id="btn-submit-signin" onclick="window.handleSignIn();">
+                <i class="fas fa-sign-in-alt"></i> SIGN IN TO PORTAL
+              </button>
+              <a href="signup.html" class="login-btn-black" id="btn-login-signup" style="text-decoration: none;">
+                <i class="fas fa-user-plus"></i> NO ACCOUNT? SIGN UP HERE
+              </a>
+            </div>
+
+            <!-- Quick Demo 1-Click Sign In Options -->
+            <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px; text-align: center; letter-spacing: 0.5px;">
+                ⚡ 1-Click Quick Demo Sign In
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Elite Member', 'ellaine.joyce@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-user" style="color: #2563eb;"></i> Elite Member
+                </button>
+                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Administrator', 'admin@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-user-shield" style="color: #dc2626;"></i> Admin Portal
+                </button>
+                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Elite Manager', 'manager@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-user-tie" style="color: #7c3aed;"></i> Manager View
+                </button>
+                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Finance', 'finance@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-coins" style="color: #16a34a;"></i> Finance Portal
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript App -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
