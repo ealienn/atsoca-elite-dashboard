@@ -448,8 +448,21 @@ textarea {
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
   box-sizing: border-box;
+}
+
+.top-header *,
+.header-right,
+.header-left,
+.header-user-box,
+.header-btn,
+.sidebar-footer,
+.sidebar-user-box,
+#btn-header-logout,
+#btn-logout {
+  pointer-events: auto !important;
 }
 
 .header-left {
@@ -1066,20 +1079,21 @@ body[data-theme="dark"] .progress-bar-fill {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  display: flex;
+  display: none !important;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 2000;
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
-  transition: all var(--transition-normal);
+  pointer-events: none !important;
+  transition: opacity var(--transition-normal);
 }
 
 .modal-overlay.active {
+  display: flex !important;
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
+  pointer-events: auto !important;
 }
 
 .modal-content {

@@ -5,7 +5,7 @@ import { db } from '../dbState.js';
 
 export function renderAnalytics(container) {
   if (!container) return;
-  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: 'ELITE-101', name: 'Ellaine Joyce' };
+  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: '004', name: 'Joshua Villafuerte' };
   const allInvites = (db && db.data && Array.isArray(db.data.invites)) ? db.data.invites : [];
   const allEnrollments = (db && db.data && Array.isArray(db.data.enrollments)) ? db.data.enrollments : [];
 

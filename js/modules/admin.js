@@ -31,7 +31,6 @@ export function renderAdmin(container) {
           <h2>Administrator System Console</h2>
         </div>
         <div style="display: flex; gap: 12px;">
-          <button class="btn btn-primary btn-sm" id="open-add-member-modal"><i class="fas fa-user-plus"></i> Add New Member Profile</button>
           <button class="btn btn-secondary btn-sm" id="btn-reset-db"><i class="fas fa-undo"></i> Reset Database</button>
         </div>
       </div>

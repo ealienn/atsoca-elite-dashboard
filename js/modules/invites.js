@@ -6,7 +6,7 @@ import { db } from '../dbState.js';
 export function renderInvites(container) {
   if (!container) return;
   const isManagerOrAdmin = (db && (db.activeRole === 'Elite Manager' || db.activeRole === 'Finance' || db.activeRole === 'Administrator'));
-  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: 'ELITE-101', name: 'Ellaine Joyce' };
+  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: '004', name: 'Joshua Villafuerte' };
   const allInvites = (db && db.data && Array.isArray(db.data.invites)) ? db.data.invites : [];
 
   const invites = allInvites.filter(i => {

@@ -94,8 +94,8 @@ const INITIAL_RELEASES = [
   {
     id: 'REL-2026-101',
     reqNumber: 'ATS-RF-9041',
-    eliteMemberId: 'ELITE-101',
-    eliteMemberName: 'Ellaine Joyce',
+    eliteMemberId: '004',
+    eliteMemberName: 'Joshua Villafuerte',
     amount: 15400,
     dateRequested: '2026-07-15',
     processingStatus: 'Released',
@@ -106,8 +106,8 @@ const INITIAL_RELEASES = [
   {
     id: 'REL-2026-102',
     reqNumber: 'ATS-RF-9088',
-    eliteMemberId: 'ELITE-101',
-    eliteMemberName: 'Ellaine Joyce',
+    eliteMemberId: '005',
+    eliteMemberName: 'Kent Bryan Lontok',
     amount: 8600,
     dateRequested: '2026-07-24',
     processingStatus: 'Finance Review',
@@ -118,8 +118,8 @@ const INITIAL_RELEASES = [
   {
     id: 'REL-2026-103',
     reqNumber: 'ATS-RF-9095',
-    eliteMemberId: 'ELITE-101',
-    eliteMemberName: 'Ellaine Joyce',
+    eliteMemberId: '006',
+    eliteMemberName: 'CE Box',
     amount: 22000,
     dateRequested: '2026-07-26',
     processingStatus: 'Submitted',
@@ -138,7 +138,7 @@ const INITIAL_NOTIFICATIONS = [
     message: 'You earned 1.11 units for Patricia Lim (Globe Telecom Inc.).',
     read: false,
     roleTarget: 'Elite Member',
-    memberId: 'ELITE-101'
+    memberId: '004'
   },
   {
     id: 'NOTIF-02',
@@ -148,7 +148,7 @@ const INITIAL_NOTIFICATIONS = [
     message: 'Engr. Robert Tan (Meralco) has been verified by Administration.',
     read: true,
     roleTarget: 'Elite Member',
-    memberId: 'ELITE-101'
+    memberId: '004'
   },
   {
     id: 'NOTIF-03',
@@ -158,7 +158,7 @@ const INITIAL_NOTIFICATIONS = [
     message: '₱810.00 referral fee is now available for release for Engr. Robert Tan.',
     read: true,
     roleTarget: 'Elite Member',
-    memberId: 'ELITE-101'
+    memberId: '004'
   }
 ];
 
@@ -166,15 +166,17 @@ class DBState {
   constructor() {
     this.listeners = [];
     this.activeRole = localStorage.getItem('atsoca_active_role') || 'Elite Member'; // 'Elite Member', 'Elite Manager', 'Finance', 'Administrator'
-    this.currentMemberId = localStorage.getItem('atsoca_current_member_id') || 'ELITE-101'; // Default logged-in Elite Member
+    this.currentMemberId = localStorage.getItem('atsoca_current_member_id') || '004'; // Default logged-in Elite Member (Joshua Villafuerte)
     this.init();
   }
 
   init() {
     const raw = localStorage.getItem(STORAGE_KEY);
+    const OFFICIAL_MEMBER_IDS = ['004', '005', '006', '007', '008'];
+
     if (!raw) {
       this.data = {
-        members: INITIAL_MEMBERS,
+        members: [...INITIAL_MEMBERS],
         invites: INITIAL_INVITES,
         enrollments: INITIAL_ENROLLMENTS,
         releases: INITIAL_RELEASES,
@@ -188,16 +190,34 @@ class DBState {
       try {
         this.data = JSON.parse(raw);
         if (this.data && this.data.members && Array.isArray(this.data.members)) {
+          // Strictly retain ONLY official 004 to 008 members
+          this.data.members = this.data.members.filter(m => m && OFFICIAL_MEMBER_IDS.includes(m.id));
+          
+          // Ensure all 5 official members are present
+          INITIAL_MEMBERS.forEach(initM => {
+            if (!this.data.members.some(m => m.id === initM.id)) {
+              this.data.members.push(initM);
+            }
+          });
+
           this.data.members.forEach(m => {
             if (!m.password || m.password === '••••••••') {
               m.password = '12345';
             }
           });
+        } else {
+          this.data.members = [...INITIAL_MEMBERS];
         }
       } catch (e) {
         console.error('Failed to parse database state, resetting:', e);
         this.resetDatabase();
       }
+    }
+
+    // Ensure active currentMemberId is valid
+    if (!OFFICIAL_MEMBER_IDS.includes(this.currentMemberId)) {
+      this.currentMemberId = '004';
+      localStorage.setItem('atsoca_current_member_id', '004');
     }
 
     if (GOOGLE_SHEETS_WEB_APP_URL) {
@@ -388,48 +408,32 @@ class DBState {
     this.notify();
   }
 
-  setRole(role, memberId = 'ELITE-101') {
-    this.activeRole = role;
-    this.currentMemberId = memberId;
-    localStorage.setItem('atsoca_active_role', role);
-    localStorage.setItem('atsoca_current_member_id', memberId);
+  setRole(role, memberId = '004') {
+    const OFFICIAL_MEMBER_IDS = ['004', '005', '006', '007', '008'];
+    const OFFICIAL_ROLES = ['Administrator', 'Elite Manager', 'Finance', 'Elite Member'];
+    
+    this.activeRole = OFFICIAL_ROLES.includes(role) ? role : 'Administrator';
+    this.currentMemberId = OFFICIAL_MEMBER_IDS.includes(memberId) ? memberId : '004';
+    
+    localStorage.setItem('atsoca_active_role', this.activeRole);
+    localStorage.setItem('atsoca_current_member_id', this.currentMemberId);
     this.notify();
   }
 
   getCurrentMember() {
-    return this.data.members.find(m => m.id === this.currentMemberId) || this.data.members[0];
+    return this.data.members.find(m => m.id === this.currentMemberId) || this.data.members.find(m => m.id === '004') || INITIAL_MEMBERS[0];
   }
 
   addMember(memberData) {
-    const newId = `ELITE-${101 + this.data.members.length}`;
-    const newMember = {
-      id: newId,
-      name: memberData.name || 'New Elite Member',
-      email: memberData.email || `${memberData.name.toLowerCase().replace(/\s+/g, '.')}@atsoca.ph`,
-      password: memberData.password || '12345',
-      role: memberData.role || 'Elite Member',
-      avatar: memberData.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      totalUnits: Number(memberData.totalUnits) || 0,
-      monthlyUnits: Number(memberData.monthlyUnits) || 0,
-      pendingFees: Number(memberData.pendingFees) || 0,
-      availableForRelease: Number(memberData.availableForRelease) || 0,
-      releasedFees: Number(memberData.releasedFees) || 0,
-      joinDate: new Date().toISOString().split('T')[0]
-    };
-    this.data.members.push(newMember);
-    this.addLog(newMember.name, 'Created Member Profile', 'System Admin', `Added new member profile ${newMember.name} (${newMember.id})`);
-
-    if (GOOGLE_SHEETS_WEB_APP_URL) {
-      fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'member', ...newMember }),
-        mode: 'no-cors'
-      }).catch(err => console.warn('POST member to Google Sheets:', err));
+    const OFFICIAL_MEMBER_IDS = ['004', '005', '006', '007', '008'];
+    let matched = this.data.members.find(m => m.email && memberData.email && m.email.toLowerCase() === memberData.email.toLowerCase());
+    if (!matched && memberData.id && OFFICIAL_MEMBER_IDS.includes(memberData.id)) {
+      matched = this.data.members.find(m => m.id === memberData.id);
     }
+    if (matched) return matched;
 
-    this.save();
-    return newMember;
+    // Strict account-level access: return default official member 004
+    return this.data.members.find(m => m.id === '004') || INITIAL_MEMBERS[0];
   }
 
   updateMemberProfile(memberId, profileData) {

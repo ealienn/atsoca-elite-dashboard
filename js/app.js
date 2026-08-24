@@ -51,6 +51,8 @@ class AppController {
     this.currentUserAvatar = document.querySelector('#current-user-avatar');
     this.currentUserName = document.querySelector('#current-user-name');
     this.currentUserRole = document.querySelector('#current-user-role');
+    this.headerUserAvatar = document.querySelector('#header-user-avatar');
+    this.headerUserName = document.querySelector('#header-user-name');
   }
 
   initTheme() {
@@ -111,7 +113,7 @@ class AppController {
     // Global Sign In Action Handler
     window.handleSignIn = () => {
       const rawEmail = loginEmail ? loginEmail.value.trim() : '';
-      const emailVal = rawEmail ? rawEmail.toLowerCase() : 'ellaine.joyce@atsoca.ph';
+      const emailVal = rawEmail ? rawEmail.toLowerCase() : 'joshua.villafuerte@atsoca.ph';
       const passwordInput = document.querySelector('#login-password');
       const pwdVal = passwordInput ? passwordInput.value.trim() : '12345';
       const loginErrorAlert = document.querySelector('#login-error-alert');
@@ -121,36 +123,43 @@ class AppController {
         loginErrorAlert.classList.add('hidden');
       }
 
-      // Find member matching entered email
-      let matchedMember = db.data.members.find(m => m.email && m.email.toLowerCase() === emailVal);
+      const OFFICIAL_MEMBER_EMAILS = {
+        '004': 'joshua.villafuerte@atsoca.ph',
+        '005': 'kent.lontok@atsoca.ph',
+        '006': 'ce.box@atsoca.ph',
+        '007': 'charlene.hilvano@atsoca.ph',
+        '008': 'jenelle.mangubat@atsoca.ph'
+      };
 
-      let role = 'Elite Member';
-      let memberId = 'ELITE-101';
+      let matchedMember = db.data.members.find(m => 
+        (m.email && m.email.toLowerCase() === emailVal) ||
+        (m.id && m.id.toLowerCase() === emailVal)
+      );
 
-      if (matchedMember) {
-        role = matchedMember.role || 'Elite Member';
-        memberId = matchedMember.id;
-      } else if (emailVal.includes('admin')) {
+      let role = null;
+      let memberId = '004';
+
+      if (emailVal.includes('admin@atsoca.ph') || emailVal === 'admin') {
         role = 'Administrator';
-        memberId = db.data.members[0]?.id || 'ELITE-101';
-      } else if (emailVal.includes('manager')) {
+        memberId = db.data.members[0]?.id || '004';
+      } else if (emailVal.includes('manager@atsoca.ph') || emailVal === 'manager') {
         role = 'Elite Manager';
-        memberId = db.data.members[0]?.id || 'ELITE-101';
-      } else if (emailVal.includes('finance')) {
+        memberId = db.data.members[0]?.id || '004';
+      } else if (emailVal.includes('finance@atsoca.ph') || emailVal === 'finance') {
         role = 'Finance';
-        memberId = db.data.members[0]?.id || 'ELITE-101';
-      } else {
-        // Auto-create user account seamlessly so sign-in ALWAYS succeeds without blocking
-        const displayName = rawEmail ? (rawEmail.split('@')[0].replace(/[\._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())) : 'Elite Member';
-        matchedMember = db.addMember({
-          name: displayName,
-          email: emailVal,
-          password: pwdVal || '12345',
-          role: 'Elite Member',
-          totalUnits: 25
-        });
+        memberId = db.data.members[0]?.id || '004';
+      } else if (matchedMember) {
         role = 'Elite Member';
         memberId = matchedMember.id;
+      }
+
+      if (!role) {
+        if (loginErrorAlert) {
+          loginErrorAlert.innerText = 'Access Denied: Account not authorized. Access is strictly restricted to the 4 official roles: Administrator, Elite Manager, Finance, and Elite Members (004 to 008).';
+          loginErrorAlert.style.display = 'block';
+          loginErrorAlert.classList.remove('hidden');
+        }
+        return;
       }
 
       localStorage.setItem('atsoca_logged_in', 'true');
@@ -180,26 +189,55 @@ class AppController {
       });
     }
 
+    // Password Visibility View Mode Toggle
+    window.togglePasswordVisibility = function(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input) {
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        if (icon) {
+          icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+        }
+      }
+    };
+
+    const btnToggleLoginPwd = document.querySelector('#btn-toggle-login-password');
+    if (btnToggleLoginPwd) {
+      btnToggleLoginPwd.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.togglePasswordVisibility('login-password', 'icon-toggle-login-password');
+      });
+    }
+
+    // Enter Key Keyboard Trigger for Sign In
+    const loginInputElements = document.querySelectorAll('#login-form input');
+    loginInputElements.forEach(input => {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+          e.preventDefault();
+          window.handleSignIn();
+        }
+      });
+    });
+
     // Quick Role Demo Sign In buttons (1-Click Sign In)
     document.querySelectorAll('.btn-quick-login').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        const targetEmail = btn.getAttribute('data-email') || 'ellaine.joyce@atsoca.ph';
+        const targetEmail = btn.getAttribute('data-email') || 'joshua.villafuerte@atsoca.ph';
         const targetRole = btn.getAttribute('data-role') || 'Elite Member';
+        const targetMemberId = btn.getAttribute('data-member-id') || '004';
 
         if (loginEmail) loginEmail.value = targetEmail;
         const passwordInput = document.querySelector('#login-password');
         if (passwordInput) passwordInput.value = '12345';
 
-        const matchedMember = db.data.members.find(m => m.email && m.email.toLowerCase() === targetEmail.toLowerCase());
-        const memberId = matchedMember ? matchedMember.id : (db.data.members[0]?.id || '004');
+        const matchedMember = db.data.members.find(m => m.id === targetMemberId || (m.email && m.email.toLowerCase() === targetEmail.toLowerCase()));
+        const memberId = matchedMember ? matchedMember.id : targetMemberId;
 
         localStorage.setItem('atsoca_logged_in', 'true');
-        
-        if (db) {
-          if (!db.activeRole) db.activeRole = 'Administrator';
-          if (!db.currentMemberId) db.currentMemberId = '004';
-        }
         db.setRole(targetRole, memberId);
 
         if (loginScreen) {
@@ -225,26 +263,48 @@ class AppController {
     }
 
     // Global Logout Handler
-    window.handleLogout = () => {
-      localStorage.setItem('atsoca_logged_in', 'false');
-      const loginScreen = document.querySelector('#login-screen');
-      if (loginScreen) {
-        loginScreen.classList.remove('hidden');
-        loginScreen.style.display = 'flex';
-      } else {
-        window.location.reload();
-      }
+    window.handleLogout = (e) => {
+      this.handleLogout(e);
     };
 
-    // Logout Button Event Delegation
-    document.addEventListener('click', (e) => {
-      const logoutBtn = e.target.closest('#btn-logout');
-      if (logoutBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        window.handleLogout();
-      }
-    });
+    // Global Open Profile Modal Handler
+    window.openProfileModal = () => {
+      this.openProfileModal();
+    };
+  }
+
+  openProfileModal() {
+    const profileModal = document.querySelector('#modal-edit-user-profile') || document.querySelector('#profile-modal');
+    const profileModalBody = document.querySelector('#modal-user-profile-body');
+    if (profileModal && profileModalBody) {
+      renderProfileModal(profileModalBody, () => {
+        this.updateProfileWidget();
+        this.renderActiveTab();
+      });
+      profileModal.classList.add('active');
+    }
+  }
+
+  handleLogout(e) {
+    if (e) {
+      try { e.preventDefault(); } catch (err) {}
+      try { e.stopPropagation(); } catch (err) {}
+    }
+    localStorage.setItem('atsoca_logged_in', 'false');
+    
+    const hideStyle = document.getElementById('login-hide-style');
+    if (hideStyle) hideStyle.remove();
+
+    const loginScreen = document.querySelector('#login-screen');
+    if (loginScreen) {
+      loginScreen.classList.remove('hidden');
+      loginScreen.style.setProperty('display', 'flex', 'important');
+      loginScreen.style.setProperty('visibility', 'visible', 'important');
+      loginScreen.style.setProperty('opacity', '1', 'important');
+      loginScreen.style.setProperty('pointer-events', 'auto', 'important');
+    } else {
+      window.location.reload();
+    }
   }
 
   promptSecurityVerification(targetRole, targetMemberId) {
@@ -316,7 +376,7 @@ class AppController {
 
         // Security Passed - Execute Account Switch
         if (this.pendingSwitchRole) {
-          db.setRole(this.pendingSwitchRole, this.pendingSwitchMemberId || 'ELITE-101');
+          db.setRole(this.pendingSwitchRole, this.pendingSwitchMemberId || '004');
           if (this.roleSelect) this.roleSelect.value = db.activeRole;
           if (this.memberSelect) this.memberSelect.value = db.currentMemberId;
           this.updateProfileWidget();
@@ -329,9 +389,47 @@ class AppController {
   }
 
   bindEvents() {
-    // Document-wide Click Delegation for Theme, Tabs, Modals, and Action Buttons
+    // 1. Dedicated Isolated Event Listeners for Profile Triggers (Navbar & Sidebar)
+    const profileElements = document.querySelectorAll('#btn-profile, #sidebar-user-box-click, #user-profile-btn, .user-profile-btn');
+    profileElements.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.openProfileModal();
+      });
+    });
+
+    // 2. Dedicated Isolated Event Listeners for Logout Buttons
+    const logoutElements = document.querySelectorAll('#btn-logout, .btn-logout-icon, .logout-btn, #btn-header-logout');
+    logoutElements.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleLogout(e);
+      });
+    });
+
+    // 3. Document-wide Click Delegation for remaining interactive elements
     document.addEventListener('click', (e) => {
-      // 1. Theme toggle click
+      // Standalone Logout click delegation check
+      const logoutTarget = e.target.closest('#btn-logout, .btn-logout-icon, .logout-btn, #btn-header-logout');
+      if (logoutTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleLogout(e);
+        return;
+      }
+
+      // Standalone Profile click delegation check
+      const profileTarget = e.target.closest('#btn-profile, #sidebar-user-box-click, #user-profile-btn, .user-profile-btn');
+      if (profileTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.openProfileModal();
+        return;
+      }
+
+      // Theme toggle click
       const themeBtn = e.target.closest('#btn-theme-toggle');
       if (themeBtn) {
         e.preventDefault();
@@ -339,7 +437,7 @@ class AppController {
         return;
       }
 
-      // 2. Sidebar & Nav Routing click
+      // Sidebar & Nav Routing click
       const navItem = e.target.closest('.nav-item[data-tab]');
       if (navItem) {
         e.preventDefault();
@@ -350,7 +448,7 @@ class AppController {
         return;
       }
 
-      // 3. Quick & Section Action Buttons for Invites & Release Modals
+      // Quick & Section Action Buttons for Invites & Release Modals
       const btnOpenInvite = e.target.closest('#open-add-invite, #btn-quick-invite');
       if (btnOpenInvite) {
         e.preventDefault();
@@ -358,7 +456,7 @@ class AppController {
         const emailInput = document.querySelector('#invite-referrer-email');
         const dateInput = document.querySelector('#invite-training-date');
         const member = db.getCurrentMember();
-        if (emailInput && member) emailInput.value = member.email || 'ellaine.joyce@atsoca.ph';
+        if (emailInput && member) emailInput.value = member.email || 'joshua.villafuerte@atsoca.ph';
         if (dateInput) dateInput.value = new Date(Date.now() + 14*86400000).toISOString().split('T')[0];
         if (modal) modal.classList.add('active');
         return;
@@ -371,13 +469,13 @@ class AppController {
         const emailInput = document.querySelector('#release-referrer-email');
         const amountInput = document.querySelector('#release-amount');
         const member = db.getCurrentMember();
-        if (emailInput && member) emailInput.value = member.email || 'ellaine.joyce@atsoca.ph';
-        if (amountInput && member) amountInput.value = member.availableForRelease || 28400;
+        if (emailInput && member) emailInput.value = member.email || 'joshua.villafuerte@atsoca.ph';
+        if (amountInput && member) amountInput.value = member.availableForRelease || 24050;
         if (modal) modal.classList.add('active');
         return;
       }
 
-      // 4. Global + Add Profile Header Button
+      // Global + Add Profile Header Button
       const btnHeaderAdd = e.target.closest('#btn-header-add-profile');
       if (btnHeaderAdd) {
         e.preventDefault();
@@ -386,24 +484,8 @@ class AppController {
         return;
       }
 
-      // 5. Sidebar User Box Click -> Profile Edit Modal
-      const sidebarUserBox = e.target.closest('#sidebar-user-box-click');
-      if (sidebarUserBox) {
-        e.preventDefault();
-        const profileModal = document.querySelector('#modal-edit-user-profile');
-        const profileModalBody = document.querySelector('#modal-user-profile-body');
-        if (profileModal && profileModalBody) {
-          renderProfileModal(profileModalBody, () => {
-            this.updateProfileWidget();
-            this.renderActiveTab();
-          });
-          profileModal.classList.add('active');
-        }
-        return;
-      }
-
-      // 6. Close buttons for overlays
-      const modalCloseBtn = e.target.closest('.modal-close, #global-cancel-add-member, #security-cancel-btn');
+      // Close buttons for overlays
+      const modalCloseBtn = e.target.closest('.modal-close, #close-modal-user-profile, #global-cancel-add-member, #security-cancel-btn');
       if (modalCloseBtn) {
         const overlay = modalCloseBtn.closest('.modal-overlay');
         if (overlay) overlay.classList.remove('active');
@@ -415,7 +497,7 @@ class AppController {
     if (this.roleSelect) {
       this.roleSelect.addEventListener('change', (e) => {
         const targetRole = e.target.value;
-        const targetMemberId = this.memberSelect ? this.memberSelect.value : 'ELITE-101';
+        const targetMemberId = this.memberSelect ? this.memberSelect.value : '004';
         this.roleSelect.value = db.activeRole;
         this.promptSecurityVerification(targetRole, targetMemberId);
       });
@@ -554,6 +636,8 @@ class AppController {
       });
     }
 
+    const profileModalClose = document.querySelector('#close-modal-user-profile');
+    const profileModal = document.querySelector('#modal-edit-user-profile');
     if (profileModalClose && profileModal) {
       profileModalClose.addEventListener('click', () => {
         profileModal.classList.remove('active');
@@ -621,26 +705,26 @@ class AppController {
 
   populateMemberSelect() {
     if (!this.memberSelect) return;
-    const currentVal = db ? db.currentMemberId : 'ELITE-101';
+    const currentVal = db ? db.currentMemberId : '004';
     const members = (db && db.data && Array.isArray(db.data.members)) ? db.data.members : [];
     if (members.length === 0) return;
     this.memberSelect.innerHTML = members.map(m => {
       if (!m) return '';
       const level = getEliteLevel(m.totalUnits || 0);
-      return `<option value="${m.id}" ${m.id === currentVal ? 'selected' : ''}>${m.name || 'Member'} (${level.name})</option>`;
+      return `<option value="${m.id}" ${m.id === currentVal ? 'selected' : ''}>${m.id} - ${m.name || 'Member'} (${level.name})</option>`;
     }).join('');
   }
 
   populateLoginMemberSelect() {
     const loginMemberId = document.querySelector('#login-member-id');
     if (!loginMemberId) return;
-    const currentVal = loginMemberId.value || (db ? db.currentMemberId : 'ELITE-101');
+    const currentVal = loginMemberId.value || (db ? db.currentMemberId : '004');
     const members = (db && db.data && Array.isArray(db.data.members)) ? db.data.members : [];
     if (members.length === 0) return;
     loginMemberId.innerHTML = members.map(m => {
       if (!m) return '';
       const level = getEliteLevel(m.totalUnits || 0);
-      return `<option value="${m.id}" ${m.id === currentVal ? 'selected' : ''}>${m.name || 'Member'} — ${level.name} Partner</option>`;
+      return `<option value="${m.id}" ${m.id === currentVal ? 'selected' : ''}>${m.id} - ${m.name || 'Member'} — ${level.name} Partner</option>`;
     }).join('');
   }
 
@@ -649,17 +733,21 @@ class AppController {
       this.populateMemberSelect();
       this.updateAdminNavVisibility();
       if (!db || db.activeRole === 'Elite Member') {
-        const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Ellaine Joyce', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80', totalUnits: 44 };
-        const level = getEliteLevel(member ? member.totalUnits : 44);
-        if (this.currentUserName) this.currentUserName.innerText = member ? member.name : 'Ellaine Joyce';
+        const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Joshua Villafuerte', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80', totalUnits: 0.73 };
+        const level = getEliteLevel(member ? member.totalUnits : 0.73);
+        if (this.currentUserName) this.currentUserName.innerText = member ? member.name : 'Joshua Villafuerte';
         if (this.currentUserRole) this.currentUserRole.innerText = `${level.name} Partner`;
         if (this.currentUserAvatar && member && member.avatar) this.currentUserAvatar.src = member.avatar;
+        if (this.headerUserName) this.headerUserName.innerText = member ? member.name : 'Joshua Villafuerte';
+        if (this.headerUserAvatar && member && member.avatar) this.headerUserAvatar.src = member.avatar;
         if (this.memberSelect) this.memberSelect.style.display = 'inline-block';
       } else {
         const mgmtAccount = (db && typeof db.getManagementProfile === 'function' ? db.getManagementProfile(db.activeRole) : null) || { name: 'Management', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80' };
         if (this.currentUserName) this.currentUserName.innerText = mgmtAccount.name || 'Management';
-        if (this.currentUserRole) this.currentUserRole.innerText = 'Admin Scope';
+        if (this.currentUserRole) this.currentUserRole.innerText = `${db.activeRole} Account`;
         if (this.currentUserAvatar && mgmtAccount.avatar) this.currentUserAvatar.src = mgmtAccount.avatar;
+        if (this.headerUserName) this.headerUserName.innerText = mgmtAccount.name || 'Management';
+        if (this.headerUserAvatar && mgmtAccount.avatar) this.headerUserAvatar.src = mgmtAccount.avatar;
         if (this.memberSelect) this.memberSelect.style.display = 'none';
       }
     } catch (err) {

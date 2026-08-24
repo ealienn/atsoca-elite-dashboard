@@ -25,14 +25,14 @@ export function renderOverview(container) {
 function renderEliteMemberOverview(container) {
   if (!container) return;
   const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || {
-    id: 'ELITE-101',
-    name: 'Ellaine Joyce',
-    referralCode: 'ATS-REF-101',
-    totalUnits: 42,
-    monthlyUnits: 18,
-    pendingFees: 12500,
-    availableForRelease: 28400,
-    releasedFees: 84500
+    id: '004',
+    name: 'Joshua Villafuerte',
+    referralCode: 'ATS-REF-004',
+    totalUnits: 0.73,
+    monthlyUnits: 0.73,
+    pendingFees: 0,
+    availableForRelease: 24050,
+    releasedFees: 0
   };
 
   const allInvites = (db && db.data && Array.isArray(db.data.invites)) ? db.data.invites : [];
@@ -56,9 +56,6 @@ function renderEliteMemberOverview(container) {
     <div class="welcome-banner-card">
       <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         Welcome back, ${member.name}!
-        <span style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fef08a; font-size: 0.82rem; padding: 4px 12px; border-radius: 20px; font-weight: 600;">
-          <i class="fas fa-ticket-alt"></i> Partner Code: ${member.referralCode || 'ATS-REF-101'}
-        </span>
       </div>
       <div class="welcome-actions">
         <button class="btn-mock-sky" id="btn-quick-invite">
@@ -117,65 +114,7 @@ function renderEliteMemberOverview(container) {
       </div>
     </div>
 
-    <!-- 2. Middle Row (2 Columns) -->
-    <div class="mock-grid-2">
-      <div class="mock-card-panel">
-        <div class="mock-panel-header">
-          <h3 class="mock-panel-title">LEVEL AND TIER PROGRESS</h3>
-          <span class="tier-badge tier-${currentLevelInfo.name.replace(/\s+/g, '')}">
-            ${currentLevelInfo.name} Tier
-          </span>
-        </div>
 
-        <div class="tier-metric-row">
-          <div class="metric-inner-box">
-            <div class="metric-box-label">Monthly Units:</div>
-            <div class="metric-box-value">${member.monthlyUnits || 0}</div>
-          </div>
-          <div class="metric-inner-box">
-            <div class="metric-box-label">Units Needed:</div>
-            <div class="metric-box-value">${currentLevelInfo.unitsNeeded || 18}</div>
-          </div>
-          <div class="trophy-container">
-            <i class="fas fa-trophy trophy-gold-icon"></i>
-          </div>
-        </div>
-
-        <div class="progress-bar-wrapper">
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" style="width: ${currentLevelInfo.progressPercent || 50}%;"></div>
-          </div>
-          <div class="progress-percent-label">${currentLevelInfo.progressPercent || 50}%</div>
-        </div>
-        <div class="tier-next-subtext">
-          ${currentLevelInfo.name} &rarr; ${currentLevelInfo.nextLevel || 'Max Level'}
-        </div>
-      </div>
-
-      <div class="mock-card-panel">
-        <div class="mock-panel-header">
-          <h3 class="mock-panel-title">EARNINGS BREAKDOWN</h3>
-        </div>
-
-        <div class="earnings-grid-2x2">
-          <div class="earning-inner-box">
-            <span>Available: ₱${availableFees.toLocaleString()}</span>
-          </div>
-
-          <div class="earning-inner-box">
-            <span>Pending Review: ₱${pendingFees.toLocaleString()}</span>
-          </div>
-
-          <div class="earning-inner-box">
-            <span>Released Payouts: ₱${releasedFees.toLocaleString()}</span>
-          </div>
-
-          <div class="earning-inner-box">
-            <span>Total Referral Earnings: ₱${totalEarnings.toLocaleString()}</span>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- 3. Bottom Card: RECENT INVITES -->
     <div class="mock-card-panel">

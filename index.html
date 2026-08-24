@@ -82,15 +82,15 @@
 
       <!-- Sidebar User Footer -->
       <div class="sidebar-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 14px; border-top: 1px solid var(--border-color);">
-        <div class="sidebar-user-box" id="sidebar-user-box-click" style="cursor: pointer; flex: 1; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 30px;" title="Click to open Profile Settings">
+        <div class="sidebar-user-box user-profile-btn" id="sidebar-user-box-click" style="cursor: pointer; flex: 1; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 30px;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
           <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" id="current-user-avatar" class="sidebar-user-avatar" alt="Profile Picture" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;">
           <div>
             <div class="user-box-name" id="current-user-name" style="font-weight: 800; font-size: 0.85rem; color: #002355;">Active User</div>
             <div class="user-box-role" id="current-user-role" style="font-size: 0.74rem; color: #64748b; font-style: italic;">Partner Account</div>
           </div>
         </div>
-        <button class="btn btn-logout-icon" id="btn-logout" title="Sign Out of Portal" aria-label="Sign Out" onclick="window.handleLogout && window.handleLogout()" style="background: #dc2626; color: #ffffff; width: 40px; height: 40px; min-width: 40px; border-radius: 12px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); transition: all 0.2s ease;">
-          <i class="fas fa-sign-out-alt"></i>
+        <button type="button" class="btn btn-logout-icon logout-btn" id="btn-logout" title="Sign Out of Portal" aria-label="Sign Out" onclick="if(window.handleLogout){window.handleLogout(event);} else {localStorage.setItem('atsoca_logged_in','false'); window.location.reload();}" style="background: #dc2626; color: #ffffff; width: 40px; height: 40px; min-width: 40px; border-radius: 12px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); transition: all 0.2s ease; position: relative; z-index: 999; pointer-events: auto;">
+          <i class="fas fa-sign-out-alt" style="pointer-events: none;"></i>
         </button>
       </div>
     </aside>
@@ -104,36 +104,23 @@
         </div>
 
         <div class="header-right">
-          <!-- Active Role Selector Pill -->
-          <div class="role-selector-wrapper">
-            <label><i class="fas fa-user"></i> Active Role:</label>
-            <select class="role-select" id="header-role-select">
-              <option value="Elite Member">Elite Member</option>
-              <option value="Elite Manager">Elite Manager</option>
-              <option value="Finance">Finance</option>
-              <option value="Administrator">Administrator</option>
-            </select>
 
-            <!-- Member Switcher (Visible in Elite Member Mode) -->
-            <select class="role-select" id="header-member-select" style="margin-left: 8px; border-left: 1px solid var(--border-color); padding-left: 8px;">
-              <option value="ELITE-101">Ellaine Joyce (Bronze)</option>
-            </select>
 
-            <!-- Quick Add Profile Button -->
-            <button class="btn-mock-sky" id="btn-header-add-profile" style="margin-left: 8px; padding: 5px 12px; font-size: 0.78rem;">
-              <i class="fas fa-user-plus"></i> + Add Profile
-            </button>
-          </div>
+          <!-- Separate Distinct User Profile Button Container (id="btn-profile") -->
+          <button type="button" class="header-user-box user-profile-btn" id="btn-profile" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 30px; margin-left: 8px; outline: none;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" id="header-user-avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; pointer-events: none;" alt="Profile Picture">
+            <span id="header-user-name" style="font-weight: 700; font-size: 0.82rem; color: #002355; pointer-events: none;">Active User</span>
+          </button>
 
           <!-- Theme Switcher Button -->
-          <button class="header-btn" id="btn-theme-toggle" title="Toggle Light / Dark Mode" aria-label="Toggle Light / Dark Mode">
-            <i class="fas fa-moon" id="theme-toggle-icon"></i>
+          <button type="button" class="header-btn" id="btn-theme-toggle" title="Toggle Light / Dark Mode" aria-label="Toggle Light / Dark Mode">
+            <i class="fas fa-moon" id="theme-toggle-icon" style="pointer-events: none;"></i>
           </button>
 
           <!-- Notification Drawer Toggle Button -->
-          <button class="header-btn" id="btn-notif-toggle" title="Notifications">
-            <i class="fas fa-bell"></i>
-            <span class="btn-dot" id="notif-badge-dot"></span>
+          <button type="button" class="header-btn" id="btn-notif-toggle" title="Notifications">
+            <i class="fas fa-bell" style="pointer-events: none;"></i>
+            <span class="btn-dot" id="notif-badge-dot" style="pointer-events: none;"></span>
           </button>
 
         </div>
@@ -144,10 +131,7 @@
         <!-- Top Welcome Banner Card -->
         <div class="welcome-banner-card">
           <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            Welcome back, Ellaine Joyce!
-            <span style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fef08a; font-size: 0.82rem; padding: 4px 12px; border-radius: 20px; font-weight: 600;">
-              <i class="fas fa-ticket-alt"></i> Partner Code: ATS-REF-101
-            </span>
+            Welcome back, Joshua Villafuerte!
           </div>
           <div class="welcome-actions">
             <button class="btn-mock-sky" id="btn-quick-invite">
@@ -205,65 +189,7 @@
           </div>
         </div>
 
-        <!-- 2. Middle Row (2 Columns) -->
-        <div class="mock-grid-2">
-          <div class="mock-card-panel">
-            <div class="mock-panel-header">
-              <h3 class="mock-panel-title">LEVEL AND TIER PROGRESS</h3>
-              <span class="tier-badge tier-Bronze">
-                <i class="fas fa-award"></i> Bronze Tier
-              </span>
-            </div>
 
-            <div class="tier-metric-row">
-              <div class="metric-inner-box">
-                <div class="metric-box-label">Monthly Units:</div>
-                <div class="metric-box-value">18</div>
-              </div>
-              <div class="metric-inner-box">
-                <div class="metric-box-label">Units Needed:</div>
-                <div class="metric-box-value">9</div>
-              </div>
-              <div class="trophy-container">
-                <i class="fas fa-trophy trophy-gold-icon"></i>
-              </div>
-            </div>
-
-            <div class="progress-bar-wrapper">
-              <div class="progress-bar-track">
-                <div class="progress-bar-fill" style="width: 84%;"></div>
-              </div>
-              <div class="progress-percent-label">84%</div>
-            </div>
-            <div class="tier-next-subtext">
-              Bronze &rarr; Silver
-            </div>
-          </div>
-
-          <div class="mock-card-panel">
-            <div class="mock-panel-header">
-              <h3 class="mock-panel-title">EARNINGS BREAKDOWN</h3>
-            </div>
-
-            <div class="earnings-grid-2x2">
-              <div class="earning-inner-box">
-                <span>Available: ₱28,400</span>
-              </div>
-
-              <div class="earning-inner-box">
-                <span>Pending Review: ₱12,500</span>
-              </div>
-
-              <div class="earning-inner-box">
-                <span>Released Payouts: ₱84,500</span>
-              </div>
-
-              <div class="earning-inner-box">
-                <span>Total Referral Earnings: ₱125,400</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- 3. Bottom Card: RECENT INVITES -->
         <div class="mock-card-panel">
@@ -443,6 +369,8 @@
           <!-- Dynamic Profile Edit Form Mounts Here -->
         </div>
       </div>
+    </div>
+
     <!-- Modal: Submit New Invite -->
     <div class="modal-overlay" id="modal-add-invite">
       <div class="modal-content" style="max-width: 520px;">
@@ -576,10 +504,7 @@
           mount.innerHTML = `
             <div class="welcome-banner-card">
               <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                Welcome back, Ellaine Joyce!
-                <span style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fef08a; font-size: 0.82rem; padding: 4px 12px; border-radius: 20px; font-weight: 600;">
-                  <i class="fas fa-ticket-alt"></i> Partner Code: ATS-REF-101
-                </span>
+                Welcome back, Joshua Villafuerte!
               </div>
               <div class="welcome-actions">
                 <button class="btn-mock-sky" id="btn-quick-invite" onclick="window.switchTab('invites');">
@@ -637,64 +562,7 @@
               </div>
             </div>
 
-            <div class="mock-grid-2">
-              <div class="mock-card-panel">
-                <div class="mock-panel-header">
-                  <h3 class="mock-panel-title">LEVEL AND TIER PROGRESS</h3>
-                  <span class="tier-badge tier-Bronze">
-                    <i class="fas fa-award"></i> Bronze Tier
-                  </span>
-                </div>
 
-                <div class="tier-metric-row">
-                  <div class="metric-inner-box">
-                    <div class="metric-box-label">Monthly Units:</div>
-                    <div class="metric-box-value">18</div>
-                  </div>
-                  <div class="metric-inner-box">
-                    <div class="metric-box-label">Units Needed:</div>
-                    <div class="metric-box-value">9</div>
-                  </div>
-                  <div class="trophy-container">
-                    <i class="fas fa-trophy trophy-gold-icon"></i>
-                  </div>
-                </div>
-
-                <div class="progress-bar-wrapper">
-                  <div class="progress-bar-track">
-                    <div class="progress-bar-fill" style="width: 84%;"></div>
-                  </div>
-                  <div class="progress-percent-label">84%</div>
-                </div>
-                <div class="tier-next-subtext">
-                  Bronze &rarr; Silver
-                </div>
-              </div>
-
-              <div class="mock-card-panel">
-                <div class="mock-panel-header">
-                  <h3 class="mock-panel-title">EARNINGS BREAKDOWN</h3>
-                </div>
-
-                <div class="earnings-grid-2x2">
-                  <div class="earning-inner-box">
-                    <span>Available: ₱28,400</span>
-                  </div>
-
-                  <div class="earning-inner-box">
-                    <span>Pending Review: ₱12,500</span>
-                  </div>
-
-                  <div class="earning-inner-box">
-                    <span>Released Payouts: ₱84,500</span>
-                  </div>
-
-                  <div class="earning-inner-box">
-                    <span>Total Referral Earnings: ₱125,400</span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <div class="mock-card-panel">
               <div class="mock-panel-header" style="margin-bottom: 16px;">
@@ -1246,7 +1114,7 @@
                   <tbody>
                     <tr class="matrix-active-row">
                       <td><strong>#1</strong></td>
-                      <td><strong>Ellaine Joyce (You)</strong></td>
+                      <td><strong>Joshua Villafuerte (You)</strong></td>
                       <td>Bronze Tier</td>
                       <td>42</td>
                       <td>18</td>
@@ -1566,14 +1434,14 @@
                       <td><strong>Engr. Robert Tan</strong></td>
                       <td>Meralco Industrial Engineering</td>
                       <td>2026-08-12</td>
-                      <td>Ellaine Joyce</td>
+                      <td>Joshua Villafuerte</td>
                       <td><span class="status-pill status-FullyPaid">Fully Paid</span></td>
                     </tr>
                     <tr>
                       <td><strong>Dr. Sofia Garcia</strong></td>
                       <td>St. Luke Medical Center</td>
                       <td>2026-08-18</td>
-                      <td>Ellaine Joyce</td>
+                      <td>Joshua Villafuerte</td>
                       <td><span class="status-pill status-Partial">Partial</span></td>
                     </tr>
                   </tbody>
@@ -1634,7 +1502,7 @@
     window.handleSignIn = function(role, targetEmail) {
       var emailInput = document.getElementById('login-email');
       var rawEmail = targetEmail || (emailInput ? emailInput.value.trim() : '');
-      var emailVal = rawEmail ? rawEmail.toLowerCase() : 'ellaine.joyce@atsoca.ph';
+      var emailVal = rawEmail ? rawEmail.toLowerCase() : 'joshua.villafuerte@atsoca.ph';
       var activeRole = role || (emailVal.includes('admin') ? 'Administrator' : (emailVal.includes('manager') ? 'Elite Manager' : (emailVal.includes('finance') ? 'Finance' : 'Elite Member')));
 
       localStorage.setItem('atsoca_logged_in', 'true');
@@ -1668,9 +1536,6 @@
       <div class="login-brand-side">
         <div class="login-brand-wrapper">
           <img src="assets/logo.png" alt="ATSOCA Learning & Consultancy OPC" class="login-hero-logo">
-          <div class="login-brand-badge-box">
-            <span class="login-badge-pill"><i class="fas fa-shield-alt"></i> Official Partner Portal 2026</span>
-          </div>
         </div>
       </div>
 
@@ -1687,44 +1552,27 @@
 
             <div class="form-group">
               <label><i class="fas fa-envelope"></i> EMAIL ADDRESS</label>
-              <input type="email" class="form-control" id="login-email" placeholder="e.g. ellaine.joyce@atsoca.ph" value="ellaine.joyce@atsoca.ph" required>
+              <input type="email" class="form-control" id="login-email" placeholder="e.g. joshua.villafuerte@atsoca.ph" value="joshua.villafuerte@atsoca.ph" required>
             </div>
 
             <div class="form-group">
               <label><i class="fas fa-lock"></i> PASSWORD</label>
-              <input type="password" class="form-control" id="login-password" value="12345" placeholder="Enter password (default: 12345)">
+              <div class="password-wrapper" style="position: relative; display: flex; align-items: center;">
+                <input type="password" class="form-control" id="login-password" value="12345" placeholder="Enter password (default: 12345)" style="padding-right: 42px;">
+                <button type="button" id="btn-toggle-login-password" aria-label="Toggle password visibility" title="Toggle Password Visibility" style="position: absolute; right: 12px; background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1rem; padding: 4px; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                  <i class="fas fa-eye" id="icon-toggle-login-password" style="pointer-events: none;"></i>
+                </button>
+              </div>
             </div>
 
             <div class="login-btn-stack">
-              <button type="button" class="login-btn-navy" id="btn-submit-signin" onclick="window.handleSignIn();">
+              <button type="submit" class="login-btn-navy" id="btn-submit-signin" onclick="window.handleSignIn();">
                 <i class="fas fa-sign-in-alt"></i> SIGN IN TO PORTAL
               </button>
               <a href="signup.html" class="login-btn-black" id="btn-login-signup" style="text-decoration: none;">
                 <i class="fas fa-user-plus"></i> NO ACCOUNT? SIGN UP HERE
               </a>
             </div>
-
-            <!-- Quick Demo 1-Click Sign In Options -->
-            <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
-              <div style="font-size: 0.72rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px; text-align: center; letter-spacing: 0.5px;">
-                ⚡ 1-Click Quick Demo Sign In
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Elite Member', 'ellaine.joyce@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
-                  <i class="fas fa-user" style="color: #2563eb;"></i> Elite Member
-                </button>
-                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Administrator', 'admin@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
-                  <i class="fas fa-user-shield" style="color: #dc2626;"></i> Admin Portal
-                </button>
-                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Elite Manager', 'manager@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
-                  <i class="fas fa-user-tie" style="color: #7c3aed;"></i> Manager View
-                </button>
-                <button type="button" class="btn-quick-login" onclick="window.handleSignIn('Finance', 'finance@atsoca.ph');" style="padding: 8px 10px; font-size: 0.78rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; color: #0f172a; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 6px;">
-                  <i class="fas fa-coins" style="color: #16a34a;"></i> Finance Portal
-                </button>
-              </div>
-            </div>
-
           </form>
         </div>
       </div>

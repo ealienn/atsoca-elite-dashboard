@@ -7,7 +7,7 @@ import { formatPHP } from '../matrixEngine.js';
 export function renderReleases(container) {
   if (!container) return;
   const isFinanceOrAdmin = (db && (db.activeRole === 'Finance' || db.activeRole === 'Administrator'));
-  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: 'ELITE-101', name: 'Ellaine Joyce' };
+  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: '004', name: 'Joshua Villafuerte' };
   const allReleases = (db && db.data && Array.isArray(db.data.releases)) ? db.data.releases : [];
 
   const releases = allReleases.filter(r => r && (db && db.activeRole === 'Elite Member' ? (r.eliteMemberId === member.id || (r.eliteMemberName && member.name && r.eliteMemberName.toLowerCase() === member.name.toLowerCase())) : true));

@@ -8,7 +8,7 @@ let activeSortMetric = 'totalUnits'; // 'totalUnits', 'monthlyUnits', 'releasedF
 
 export function renderLeaderboard(container) {
   if (!container) return;
-  const currentMember = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: 'ELITE-101', name: 'Ellaine Joyce' };
+  const currentMember = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: '004', name: 'Joshua Villafuerte' };
   const members = (db && db.data && Array.isArray(db.data.members)) ? db.data.members : [];
 
   // Get and sort member list
