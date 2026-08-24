@@ -56,7 +56,7 @@ export function renderReleases(container) {
     <!-- Payout Requests Table Card -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title"><i class="fas fa-history"></i> Payout Release History & Requests</div>
+        <div class="card-title">Payout Release History & Requests</div>
       </div>
 
       <div class="table-responsive">

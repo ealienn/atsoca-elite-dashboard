@@ -746,7 +746,7 @@ class AppController {
   updateAdminNavVisibility() {
     const role = db ? db.activeRole : 'Elite Member';
     const isEliteMember = role === 'Elite Member';
-    const isFinanceOrAdmin = role === 'Finance' || role === 'Administrator';
+    const isManagerOrFinance = role === 'Elite Manager' || role === 'Finance';
     const isAdmin = role === 'Administrator';
 
     const adminNavGroup = document.querySelector('#admin-nav-group');
@@ -756,26 +756,23 @@ class AppController {
 
     const publicEnrollmentLink = document.querySelector('.nav-item[data-tab="public-enrollments"]');
     if (publicEnrollmentLink) {
-      publicEnrollmentLink.style.display = !isEliteMember ? 'flex' : 'none';
+      publicEnrollmentLink.style.display = isManagerOrFinance ? 'flex' : 'none';
     }
 
     const reportsLink = document.querySelector('.nav-item[data-tab="reports"]');
     if (reportsLink) {
-      reportsLink.style.display = !isEliteMember ? 'flex' : 'none';
+      reportsLink.style.display = isManagerOrFinance ? 'flex' : 'none';
     }
 
     const notifLink = document.querySelector('.nav-item[data-tab="notifications"]');
     if (notifLink) {
-      notifLink.style.display = !isEliteMember ? 'flex' : 'none';
+      notifLink.style.display = isManagerOrFinance ? 'flex' : 'none';
     }
 
     const adminLink = document.querySelector('.nav-item[data-tab="admin"]');
     if (adminLink) {
       adminLink.style.display = isAdmin ? 'flex' : 'none';
     }
-
-    const restrictedTabsForNonAdmin = ['admin'];
-    const restrictedTabsForElite = ['notifications', 'public-enrollments', 'reports', 'admin'];
 
     if (!isAdmin && this.currentTab === 'admin') {
       this.currentTab = 'overview';
@@ -786,7 +783,7 @@ class AppController {
           item.classList.remove('active');
         }
       });
-    } else if (isEliteMember && restrictedTabsForElite.includes(this.currentTab)) {
+    } else if (!isManagerOrFinance && ['notifications', 'public-enrollments', 'reports'].includes(this.currentTab) && !isAdmin) {
       this.currentTab = 'overview';
       this.navItems.forEach(item => {
         if (item.getAttribute('data-tab') === 'overview') {

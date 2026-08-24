@@ -65,7 +65,7 @@ export function renderAnalytics(container) {
       <!-- Recruitment Funnel Chart -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title"><i class="fas fa-filter"></i> Recruitment Funnel Breakdown</div>
+          <div class="card-title">Recruitment Funnel Breakdown</div>
         </div>
         <div style="height: 280px; position: relative;">
           <canvas id="chart-funnel"></canvas>
@@ -75,7 +75,7 @@ export function renderAnalytics(container) {
       <!-- Monthly Trend Line Chart -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title"><i class="fas fa-chart-area"></i> Monthly Recruitment & Unit Trend</div>
+          <div class="card-title">Monthly Recruitment & Unit Trend</div>
         </div>
         <div style="height: 280px; position: relative;">
           <canvas id="chart-monthly"></canvas>

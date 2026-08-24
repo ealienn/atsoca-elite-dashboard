@@ -68,7 +68,7 @@ export function renderPublicEnrollments(container) {
     <!-- Filter & Master Table -->
     <div class="card">
       <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
-        <div class="card-title"><i class="fas fa-table"></i> All Enrolled Participants Registry</div>
+        <div class="card-title">All Enrolled Participants Registry</div>
         <div style="display: flex; gap: 12px; align-items: center;">
           <input type="text" id="search-public-enr" class="form-control" placeholder="Search participant or school..." style="width: 240px; padding: 6px 12px;">
           <select id="filter-payment-status" class="form-control" style="width: 160px; padding: 6px 12px;">

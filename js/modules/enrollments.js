@@ -58,7 +58,7 @@ export function renderEnrollments(container) {
     <!-- Enrollment & Payment Tracking Table -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title"><i class="fas fa-receipt"></i> Referral Payment Ledger</div>
+        <div class="card-title">Referral Payment Ledger</div>
       </div>
 
       <div class="table-responsive">

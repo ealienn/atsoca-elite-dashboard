@@ -46,7 +46,7 @@ export function renderReports(container) {
       </div>
 
       <div style="margin-bottom: 16px; font-weight: 800; font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">
-        <span>Elite Member Account Folders (${members.length} Accounts)</span>
+        <span>Elite Member Accounts</span>
       </div>
 
       <div class="grid-3" style="margin-bottom: 24px; gap: 18px;">

@@ -18,9 +18,6 @@ export function renderUnits(container) {
         <div>
           <h2>Unit Monitoring & Conversion</h2>
         </div>
-        <div class="tier-badge" style="background: rgba(255,255,255,0.14); color: #ffffff; border: 1px solid rgba(255,255,255,0.35);">
-          <i class="fas fa-calculator" style="color: #38bdf8;"></i> 1 Unit = ${formatPHP(UNIT_VALUATION)} Net Fee
-        </div>
       </div>
     </div>
 
@@ -68,7 +65,7 @@ export function renderUnits(container) {
     <!-- Verified Payment to Unit Conversion Ledger -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title"><i class="fas fa-list-ol"></i> Unit Conversion Credit History</div>
+        <div class="card-title">Unit Conversion Credit History</div>
       </div>
 
       <div class="table-responsive">

@@ -346,11 +346,25 @@ function renderManagementOverview(container, role) {
     btnCloseModal.addEventListener('click', () => modal.classList.remove('active'));
   }
 
+  // Attach direct button listeners
   container.querySelectorAll('.btn-inspect-account').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const memId = btn.getAttribute('data-id');
-      openInspectModal(memId);
+      if (memId) openInspectModal(memId);
     });
+  });
+
+  // Attach delegated listener on container for reliability
+  container.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-inspect-account');
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const memId = btn.getAttribute('data-id');
+      if (memId) openInspectModal(memId);
+    }
   });
 
   // Function to open and populate inspect account modal
@@ -381,12 +395,14 @@ function renderManagementOverview(container, role) {
                   ${tier.name} Tier
                 </span>
               </h3>
-              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                ID: <code>${targetMember.id}</code> | Email: <strong>${targetMember.email}</strong>
-              </div>
-              <div style="font-size: 0.82rem; color: var(--accent-amber); margin-top: 4px; font-weight: 600;">
-                <i class="fas fa-ticket-alt"></i> Partner Referral Code: ${targetMember.referralCode || 'ATS-REF-101'}
-              </div>
+              ${!isEliteMember ? `
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
+                  ID: <code>${targetMember.id}</code> | Email: <strong>${targetMember.email}</strong>
+                </div>
+                <div style="font-size: 0.82rem; color: var(--accent-amber); margin-top: 4px; font-weight: 600;">
+                  Partner Referral Code: ${targetMember.referralCode || 'ATS-REF-101'}
+                </div>
+              ` : ''}
             </div>
           </div>
 
@@ -400,7 +416,6 @@ function renderManagementOverview(container, role) {
             <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-top: 2px;">
               ${memberInvites.length} Total
             </div>
-            <div style="font-size: 0.72rem; color: var(--accent-amber); font-weight: 600;">${pendingCount} Awaiting Verification</div>
           </div>
 
 
@@ -415,7 +430,6 @@ function renderManagementOverview(container, role) {
             <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-purple); margin-top: 2px;">
               ${Number(targetMember.totalUnits || 0).toFixed(2)} Units
             </div>
-            <div style="font-size: 0.72rem; color: var(--text-muted);">1 Unit = ₱4,500</div>
           </div>
 
           <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-sm); position: relative;">
@@ -428,7 +442,6 @@ function renderManagementOverview(container, role) {
             <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-emerald); margin-top: 2px;">
               ₱${(targetMember.availableForRelease || 0).toLocaleString()}
             </div>
-            <div style="font-size: 0.72rem; color: var(--text-muted);">Released: ₱${(targetMember.releasedFees || 0).toLocaleString()}</div>
           </div>
         </div>
       </div>
@@ -437,7 +450,7 @@ function renderManagementOverview(container, role) {
       <div style="margin-top: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h4 style="margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-list-check" style="color: var(--accent-amber);"></i> Submitted Enrollments & Verification Registry
+            Submitted Enrollments & Verification Registry
           </h4>
           <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">${memberInvites.length} Records Scoped to Code [${targetMember.id}]</span>
         </div>
@@ -547,6 +560,13 @@ function renderManagementOverview(container, role) {
         }
       });
     }
+
+    // Activate and show modal overlay
+    if (typeof window.openModal === 'function') {
+      window.openModal(modal);
+    } else {
+      modal.classList.add('active');
+    }
   }
 
   // Function to open Unit History Audit Trail Ledger Modal
@@ -562,7 +582,7 @@ function renderManagementOverview(container, role) {
       modalDiv.innerHTML = `
         <div class="modal-content modal-lg">
           <div class="modal-header">
-            <h3><i class="fas fa-history" style="color: var(--accent-purple);"></i> Total Accumulated Units Audit Trail</h3>
+            <h3>Total Accumulated Units Audit Trail</h3>
             <button class="modal-close" id="close-modal-units">&times;</button>
           </div>
           <div id="modal-units-body"></div>
@@ -601,7 +621,7 @@ function renderManagementOverview(container, role) {
 
       <!-- Add / Deduct Adjustment Form -->
       <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
-        <h5 style="margin: 0 0 12px 0; color: var(--text-primary);"><i class="fas fa-plus-minus" style="color: var(--accent-blue);"></i> New Unit Adjustment</h5>
+        <h5 style="margin: 0 0 12px 0; color: var(--text-primary);">New Unit Adjustment</h5>
         <div style="display: grid; grid-template-columns: 140px 140px 1fr auto; gap: 12px; align-items: flex-end;">
           <div>
             <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Action</label>
@@ -627,7 +647,7 @@ function renderManagementOverview(container, role) {
       </div>
 
       <!-- Chronological Audit Trail History Table -->
-      <h5 style="margin: 0 0 10px 0; color: var(--text-primary);"><i class="fas fa-list-ul" style="color: var(--accent-amber);"></i> Chronological Unit Ledger (Audit Trail)</h5>
+      <h5 style="margin: 0 0 10px 0; color: var(--text-primary);">Chronological Unit Ledger (Audit Trail)</h5>
       <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
         <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
           <thead>
