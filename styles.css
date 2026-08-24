@@ -2,11 +2,11 @@
 :root,
 html[data-theme="light"],
 body[data-theme="light"] {
-  --bg-main: #f8fafc;
+  --bg-main: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #f1f5f9;
+  --bg-card-hover: #f8fafc;
   --bg-sidebar: #002355;
-  --bg-header: #ffffff;
+  --bg-header: #002355;
   --border-color: #e2e8f0;
   --border-glow: rgba(0, 35, 85, 0.15);
 
@@ -256,7 +256,7 @@ textarea {
   font-family: var(--font-heading);
   font-size: 1.75rem;
   font-weight: 900;
-  color: var(--heading-color);
+  color: #ffffff !important;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   line-height: 1 !important;
@@ -415,9 +415,9 @@ textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  padding: 4px 12px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 4px 14px;
   border-radius: var(--radius-full);
 }
 
@@ -425,14 +425,14 @@ textarea {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #002355;
+  color: #ffffff;
   font-weight: 700;
 }
 
 .role-select,
 .role-selector-wrapper select {
   background: transparent !important;
-  color: #002355;
+  color: #ffffff !important;
   border: none !important;
   font-size: 0.85rem;
   font-weight: 700;
@@ -444,8 +444,8 @@ textarea {
 
 .role-select option,
 .role-selector-wrapper select option {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
+  background-color: #002355 !important;
+  color: #ffffff !important;
 }
 
 .header-right {
@@ -458,9 +458,9 @@ textarea {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #002355;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -470,9 +470,9 @@ textarea {
 }
 
 .header-btn:hover {
-  background-color: #f1f5f9;
-  border-color: #002355;
-  color: #002355;
+  background-color: rgba(255, 255, 255, 0.22);
+  border-color: #ffffff;
+  color: #ffffff !important;
 }
 
 .btn-dot {
