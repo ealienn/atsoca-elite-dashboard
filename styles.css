@@ -47,8 +47,8 @@ body[data-theme="light"] {
   --accent-cyan: #06b6d4;
   --brand-navy: #002355;
 
-  --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   --shadow-sm: none;
   --shadow-md: none;
