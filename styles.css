@@ -300,38 +300,72 @@ textarea {
 }
 
 .nav-section-title {
-  font-size: 0.78rem !important;
+  font-size: 0.8rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.1em !important;
   color: #0284c7 !important;
   font-weight: 800 !important;
   margin: 18px 10px 8px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  color: #002355;
-  border-radius: var(--radius-md);
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: all var(--transition-fast);
-  text-decoration: none;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 10px 14px !important;
+  color: #002355 !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  transition: all var(--transition-fast) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.nav-item span {
+  color: #002355 !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .nav-item i {
-  font-size: 1.1rem;
-  width: 22px;
-  text-align: center;
-  color: #002355;
-  transition: color var(--transition-fast);
+  font-size: 1.1rem !important;
+  width: 22px !important;
+  text-align: center !important;
+  color: #002355 !important;
+  transition: color var(--transition-fast) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .nav-item:hover {
-  background-color: #f1f5f9;
-  color: #0284c7;
+  background-color: #f1f5f9 !important;
+  color: #0284c7 !important;
+}
+
+.nav-item:hover span,
+.nav-item:hover i {
+  color: #0284c7 !important;
+}
+
+.nav-item.active {
+  background-color: #e0f2fe !important;
+  color: #0284c7 !important;
+  font-weight: 800 !important;
+}
+
+.nav-item.active span,
+.nav-item.active i {
+  color: #0284c7 !important;
+  font-weight: 800 !important;
 }
 
 .nav-item:hover i {
