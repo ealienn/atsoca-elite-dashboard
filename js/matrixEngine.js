@@ -46,13 +46,14 @@ export function getEliteLevel(totalUnits) {
 
   for (let i = 0; i < ELITE_LEVELS.length; i++) {
     const level = ELITE_LEVELS[i];
-    if (units >= level.minUnits && units <= level.maxUnits) {
+    const min = (i === 0) ? 0.01 : level.minUnits;
+    if (units >= min && units <= level.maxUnits) {
       const nextLevel = ELITE_LEVELS[i + 1] ? ELITE_LEVELS[i + 1] : null;
-      const unitsNeeded = nextLevel ? nextLevel.minUnits - units : 0;
+      const unitsNeeded = nextLevel ? Number(Math.max(0, nextLevel.minUnits - units).toFixed(2)) : 0;
       
       const range = (level.maxUnits === Infinity) ? 1000 : (level.maxUnits - level.minUnits + 1);
       const currentInTier = units - level.minUnits + 1;
-      const progressPercent = nextLevel ? Math.min(100, Math.round((currentInTier / range) * 100)) : 100;
+      const progressPercent = nextLevel ? Math.min(100, Math.max(0, Math.round((currentInTier / range) * 100))) : 100;
 
       return {
         ...level,

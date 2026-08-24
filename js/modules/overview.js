@@ -38,18 +38,18 @@ function renderEliteMemberOverview(container) {
   const allInvites = (db && db.data && Array.isArray(db.data.invites)) ? db.data.invites : [];
   const invites = allInvites.filter(i => i && (i.referrerId === member.id || (i.referrerName && member.name && i.referrerName.toLowerCase() === member.name.toLowerCase())));
 
-  const totalInvites = invites.length || 9;
-  const monthlyInvites = invites.filter(i => i && i.dateSubmitted && i.dateSubmitted.startsWith('2026-07')).length || totalInvites;
-  const enrolledInvites = invites.filter(i => i && i.enrollmentStatus === 'Enrolled').length || totalInvites;
-  const verifiedInvites = invites.filter(i => i && i.verificationStatus === 'Verified').length || totalInvites;
+  const totalInvites = invites.length;
+  const monthlyInvites = invites.filter(i => i && i.dateSubmitted && i.dateSubmitted.startsWith('2026-08')).length;
+  const enrolledInvites = invites.filter(i => i && i.enrollmentStatus === 'Enrolled').length;
+  const verifiedInvites = invites.filter(i => i && i.verificationStatus === 'Verified').length;
 
-  const currentLevelInfo = getEliteLevel(member.totalUnits || 44);
-  const pendingFees = member.pendingFees || 3500;
-  const availableFees = member.availableForRelease || 30020;
-  const releasedFees = member.releasedFees || 93100;
+  const currentLevelInfo = getEliteLevel(member ? member.totalUnits : 0);
+  const pendingFees = Number(member.pendingFees) || 0;
+  const availableFees = Number(member.availableForRelease) || 0;
+  const releasedFees = Number(member.releasedFees) || 0;
   const totalEarnings = releasedFees + availableFees + pendingFees;
 
-  const displayUnits = typeof member.totalUnits === 'number' ? member.totalUnits : 44;
+  const displayUnits = Number(member.totalUnits) || 0;
 
   container.innerHTML = `
     <!-- Top Welcome Banner Card -->
@@ -241,12 +241,12 @@ function renderManagementOverview(container, role) {
   const members = (db && db.data && Array.isArray(db.data.members)) ? db.data.members : [];
   const allInvites = (db && db.data && Array.isArray(db.data.invites)) ? db.data.invites : [];
 
-  const totalMembers = members.length || 1;
-  const totalInvites = allInvites.length || 9;
+  const totalMembers = members.length;
+  const totalInvites = allInvites.length;
   const pendingInvites = allInvites.filter(i => i && i.verificationStatus === 'Pending').length;
-  const verifiedInvites = allInvites.filter(i => i && i.verificationStatus === 'Verified').length || totalInvites;
-  const enrolledInvites = allInvites.filter(i => i && i.enrollmentStatus === 'Enrolled').length || totalInvites;
-  const totalUnits = members.reduce((sum, m) => sum + (m ? (Number(m.totalUnits) || 0) : 0), 0) || 44;
+  const verifiedInvites = allInvites.filter(i => i && i.verificationStatus === 'Verified').length;
+  const enrolledInvites = allInvites.filter(i => i && i.enrollmentStatus === 'Enrolled').length;
+  const totalUnits = members.reduce((sum, m) => sum + (m ? (Number(m.totalUnits) || 0) : 0), 0);
 
   container.innerHTML = `
     <!-- Top Welcome Management Banner -->

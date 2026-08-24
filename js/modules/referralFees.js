@@ -6,8 +6,8 @@ import { MATRIX_RATES, getEliteLevel, calculateReferralFee, formatPHP } from '..
 
 export function renderReferralFees(container) {
   if (!container) return;
-  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: 'ELITE-101', name: 'Ellaine Joyce', totalUnits: 44 };
-  const currentLevelInfo = getEliteLevel(member.totalUnits || 44);
+  const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: '004', name: 'Joshua Villafuerte', totalUnits: 0 };
+  const currentLevelInfo = getEliteLevel(member ? member.totalUnits : 0);
   const allEnrollments = (db && db.data && Array.isArray(db.data.enrollments)) ? db.data.enrollments : [];
 
   const enrollments = allEnrollments.filter(e => e && (db && db.activeRole === 'Elite Member' ? (e.referrerId === member.id || (e.referrerName && member.name && e.referrerName.toLowerCase() === member.name.toLowerCase())) : e.isReferred));
