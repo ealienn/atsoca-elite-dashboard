@@ -560,54 +560,70 @@ function renderManagementOverview(container, role) {
         </div>
       </div>
 
-      <!-- Invites List Table for Verification -->
+      <!-- Invites & Enrollments Table for Verification (12-Column Schema) -->
       <div style="margin-top: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h4 style="margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-list-check" style="color: var(--accent-amber);"></i> Submitted Invites Log for Verification
+            <i class="fas fa-list-check" style="color: var(--accent-amber);"></i> Submitted Enrollments & Verification Registry
           </h4>
-          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">${memberInvites.length} Invites Found</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">${memberInvites.length} Records Scoped to Code [${targetMember.id}]</span>
         </div>
 
-        <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
-          <table class="custom-table" style="width: 100%;">
+        <div class="table-responsive" style="max-height: 340px; overflow-y: auto;">
+          <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
             <thead>
               <tr>
-                <th>Invite ID</th>
-                <th>Invite Participant</th>
+                <th>Respondent ID</th>
+                <th>Participant Name</th>
+                <th>Duplicate Checker</th>
                 <th>School / Company</th>
-                <th>Training Course</th>
-                <th>Date Submitted</th>
-                <th style="min-width: 130px;">Verification Status</th>
-                <th style="min-width: 130px;">Enrollment Status</th>
+                <th>Training Program</th>
+                <th>Referrer</th>
+                <th>Unit Accumulation</th>
+                <th>Investment Fee</th>
+                <th>Payment Made</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               ${memberInvites.length === 0 ? `
-                <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 28px;">No invites submitted by this Elite Member yet.</td></tr>
-              ` : memberInvites.map(inv => `
-                <tr>
-                  <td><code>${inv.id}</code></td>
-                  <td><strong>${inv.inviteName}</strong></td>
-                  <td>${inv.schoolCompany}</td>
-                  <td><small>${inv.trainingType}</small></td>
-                  <td>${inv.dateSubmitted}</td>
-                  <td>
-                    <select class="form-control select-ver-status" data-id="${inv.id}" style="padding: 4px 8px; font-size: 0.82rem; font-weight: 700; border-radius: 8px; color: ${inv.verificationStatus === 'Verified' ? 'var(--accent-emerald)' : inv.verificationStatus === 'Rejected' ? 'var(--accent-rose)' : 'var(--accent-amber)'}; background: var(--box-inner-bg);">
-                      <option value="Verified" ${inv.verificationStatus === 'Verified' ? 'selected' : ''}>Verified</option>
-                      <option value="Pending" ${inv.verificationStatus === 'Pending' ? 'selected' : ''}>Pending</option>
-                      <option value="Rejected" ${inv.verificationStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                    </select>
-                  </td>
-                  <td>
-                    <select class="form-control select-enr-status" data-id="${inv.id}" style="padding: 4px 8px; font-size: 0.82rem; font-weight: 700; border-radius: 8px; color: ${inv.enrollmentStatus === 'Enrolled' ? 'var(--accent-emerald)' : 'var(--text-secondary)'}; background: var(--box-inner-bg);">
-                      <option value="Enrolled" ${inv.enrollmentStatus === 'Enrolled' ? 'selected' : ''}>Enrolled</option>
-                      <option value="Pending" ${inv.enrollmentStatus === 'Pending' ? 'selected' : ''}>Pending</option>
-                      <option value="Not Enrolled" ${inv.enrollmentStatus === 'Not Enrolled' ? 'selected' : ''}>Not Enrolled</option>
-                    </select>
-                  </td>
-                </tr>
-              `).join('')}
+                <tr><td colspan="12" style="text-align: center; color: var(--text-muted); padding: 28px;">No enrollment / invite records found for this Elite Member yet.</td></tr>
+              ` : memberInvites.map(inv => {
+                const enrRecord = (db.data.enrollments || []).find(e => e.id === inv.id || e.id === `ENR-${inv.id}`) || inv;
+                const isDup = inv.duplicateChecker === 'DUPLICATE' || String(inv.duplicateChecker).toUpperCase().includes('DUP');
+                const unitsEarned = Number(enrRecord.unitsEarned || ((enrRecord.paymentMade || 0) / 4500)).toFixed(2);
+                const fee = Number(enrRecord.investmentFee || inv.investmentFee || 4500);
+                const paid = Number(enrRecord.paymentMade || inv.paymentMade || 0);
+                const bal = Math.max(0, fee - paid);
+                const payStatus = enrRecord.paymentStatus || inv.paymentStatus || (paid >= fee ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
+
+                return `
+                  <tr>
+                    <td><code>${inv.id}</code></td>
+                    <td><strong>${inv.inviteName || inv.participantName}</strong></td>
+                    <td>
+                      <span class="status-pill ${isDup ? 'status-Rejected' : 'status-Verified'}" style="font-size: 0.72rem; padding: 2px 8px;">
+                        ${isDup ? 'DUPLICATE' : 'UNIQUE'}
+                      </span>
+                    </td>
+                    <td>${inv.schoolCompany || 'N/A'}</td>
+                    <td><small>${inv.trainingType}</small></td>
+                    <td>${inv.referrerName || targetMember.name}</td>
+                    <td><span class="unit-badge" style="font-size: 0.75rem;"><i class="fas fa-star"></i> +${unitsEarned} Units</span></td>
+                    <td><strong>${formatPHP(fee)}</strong></td>
+                    <td><span style="color: var(--accent-emerald); font-weight: 700;">${formatPHP(paid)}</span></td>
+                    <td><span style="color: ${bal > 0 ? 'var(--accent-rose)' : 'var(--text-muted)'}; font-weight: 600;">${formatPHP(bal)}</span></td>
+                    <td><span class="status-pill status-${payStatus.replace(/\s+/g, '')}">${payStatus}</span></td>
+                    <td>
+                      <button class="btn btn-secondary btn-xs btn-edit-inspect-pay" data-id="${enrRecord.id || inv.id}" style="padding: 3px 8px; font-size: 0.72rem;">
+                        <i class="fas fa-edit"></i> Edit Payment
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -616,41 +632,31 @@ function renderManagementOverview(container, role) {
 
     modal.classList.add('active');
 
-    // Bind verification dropdown status changes
-    modalBody.querySelectorAll('.select-ver-status').forEach(select => {
-      select.addEventListener('change', (e) => {
-        const invId = select.getAttribute('data-id');
-        const newVer = e.target.value;
-        const invObj = memberInvites.find(i => i.id === invId);
-        db.verifyInvite(invId, newVer, invObj ? invObj.enrollmentStatus : null);
-        openInspectModal(memId);
-        renderManagementOverview(container, role);
-      });
-    });
+    // Bind Edit Payment action triggers inside verification table
+    modalBody.querySelectorAll('.btn-edit-inspect-pay').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-id');
+        const enr = (db.data.enrollments || []).find(e => e.id === targetId || e.id === `ENR-${targetId}`);
+        const currentPaid = enr ? enr.paymentMade : 0;
+        const currentFee = enr ? enr.investmentFee : 4500;
+        const targetName = enr ? enr.participantName : 'Participant';
 
-    // Bind enrollment dropdown status changes
-    modalBody.querySelectorAll('.select-enr-status').forEach(select => {
-      select.addEventListener('change', (e) => {
-        const invId = select.getAttribute('data-id');
-        const newEnr = e.target.value;
-        const invObj = memberInvites.find(i => i.id === invId);
-        db.verifyInvite(invId, invObj ? invObj.verificationStatus : 'Verified', newEnr);
-        openInspectModal(memId);
-        renderManagementOverview(container, role);
-      });
-    });
-
-    // Bind Units adjust button
-    const btnAdjUnits = modalBody.querySelector('.btn-adjust-units');
-    if (btnAdjUnits) {
-      btnAdjUnits.addEventListener('click', () => {
-        const current = targetMember.totalUnits || 0;
-        const val = prompt(`Adjust Total Accumulated Units for ${targetMember.name}:`, current);
+        const val = prompt(`Enter updated Payment Amount Made for ${targetName} (Total Investment Fee: ${formatPHP(currentFee)}):`, currentPaid);
         if (val !== null && !isNaN(parseFloat(val))) {
-          db.updateMemberUnitsAndFees(targetMember.id, parseFloat(val), targetMember.availableForRelease);
+          if (enr) {
+            db.updateEnrollmentPayment(enr.id, parseFloat(val));
+          }
           openInspectModal(memId);
           renderManagementOverview(container, role);
         }
+      });
+    });
+
+    // Bind Units adjust button to open Unit History Audit Trail Ledger Modal
+    const btnAdjUnits = modalBody.querySelector('.btn-adjust-units');
+    if (btnAdjUnits) {
+      btnAdjUnits.addEventListener('click', () => {
+        openAdjustUnitsModal(targetMember.id);
       });
     }
 
@@ -666,6 +672,157 @@ function renderManagementOverview(container, role) {
           renderManagementOverview(container, role);
         }
       });
+    }
+  }
+
+  // Function to open Unit History Audit Trail Ledger Modal
+  function openAdjustUnitsModal(memId) {
+    const member = db.data.members.find(m => m.id === memId);
+    if (!member) return;
+
+    let unitsModal = document.querySelector('#modal-adjust-units');
+    if (!unitsModal) {
+      const modalDiv = document.createElement('div');
+      modalDiv.className = 'modal-overlay';
+      modalDiv.id = 'modal-adjust-units';
+      modalDiv.innerHTML = `
+        <div class="modal-content modal-lg">
+          <div class="modal-header">
+            <h3><i class="fas fa-history" style="color: var(--accent-purple);"></i> Total Accumulated Units Audit Trail</h3>
+            <button class="modal-close" id="close-modal-units">&times;</button>
+          </div>
+          <div id="modal-units-body"></div>
+        </div>
+      `;
+      document.body.appendChild(modalDiv);
+      unitsModal = modalDiv;
+    }
+
+    const unitsBody = unitsModal.querySelector('#modal-units-body');
+    const closeBtn = unitsModal.querySelector('#close-modal-units');
+    if (closeBtn) closeBtn.onclick = () => unitsModal.classList.remove('active');
+
+    const storageKey = `atsoca_unit_ledger_${member.id}`;
+    let ledger = [];
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) ledger = JSON.parse(raw);
+    } catch (e) {
+      ledger = [];
+    }
+
+    unitsBody.innerHTML = `
+      <div style="background: var(--box-inner-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">${member.name} (Code: [${member.id}])</h4>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Email: ${member.email}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Current Balance</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-purple);">${Number(member.totalUnits || 0).toFixed(2)} Units</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add / Deduct Adjustment Form -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
+        <h5 style="margin: 0 0 12px 0; color: var(--text-primary);"><i class="fas fa-plus-minus" style="color: var(--accent-blue);"></i> New Unit Adjustment</h5>
+        <div style="display: grid; grid-template-columns: 140px 140px 1fr auto; gap: 12px; align-items: flex-end;">
+          <div>
+            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Action</label>
+            <select id="adj-type" class="form-control" style="padding: 6px 10px; font-size: 0.85rem; font-weight: 700;">
+              <option value="add">Add (+ Units)</option>
+              <option value="deduct">Deduct (- Units)</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Amount (Units)</label>
+            <input type="number" id="adj-amount" class="form-control" step="0.01" min="0.01" value="1.00" style="padding: 6px 10px; font-size: 0.85rem; font-weight: 700;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Reason / Note</label>
+            <input type="text" id="adj-note" class="form-control" placeholder="e.g., Manual bonus credit for August" style="padding: 6px 10px; font-size: 0.85rem;">
+          </div>
+          <div>
+            <button class="btn btn-primary" id="btn-save-unit-adj" style="padding: 8px 16px; font-weight: 700; font-size: 0.85rem;">
+              Apply Adjustment
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chronological Audit Trail History Table -->
+      <h5 style="margin: 0 0 10px 0; color: var(--text-primary);"><i class="fas fa-list-ul" style="color: var(--accent-amber);"></i> Chronological Unit Ledger (Audit Trail)</h5>
+      <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
+        <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Previous Units</th>
+              <th>Adjustment Made</th>
+              <th>New Balance</th>
+              <th>Reason / Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ledger.length === 0 ? `
+              <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No manual unit adjustments recorded yet for this member.</td></tr>
+            ` : ledger.map(entry => `
+              <tr>
+                <td><small>${entry.timestamp}</small></td>
+                <td>${entry.prevUnits} Units</td>
+                <td>
+                  <span class="status-pill ${entry.adjustment.startsWith('+') ? 'status-Verified' : 'status-Rejected'}" style="font-size: 0.75rem; font-weight: 700;">
+                    ${entry.adjustment}
+                  </span>
+                </td>
+                <td><strong>${entry.newBalance} Units</strong></td>
+                <td><small>${entry.note || 'N/A'}</small></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    unitsModal.classList.add('active');
+
+    const btnSave = unitsModal.querySelector('#btn-save-unit-adj');
+    if (btnSave) {
+      btnSave.onclick = () => {
+        const type = unitsModal.querySelector('#adj-type').value;
+        const amt = parseFloat(unitsModal.querySelector('#adj-amount').value);
+        const note = unitsModal.querySelector('#adj-note').value.trim() || 'Manual Unit Adjustment';
+
+        if (isNaN(amt) || amt <= 0) {
+          alert('Please enter a valid unit adjustment amount.');
+          return;
+        }
+
+        const prevUnits = Number(member.totalUnits || 0);
+        const newBalance = type === 'add' ? Number((prevUnits + amt).toFixed(2)) : Number(Math.max(0, prevUnits - amt).toFixed(2));
+        const adjStr = (type === 'add' ? '+' : '-') + amt.toFixed(2) + ' Units';
+
+        db.updateMemberUnitsAndFees(member.id, newBalance, member.availableForRelease);
+
+        const entry = {
+          timestamp: new Date().toLocaleString(),
+          prevUnits: prevUnits.toFixed(2),
+          adjustment: adjStr,
+          newBalance: newBalance.toFixed(2),
+          note: note
+        };
+
+        ledger.unshift(entry);
+        localStorage.setItem(storageKey, JSON.stringify(ledger));
+
+        openAdjustUnitsModal(memId);
+        if (document.querySelector('#modal-inspect-account')?.classList.contains('active')) {
+          openInspectModal(memId);
+        }
+        renderManagementOverview(container, role);
+      };
     }
   }
 }
