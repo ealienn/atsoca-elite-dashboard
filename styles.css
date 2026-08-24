@@ -2,19 +2,19 @@
 :root,
 html[data-theme="light"],
 body[data-theme="light"] {
-  --bg-main: #ffffff;
+  --bg-main: #f1f5f9;
   --bg-card: #ffffff;
   --bg-card-hover: #f8fafc;
-  --bg-sidebar: #002355;
-  --bg-header: #002355;
+  --bg-sidebar: #ffffff;
+  --bg-header: #ffffff;
   --border-color: #e2e8f0;
   --border-glow: rgba(0, 35, 85, 0.15);
 
   --text-primary: #000000;
-  --text-secondary: #000000;
-  --text-muted: #000000;
+  --text-secondary: #002355;
+  --text-muted: #64748b;
 
-  --heading-color: #000000;
+  --heading-color: #002355;
   --stat-title-color: #000000;
   --stat-num-color: #000000;
 
@@ -219,7 +219,29 @@ textarea {
   align-items: center;
   border-bottom: 1px solid var(--border-color);
   box-sizing: border-box;
+}
+
+.sidebar-footer {
+  padding: 16px 14px;
+  border-top: 1px solid var(--border-color);
   background-color: var(--bg-sidebar);
+}
+
+.sidebar-user-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+.user-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .sidebar-brand-box {
@@ -240,7 +262,7 @@ textarea {
   font-family: var(--font-heading);
   font-size: 1.75rem;
   font-weight: 900;
-  color: #ffffff !important;
+  color: #002355 !important;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   line-height: 1 !important;
@@ -256,7 +278,7 @@ textarea {
   font-family: var(--font-heading);
   font-size: 1.75rem;
   font-weight: 900;
-  color: #ffffff !important;
+  color: #002355 !important;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   line-height: 1 !important;
@@ -281,10 +303,9 @@ textarea {
   font-size: 0.78rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.1em !important;
-  color: #ffffff !important;
+  color: #0284c7 !important;
   font-weight: 800 !important;
   margin: 18px 10px 8px !important;
-  opacity: 0.9;
 }
 
 .nav-item {
@@ -292,10 +313,10 @@ textarea {
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  color: var(--text-secondary);
+  color: #002355;
   border-radius: var(--radius-md);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--transition-fast);
   text-decoration: none;
 }
@@ -304,28 +325,27 @@ textarea {
   font-size: 1.1rem;
   width: 22px;
   text-align: center;
-  color: #ffffff;
+  color: #002355;
   transition: color var(--transition-fast);
 }
 
 .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
+  background-color: #f1f5f9;
+  color: #0284c7;
 }
 
 .nav-item:hover i {
-  color: var(--accent-blue);
+  color: #0284c7;
 }
 
 .nav-item.active {
-  background-color: rgba(2, 132, 199, 0.12);
-  color: #ffffff;
-  border-left: 3px solid var(--accent-blue);
-  font-weight: 600;
+  background-color: #e0f2fe;
+  color: #0284c7;
+  font-weight: 700;
 }
 
 .nav-item.active i {
-  color: var(--accent-blue);
+  color: #0284c7;
 }
 
 .nav-badge {
@@ -415,8 +435,8 @@ textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
   padding: 4px 14px;
   border-radius: var(--radius-full);
 }
@@ -425,14 +445,14 @@ textarea {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #ffffff;
+  color: #002355;
   font-weight: 700;
 }
 
 .role-select,
 .role-selector-wrapper select {
   background: transparent !important;
-  color: #ffffff !important;
+  color: #002355 !important;
   border: none !important;
   font-size: 0.85rem;
   font-weight: 700;
@@ -444,8 +464,8 @@ textarea {
 
 .role-select option,
 .role-selector-wrapper select option {
-  background-color: #002355 !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }
 
 .header-right {
@@ -458,9 +478,9 @@ textarea {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background-color: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff !important;
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+  color: #002355 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -470,9 +490,9 @@ textarea {
 }
 
 .header-btn:hover {
-  background-color: rgba(255, 255, 255, 0.22);
-  border-color: #ffffff;
-  color: #ffffff !important;
+  background-color: #bae6fd;
+  border-color: #0284c7;
+  color: #002355 !important;
 }
 
 .btn-dot {
