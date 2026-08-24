@@ -153,6 +153,68 @@ class AppController {
         memberId = matchedMember.id;
       }
 
+      const executeLoginWithAnimation = (role, memberId) => {
+        const btnSubmitSignin = document.querySelector('#btn-submit-signin');
+        const loginCardInner = document.querySelector('#login-card-inner');
+        const appContainer = document.querySelector('#app-container');
+
+        if (btnSubmitSignin) {
+          btnSubmitSignin.disabled = true;
+          btnSubmitSignin.classList.add('btn-logging-in');
+          btnSubmitSignin.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> VERIFYING...';
+        }
+
+        setTimeout(() => {
+          if (btnSubmitSignin) {
+            btnSubmitSignin.classList.remove('btn-logging-in');
+            btnSubmitSignin.classList.add('btn-login-success');
+            btnSubmitSignin.innerHTML = '<i class="fas fa-check-circle"></i> WELCOME TO ELITE!';
+          }
+
+          if (loginCardInner) {
+            loginCardInner.classList.add('login-success-card');
+          }
+
+          setTimeout(() => {
+            if (loginScreen) {
+              loginScreen.classList.add('login-fade-out');
+            }
+
+            localStorage.setItem('atsoca_logged_in', 'true');
+            db.setRole(role, memberId);
+
+            this.updateProfileWidget();
+            this.renderActiveTab();
+
+            if (appContainer) {
+              appContainer.classList.remove('app-entrance-anim');
+              void appContainer.offsetWidth; // trigger reflow
+              appContainer.classList.add('app-entrance-anim');
+            }
+
+            setTimeout(() => {
+              if (loginScreen) {
+                loginScreen.classList.add('hidden');
+                loginScreen.style.display = 'none';
+                loginScreen.classList.remove('login-fade-out');
+              }
+              if (loginCardInner) {
+                loginCardInner.classList.remove('login-success-card');
+              }
+              if (btnSubmitSignin) {
+                btnSubmitSignin.disabled = false;
+                btnSubmitSignin.classList.remove('btn-login-success');
+                btnSubmitSignin.innerHTML = '<i class="fas fa-sign-in-alt"></i> SIGN IN';
+              }
+            }, 550);
+
+          }, 350);
+
+        }, 450);
+      };
+
+      this.executeLoginWithAnimation = executeLoginWithAnimation;
+
       if (!role) {
         if (loginErrorAlert) {
           loginErrorAlert.innerText = 'Access Denied: Account not authorized. Access is strictly restricted to the 4 official roles: Administrator, Elite Manager, Finance, and Elite Members (004 to 008).';
@@ -162,15 +224,7 @@ class AppController {
         return;
       }
 
-      localStorage.setItem('atsoca_logged_in', 'true');
-      db.setRole(role, memberId);
-
-      if (loginScreen) {
-        loginScreen.classList.add('hidden');
-        loginScreen.style.display = 'none';
-      }
-      this.updateProfileWidget();
-      this.renderActiveTab();
+      executeLoginWithAnimation(role, memberId);
     };
 
     // Form submission (Login) listener
@@ -237,15 +291,18 @@ class AppController {
         const matchedMember = db.data.members.find(m => m.id === targetMemberId || (m.email && m.email.toLowerCase() === targetEmail.toLowerCase()));
         const memberId = matchedMember ? matchedMember.id : targetMemberId;
 
-        localStorage.setItem('atsoca_logged_in', 'true');
-        db.setRole(targetRole, memberId);
-
-        if (loginScreen) {
-          loginScreen.classList.add('hidden');
-          loginScreen.style.display = 'none';
+        if (typeof this.executeLoginWithAnimation === 'function') {
+          this.executeLoginWithAnimation(targetRole, memberId);
+        } else {
+          localStorage.setItem('atsoca_logged_in', 'true');
+          db.setRole(targetRole, memberId);
+          if (loginScreen) {
+            loginScreen.classList.add('hidden');
+            loginScreen.style.display = 'none';
+          }
+          this.updateProfileWidget();
+          this.renderActiveTab();
         }
-        this.updateProfileWidget();
-        this.renderActiveTab();
       });
     });
 
@@ -679,19 +736,37 @@ class AppController {
 
   updateAdminNavVisibility() {
     const role = db ? db.activeRole : 'Elite Member';
+    const isEliteMember = role === 'Elite Member';
     const isFinanceOrAdmin = role === 'Finance' || role === 'Administrator';
+    const isAdmin = role === 'Administrator';
+
+    const adminNavGroup = document.querySelector('#admin-nav-group');
+    if (adminNavGroup) {
+      adminNavGroup.style.display = isEliteMember ? 'none' : 'block';
+    }
 
     const publicEnrollmentLink = document.querySelector('.nav-item[data-tab="public-enrollments"]');
     if (publicEnrollmentLink) {
       publicEnrollmentLink.style.display = isFinanceOrAdmin ? 'flex' : 'none';
     }
 
-    const adminLink = document.querySelector('.nav-item[data-tab="admin"]');
-    if (adminLink) {
-      adminLink.style.display = (role === 'Administrator') ? 'flex' : 'none';
+    const reportsLink = document.querySelector('.nav-item[data-tab="reports"]');
+    if (reportsLink) {
+      reportsLink.style.display = !isEliteMember ? 'flex' : 'none';
     }
 
-    if (!isFinanceOrAdmin && this.currentTab === 'public-enrollments') {
+    const notifLink = document.querySelector('.nav-item[data-tab="notifications"]');
+    if (notifLink) {
+      notifLink.style.display = !isEliteMember ? 'flex' : 'none';
+    }
+
+    const adminLink = document.querySelector('.nav-item[data-tab="admin"]');
+    if (adminLink) {
+      adminLink.style.display = isAdmin ? 'flex' : 'none';
+    }
+
+    const restrictedTabsForElite = ['notifications', 'public-enrollments', 'reports', 'admin'];
+    if (isEliteMember && restrictedTabsForElite.includes(this.currentTab)) {
       this.currentTab = 'overview';
       this.navItems.forEach(item => {
         if (item.getAttribute('data-tab') === 'overview') {

@@ -23,8 +23,8 @@ export function renderEnrollments(container) {
   const totalBal = enrollments.reduce((sum, e) => sum + (Number(e ? e.balance : 0) || 0), 0);
 
   container.innerHTML = `
-    <div class="card" style="margin-bottom: 24px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div class="welcome-banner-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
         <div>
           <h2>Enrollment & Payment Tracking</h2>
         </div>
@@ -72,7 +72,6 @@ export function renderEnrollments(container) {
           <thead>
             <tr>
               <th>Respondent ID</th>
-              <th>Elite Code</th>
               <th>Participant Name</th>
               <th>School / Company</th>
               <th>Course</th>
@@ -88,7 +87,6 @@ export function renderEnrollments(container) {
             ${enrollments.map(enr => `
               <tr>
                 <td><code>${enr.respondentId || enr.id.replace('ENR-', '')}</code></td>
-                <td><span style="font-weight: 800; color: #0284c7;">${enr.eliteCode || enr.referrerId}</span></td>
                 <td><strong>${enr.participantName}</strong></td>
                 <td>${enr.schoolCompany}</td>
                 <td><span style="font-size: 0.8rem; font-weight: 700;">${enr.course || enr.trainingType}</span></td>

@@ -86,7 +86,6 @@
           <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" id="current-user-avatar" class="sidebar-user-avatar" alt="Profile Picture" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;">
           <div>
             <div class="user-box-name" id="current-user-name" style="font-weight: 800; font-size: 0.85rem; color: #002355;">Active User</div>
-            <div class="user-box-role" id="current-user-role" style="font-size: 0.74rem; color: #64748b; font-style: italic;">Partner Account</div>
           </div>
         </div>
         <button type="button" class="btn btn-logout-icon logout-btn" id="btn-logout" title="Sign Out of Portal" aria-label="Sign Out" onclick="if(window.handleLogout){window.handleLogout(event);} else {localStorage.setItem('atsoca_logged_in','false'); window.location.reload();}" style="background: #dc2626; color: #ffffff; width: 40px; height: 40px; min-width: 40px; border-radius: 12px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); transition: all 0.2s ease; position: relative; z-index: 999; pointer-events: auto;">
@@ -205,7 +204,6 @@
                   <th>School / Company</th>
                   <th>Training Type</th>
                   <th>Date Submitted</th>
-                  <th>Verification</th>
                   <th>Enrollment Status</th>
                 </tr>
               </thead>
@@ -215,7 +213,6 @@
                   <td>De La Salle University System</td>
                   <td>Executive Leadership & Governance</td>
                   <td>2026-07-23</td>
-                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                   <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                 </tr>
                 <tr>
@@ -223,7 +220,6 @@
                   <td>PUP</td>
                   <td>Data Privacy Officer (DPO) Training</td>
                   <td>2026-07-27</td>
-                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                   <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                 </tr>
                 <tr>
@@ -231,7 +227,6 @@
                   <td>PUP</td>
                   <td>Project Management Professional Seminar</td>
                   <td>2026-07-26</td>
-                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                   <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                 </tr>
                 <tr>
@@ -239,7 +234,6 @@
                   <td>PUP</td>
                   <td>Data Privacy Officer (DPO) Training</td>
                   <td>2026-07-26</td>
-                  <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                   <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                 </tr>
                 <tr>
@@ -247,7 +241,6 @@
                   <td>PUP</td>
                   <td>Healthcare Safety & Compliance Masterclass</td>
                   <td>2026-07-27</td>
-                  <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Pending</span></td>
                   <td><span class="status-pill status-NotEnrolled"><i class="fas fa-times-circle"></i> Not Enrolled</span></td>
                 </tr>
               </tbody>
@@ -577,7 +570,6 @@
                       <th>School / Company</th>
                       <th>Training Type</th>
                       <th>Date Submitted</th>
-                      <th>Verification</th>
                       <th>Enrollment Status</th>
                     </tr>
                   </thead>
@@ -587,7 +579,6 @@
                       <td>De La Salle University System</td>
                       <td>Executive Leadership & Governance</td>
                       <td>2026-07-23</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -595,7 +586,6 @@
                       <td>PUP</td>
                       <td>Data Privacy Officer (DPO) Training</td>
                       <td>2026-07-27</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -603,7 +593,6 @@
                       <td>PUP</td>
                       <td>Project Management Professional Seminar</td>
                       <td>2026-07-26</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -611,7 +600,6 @@
                       <td>PUP</td>
                       <td>Data Privacy Officer (DPO) Training</td>
                       <td>2026-07-26</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -619,7 +607,6 @@
                       <td>PUP</td>
                       <td>Healthcare Safety & Compliance Masterclass</td>
                       <td>2026-07-27</td>
-                      <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Pending</span></td>
                       <td><span class="status-pill status-NotEnrolled"><i class="fas fa-times-circle"></i> Not Enrolled</span></td>
                     </tr>
                   </tbody>
@@ -1344,22 +1331,11 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td><strong>ATS-RF-9041</strong></td>
-                      <td>2026-07-15</td>
-                      <td style="color: var(--accent-emerald); font-weight: 700;">₱15,400.00</td>
-                      <td>GCash (0917-***-8821)</td>
-                      <td><span class="status-pill status-Enrolled"><i class="fas fa-check-circle"></i> Released</span></td>
-                      <td style="color: var(--accent-emerald); font-weight: 600;">2026-07-18</td>
-                      <td style="font-size: 0.8rem; color: var(--text-secondary);">Batch #4 Referral Fee Release Processed by Finance</td>
-                    </tr>
-                    <tr>
-                      <td><strong>ATS-RF-9888</strong></td>
-                      <td>2026-07-24</td>
-                      <td style="color: var(--accent-emerald); font-weight: 700;">₱8,600.00</td>
-                      <td>Bank Transfer (BDO - 0048-****-1192)</td>
-                      <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Finance Review</span></td>
-                      <td>Pending</td>
-                      <td style="font-size: 0.8rem; color: var(--text-secondary);">Submitted for July 2nd Half Earnings</td>
+                      <td colspan="7" style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
+                        <i class="fas fa-inbox" style="font-size: 2.2rem; display: block; margin-bottom: 8px; opacity: 0.4;"></i>
+                        <div style="font-weight: 700; font-size: 0.92rem; color: var(--text-primary); margin-bottom: 4px;">No Payout Requests Found</div>
+                        <div style="font-size: 0.78rem;">There are currently no payout release requests submitted.</div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -1567,7 +1543,7 @@
 
             <div class="login-btn-stack">
               <button type="submit" class="login-btn-navy" id="btn-submit-signin" onclick="window.handleSignIn();">
-                <i class="fas fa-sign-in-alt"></i> SIGN IN TO PORTAL
+                <i class="fas fa-sign-in-alt"></i> SIGN IN
               </button>
               <a href="signup.html" class="login-btn-black" id="btn-login-signup" style="text-decoration: none;">
                 <i class="fas fa-user-plus"></i> NO ACCOUNT? SIGN UP HERE

@@ -180,6 +180,7 @@ function doGet(e) {
         paymentMade: paid,
         balance: balance,
         paymentStatus: paymentStatus,
+        colG: dateSubmitted,
         enrollmentStatus: enrollmentStatus,
         verificationStatus: paymentStatus === 'Fully Paid' ? 'Verified' : 'Pending',
         isReferred: true,

@@ -18,8 +18,8 @@ export function renderInvites(container) {
   });
 
   container.innerHTML = `
-    <div class="card" style="margin-bottom: 24px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div class="welcome-banner-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
         <div>
           <h2>Invite Monitoring</h2>
         </div>

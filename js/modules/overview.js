@@ -130,20 +130,18 @@ function renderEliteMemberOverview(container) {
               <th>School / Company</th>
               <th>Training Type</th>
               <th>Date Submitted</th>
-              <th>Verification</th>
               <th>Enrollment Status</th>
             </tr>
           </thead>
           <tbody>
             ${invites.length === 0 ? `
-              <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No invites submitted yet.</td></tr>
+              <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No invites submitted yet.</td></tr>
             ` : invites.slice(0, 5).map(inv => `
               <tr>
                 <td><strong>${inv.inviteName}</strong></td>
                 <td>${inv.schoolCompany}</td>
                 <td>${inv.trainingType}</td>
                 <td>${inv.dateSubmitted}</td>
-                <td><span class="status-pill status-${inv.verificationStatus}">${inv.verificationStatus}</span></td>
                 <td><span class="status-pill status-${inv.enrollmentStatus.replace(/\s+/g, '')}">${inv.enrollmentStatus}</span></td>
               </tr>
             `).join('')}
@@ -277,7 +275,6 @@ function renderManagementOverview(container, role) {
               <th>MEMBER ID</th>
               <th>CALCULATED TIER</th>
               <th>SUBMITTED INVITES</th>
-              <th>VERIFIED / ENROLLED</th>
               <th>TOTAL UNITS</th>
               <th>AVAILABLE FEES</th>
               <th style="text-align: right;">VERIFICATION ACCESS</th>
@@ -309,12 +306,8 @@ function renderManagementOverview(container, role) {
                     </span>
                   </td>
                   <td>
-                    <strong style="font-size: 0.88rem;">${mInvites.length} Invites</strong>
+                    <strong style="font-size: 0.88rem;">${mInvites.length} ${mInvites.length === 1 ? 'Invite' : 'Invites'}</strong>
                     ${mPending > 0 ? `<span style="background: #e0f2fe; color: #0284c7; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; margin-left: 6px; font-weight: 700;">${mPending} Pending</span>` : ''}
-                  </td>
-                  <td>
-                    <span style="font-size: 0.82rem; color: var(--text-primary); font-weight: 600;">✓ ${mVerified} Verified</span> / 
-                    <span style="font-size: 0.82rem; color: var(--text-muted);">${mEnrolled} Enrolled</span>
                   </td>
                   <td><strong>${Number(m.totalUnits || 0).toFixed(2)} Units</strong></td>
                   <td><strong style="color: #0284c7;">₱${(m.availableForRelease || 0).toLocaleString()}</strong></td>

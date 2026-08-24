@@ -33,8 +33,8 @@ export function renderPublicEnrollments(container) {
   const totalOutstanding = allEnrollments.reduce((sum, e) => sum + e.balance, 0);
 
   container.innerHTML = `
-    <div class="card" style="margin-bottom: 24px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div class="welcome-banner-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
         <div>
           <h2>Public Enrollment Monitoring</h2>
         </div>
@@ -99,7 +99,6 @@ export function renderPublicEnrollments(container) {
               <th>Participant Name</th>
               <th>School / Company</th>
               <th>Training Program</th>
-              <th>Enrollment Type</th>
               <th>Referrer</th>
               <th>Training Fee</th>
               <th>Amount Paid</th>
@@ -115,11 +114,6 @@ export function renderPublicEnrollments(container) {
                 <td><strong>${enr.participantName}</strong></td>
                 <td>${enr.schoolCompany}</td>
                 <td><small>${enr.trainingType}</small></td>
-                <td>
-                  <span class="status-pill ${enr.isReferred ? 'status-Verified' : 'status-Submitted'}">
-                    ${enr.isReferred ? 'Elite Referral' : 'Public Walk-in'}
-                  </span>
-                </td>
                 <td>${enr.referrerName}</td>
                 <td><strong>${formatPHP(enr.investmentFee)}</strong></td>
                 <td><span style="color: var(--accent-emerald); font-weight: 700;">${formatPHP(enr.paymentMade)}</span></td>

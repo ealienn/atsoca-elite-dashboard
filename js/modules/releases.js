@@ -13,8 +13,8 @@ export function renderReleases(container) {
   const releases = allReleases.filter(r => r && (db && db.activeRole === 'Elite Member' ? (r.eliteMemberId === member.id || (r.eliteMemberName && member.name && r.eliteMemberName.toLowerCase() === member.name.toLowerCase())) : true));
 
   container.innerHTML = `
-    <div class="card" style="margin-bottom: 24px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div class="welcome-banner-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
         <div>
           <h2>Referral Fee Release Workflow</h2>
         </div>
@@ -75,7 +75,7 @@ export function renderReleases(container) {
             </tr>
           </thead>
           <tbody>
-            ${releases.map(rel => `
+            ${releases.length > 0 ? releases.map(rel => `
               <tr>
                 <td><code>${rel.reqNumber}</code></td>
                 ${isFinanceOrAdmin ? `<td><strong>${rel.eliteMemberName}</strong></td>` : ''}
@@ -95,7 +95,15 @@ export function renderReleases(container) {
                   </td>
                 ` : ''}
               </tr>
-            `).join('')}
+            `).join('') : `
+              <tr>
+                <td colspan="${isFinanceOrAdmin ? 9 : 8}" style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
+                  <i class="fas fa-inbox" style="font-size: 2.2rem; display: block; margin-bottom: 8px; opacity: 0.4;"></i>
+                  <div style="font-weight: 700; font-size: 0.92rem; color: var(--text-primary); margin-bottom: 4px;">No Payout Requests Found</div>
+                  <div style="font-size: 0.78rem;">There are currently no payout release requests submitted.</div>
+                </td>
+              </tr>
+            `}
           </tbody>
         </table>
       </div>

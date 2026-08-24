@@ -144,7 +144,7 @@ export function renderReports(container) {
             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
               <div style="background: var(--bg-card); padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
                 <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700;">INVITES LOG</div>
-                <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin-top: 2px;">${invites.length} Records</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin-top: 2px;">${invites.length} ${invites.length === 1 ? 'Record' : 'Records'}</div>
               </div>
               <div style="background: var(--bg-card); padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
                 <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 700;">TOTAL FEES</div>
@@ -775,7 +775,7 @@ function exportCompiledPDF(targetMemberId, start, end) {
       <table>
         <thead>
           <tr>
-            <th>Elite Code</th><th>Participant Name</th><th>School / Company</th><th>Course</th><th>Enrollment Status</th><th>Verification</th><th>Submitted Date</th>
+            <th>Elite Code</th><th>Participant Name</th><th>School / Company</th><th>Course</th><th>Enrollment Status</th><th>Submitted Date</th>
           </tr>
         </thead>
         <tbody>
@@ -786,10 +786,9 @@ function exportCompiledPDF(targetMemberId, start, end) {
               <td>${i.schoolCompany}</td>
               <td>${i.trainingType || 'BOSH/COSH'}</td>
               <td>${i.enrollmentStatus || 'Pending'}</td>
-              <td>${i.verificationStatus || 'Unpaid'}</td>
               <td>${i.dateSubmitted || i.trainingDate || 'N/A'}</td>
             </tr>
-          `).join('') : `<tr><td colspan="7" style="text-align:center; padding:12px; color:#94a3b8;">No invites found for this scope.</td></tr>`}
+          `).join('') : `<tr><td colspan="6" style="text-align:center; padding:12px; color:#94a3b8;">No invites found for this scope.</td></tr>`}
         </tbody>
       </table>
 

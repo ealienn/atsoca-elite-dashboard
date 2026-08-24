@@ -90,44 +90,7 @@ const INITIAL_INVITES = [];
 
 const INITIAL_ENROLLMENTS = [];
 
-const INITIAL_RELEASES = [
-  {
-    id: 'REL-2026-101',
-    reqNumber: 'ATS-RF-9041',
-    eliteMemberId: '004',
-    eliteMemberName: 'Joshua Villafuerte',
-    amount: 15400,
-    dateRequested: '2026-07-15',
-    processingStatus: 'Released',
-    dateReleased: '2026-07-18',
-    disbursementMethod: 'GCash (0917-***-8821)',
-    notes: 'Batch #4 Referral Fee Release Processed by Finance'
-  },
-  {
-    id: 'REL-2026-102',
-    reqNumber: 'ATS-RF-9088',
-    eliteMemberId: '005',
-    eliteMemberName: 'Kent Bryan Lontok',
-    amount: 8600,
-    dateRequested: '2026-07-24',
-    processingStatus: 'Finance Review',
-    dateReleased: null,
-    disbursementMethod: 'Bank Transfer (BDO - 0048****1192)',
-    notes: 'Submitted for July 2nd Half Earnings'
-  },
-  {
-    id: 'REL-2026-103',
-    reqNumber: 'ATS-RF-9095',
-    eliteMemberId: '006',
-    eliteMemberName: 'CE Box',
-    amount: 22000,
-    dateRequested: '2026-07-26',
-    processingStatus: 'Submitted',
-    dateReleased: null,
-    disbursementMethod: 'GCash (0928-***-4410)',
-    notes: 'Pending validation by Finance'
-  }
-];
+const INITIAL_RELEASES = [];
 
 const INITIAL_NOTIFICATIONS = [
   {
@@ -205,6 +168,11 @@ class DBState {
               m.password = '12345';
             }
           });
+
+          if (this.data.releases && Array.isArray(this.data.releases)) {
+            this.data.releases = this.data.releases.filter(r => !r.id || !r.id.startsWith('REL-2026-10'));
+          }
+          this.save();
         } else {
           this.data.members = [...INITIAL_MEMBERS];
         }
@@ -308,7 +276,39 @@ class DBState {
         const payStatusRaw = String((isArr ? r[28] : (r.paymentStatus || r.colAC)) || '').trim();
         const paymentStatus = (payStatusRaw && payStatusRaw !== 'Unpaid') ? payStatusRaw : (paid >= fee && fee > 0 ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
 
-        const dateSub = r.dateSubmitted || (r.submittedAt ? String(r.submittedAt).split('T')[0] : new Date().toISOString().split('T')[0]);
+        // Date Submitted: Column G (row[6] / r.colG / r.dateSubmitted)
+        let rawColG = isArr ? r[6] : (r.colG !== undefined && r.colG !== '' ? r.colG : (r.dateSubmitted || r.date || r.submittedAt));
+        let dateSub = '';
+        if (rawColG) {
+          if (rawColG instanceof Date) {
+            const y = rawColG.getFullYear();
+            const m = String(rawColG.getMonth() + 1).padStart(2, '0');
+            const d = String(rawColG.getDate()).padStart(2, '0');
+            dateSub = `${y}-${m}-${d}`;
+          } else {
+            let strG = String(rawColG).trim();
+            if (strG.includes('T')) strG = strG.split('T')[0];
+            if (strG.includes(' ')) strG = strG.split(' ')[0];
+            if (strG.includes('/')) {
+              const parts = strG.split('/');
+              if (parts.length === 3) {
+                if (parts[0].length === 4) {
+                  dateSub = `${parts[0]}-${String(parts[1]).padStart(2, '0')}-${String(parts[2]).padStart(2, '0')}`;
+                } else {
+                  const y = parts[2].length === 2 ? '20' + parts[2] : parts[2];
+                  const m = String(parts[0]).padStart(2, '0');
+                  const d = String(parts[1]).padStart(2, '0');
+                  dateSub = `${y}-${m}-${d}`;
+                }
+              }
+            } else {
+              dateSub = strG;
+            }
+          }
+        }
+        if (!dateSub || dateSub === 'undefined' || dateSub === 'null') {
+          dateSub = r.dateSubmitted || new Date().toISOString().split('T')[0];
+        }
 
         syncedInvites.push({
           id: respId,

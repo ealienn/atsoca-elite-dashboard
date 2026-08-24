@@ -13,12 +13,12 @@ export function renderUnits(container) {
   const enrollments = allEnrollments.filter(e => e && (db && db.activeRole === 'Elite Member' ? (e.referrerId === member.id || (e.referrerName && member.name && e.referrerName.toLowerCase() === member.name.toLowerCase())) : e.isReferred));
 
   container.innerHTML = `
-    <div class="card" style="margin-bottom: 24px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div class="welcome-banner-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
         <div>
           <h2>Unit Monitoring & Conversion</h2>
         </div>
-        <div class="tier-badge" style="background: #002355; color: #ffffff; border: 1px solid #38bdf8;">
+        <div class="tier-badge" style="background: rgba(255,255,255,0.14); color: #ffffff; border: 1px solid rgba(255,255,255,0.35);">
           <i class="fas fa-calculator" style="color: #38bdf8;"></i> 1 Unit = ${formatPHP(UNIT_VALUATION)} Net Fee
         </div>
       </div>

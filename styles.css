@@ -946,45 +946,48 @@ body[data-theme="dark"] .progress-bar-fill {
   border-bottom: none;
 }
 
-/* Status Pills */
+/* Status Pills - Plain Simple Text */
 .status-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  font-size: 0.76rem;
+  gap: 4px;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: 0.85rem;
   font-weight: 700;
   width: max-content;
   max-width: 100%;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #000000 !important;
 }
 
 .status-Verified,
 .status-FullyPaid,
 .status-Released,
-.status-Enrolled {
-  background: #d1fae5;
-  color: #047857;
-  border: 1px solid #10b981;
-}
-
 .status-Pending,
 .status-Partial,
 .status-FinanceReview,
-.status-Submitted {
-  background: #fef3c7;
-  color: #b45309;
-  border: 1px solid #f59e0b;
-}
-
+.status-Submitted,
 .status-Rejected,
 .status-Unpaid,
-.status-NotEnrolled {
-  background: #ffe4e6;
-  color: #be123c;
-  border: 1px solid #f43f5e;
+.status-NotEnrolled,
+.status-Enrolled,
+.status-pill.status-Enrolled,
+.status-pill.status-NotEnrolled {
+  background: transparent !important;
+  color: #000000 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  font-weight: 700;
+}
+
+.status-pill i {
+  display: none !important;
 }
 
 /* Unit Bonus Badge */
@@ -1600,10 +1603,7 @@ html[data-theme="dark"] .logo-white-version {
 }
 
 .user-box-role {
-  font-size: 0.78rem;
-  font-style: italic;
-  color: #475569;
-  margin-top: 2px;
+  display: none;
 }
 
 /* Top Sticky Header Logo Group */
@@ -1633,23 +1633,45 @@ html[data-theme="dark"] .logo-white-version {
   margin: 0;
 }
 
-/* Top Welcome Banner Card */
-.welcome-banner-card {
-  background: #002355;
-  border: 1px solid #002355;
-  border-radius: 14px;
-  padding: 18px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  color: #ffffff;
+/* Top Welcome & Tab Header Banner Card - Dark Blue Signature */
+.welcome-banner-card,
+.tab-header-card {
+  background: #002355 !important;
+  border: 1px solid #002355 !important;
+  border-radius: 14px !important;
+  padding: 20px 24px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 24px !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.welcome-banner-card h1,
+.welcome-banner-card h2,
+.welcome-banner-card h3,
+.welcome-banner-card h4,
+.tab-header-card h1,
+.tab-header-card h2,
+.tab-header-card h3,
+.tab-header-card h4 {
+  color: #ffffff !important;
+  margin: 0 !important;
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+}
+
+.welcome-banner-card p,
+.tab-header-card p {
+  color: #cbd5e1 !important;
+  margin-top: 4px !important;
 }
 
 .welcome-text {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .welcome-actions {
@@ -2112,31 +2134,25 @@ body[data-theme="dark"] .mock-gold-badge {
   border: 1px solid #eab308 !important;
 }
 
-/* Status Pills in Dark Mode */
+/* Status Pills in Dark Mode - Plain Text */
+body[data-theme="dark"] .status-pill,
 body[data-theme="dark"] .status-Verified,
 body[data-theme="dark"] .status-FullyPaid,
 body[data-theme="dark"] .status-Released,
-body[data-theme="dark"] .status-Enrolled {
-  background: rgba(16, 185, 129, 0.2) !important;
-  color: #34d399 !important;
-  border: 1px solid rgba(16, 185, 129, 0.4) !important;
-}
-
+body[data-theme="dark"] .status-Enrolled,
 body[data-theme="dark"] .status-Pending,
 body[data-theme="dark"] .status-Partial,
 body[data-theme="dark"] .status-FinanceReview,
-body[data-theme="dark"] .status-Submitted {
-  background: rgba(245, 158, 11, 0.2) !important;
-  color: #fbbf24 !important;
-  border: 1px solid rgba(245, 158, 11, 0.4) !important;
-}
-
+body[data-theme="dark"] .status-Submitted,
 body[data-theme="dark"] .status-Rejected,
 body[data-theme="dark"] .status-Unpaid,
 body[data-theme="dark"] .status-NotEnrolled {
-  background: rgba(244, 63, 94, 0.2) !important;
-  color: #f87171 !important;
-  border: 1px solid rgba(244, 63, 94, 0.4) !important;
+  background: transparent !important;
+  color: #f8fafc !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  font-weight: 700;
 }
 
 /* Memo 1 Matrix Active Row & Highlight Styles */
@@ -2299,6 +2315,58 @@ body[data-theme="dark"] .unit-badge i {
   visibility: hidden;
   pointer-events: none;
   display: none !important;
+}
+
+/* Login Success & Portal Transition Animations */
+.login-btn-navy.btn-logging-in {
+  background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+  color: #60a5fa !important;
+  cursor: wait !important;
+  box-shadow: 0 0 15px rgba(96, 165, 250, 0.4) !important;
+}
+
+.login-btn-navy.btn-login-success {
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.55) !important;
+  transform: scale(1.02);
+}
+
+.login-card-inner.login-success-card {
+  animation: cardSuccessPulse 0.5s ease forwards;
+}
+
+@keyframes cardSuccessPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); box-shadow: 0 15px 35px rgba(16, 185, 129, 0.25); }
+  100% { transform: scale(0.98); opacity: 0.85; }
+}
+
+.login-screen-overlay.login-fade-out {
+  opacity: 0 !important;
+  transform: scale(1.05) !important;
+  filter: blur(8px) !important;
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), filter 0.55s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none !important;
+}
+
+.app-entrance-anim {
+  animation: appEntranceKeyframes 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes appEntranceKeyframes {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+    filter: blur(6px);
+  }
+  60% {
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .login-split-container {
@@ -3217,6 +3285,213 @@ body[data-theme="dark"] .modal-content strong,
 body[data-theme="dark"] .custom-table th,
 body[data-theme="dark"] table th {
   color: #ffffff !important;
+}
+
+/* Compact & Modern Leaderboard UI */
+.podium-grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .podium-grid-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.podium-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.podium-card.podium-gold {
+  border-left: 4px solid #f59e0b !important;
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.35) 0%, var(--bg-card) 100%);
+}
+
+.podium-card.podium-silver {
+  border-left: 4px solid #94a3b8 !important;
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.35) 0%, var(--bg-card) 100%);
+}
+
+.podium-card.podium-bronze {
+  border-left: 4px solid #d97706 !important;
+  background: linear-gradient(135deg, rgba(254, 215, 170, 0.35) 0%, var(--bg-card) 100%);
+}
+
+body[data-theme="dark"] .podium-card.podium-gold {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, var(--bg-card) 100%) !important;
+}
+
+body[data-theme="dark"] .podium-card.podium-silver {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.12) 0%, var(--bg-card) 100%) !important;
+}
+
+body[data-theme="dark"] .podium-card.podium-bronze {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.12) 0%, var(--bg-card) 100%) !important;
+}
+
+.podium-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.podium-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+}
+
+.podium-gold .podium-avatar { border-color: #f59e0b; }
+.podium-silver .podium-avatar { border-color: #94a3b8; }
+.podium-bronze .podium-avatar { border-color: #d97706; }
+
+.podium-crown-icon {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 0.9rem;
+}
+
+.podium-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.podium-header-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.podium-member-name {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 4px 0;
+}
+
+.podium-stat-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+
+.podium-stat-unit {
+  font-weight: 800;
+  color: #002355;
+}
+
+body[data-theme="dark"] .podium-stat-unit {
+  color: #38bdf8 !important;
+}
+
+.podium-stat-earned {
+  font-weight: 700;
+  color: #10b981;
+}
+
+/* Leaderboard Filter Switcher */
+.leaderboard-filter-group {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-main);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.leaderboard-filter-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.leaderboard-filter-btn.active {
+  background: var(--bg-card);
+  color: #002355;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body[data-theme="dark"] .leaderboard-filter-btn.active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* Rank Badges & Row Styles in Table */
+.rank-position-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.rank-position-badge.rank-gold {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.rank-position-badge.rank-silver {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.rank-position-badge.rank-bronze {
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.rank-position-badge.rank-standard {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.current-user-row {
+  background: rgba(2, 132, 199, 0.06) !important;
+}
+
+.you-pill-badge {
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
 }
 
 
