@@ -249,85 +249,75 @@ function renderManagementOverview(container, role) {
   const totalUnits = members.reduce((sum, m) => sum + (m ? (Number(m.totalUnits) || 0) : 0), 0);
 
   container.innerHTML = `
-    <!-- Top Welcome Management Banner -->
-    <div class="welcome-banner-card" style="background: #002355; border: 1px solid var(--border-color);">
-      <div class="welcome-text" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-        <span>Portal Overview: ${role}</span>
-        <span style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; font-size: 0.82rem; padding: 4px 14px; border-radius: 20px; font-weight: 600;">
-          Full Elite Account & Invite Verification Access
-        </span>
+    <!-- Top Administrator Executive Console Banner -->
+    <div class="welcome-banner-card" style="background: #002355; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h2 style="color: #ffffff; margin: 0; font-size: 1.35rem; font-weight: 800;">Administrator Executive Console</h2>
       </div>
-      <div class="welcome-actions">
-        <button class="btn-mock-sky" id="btn-mgmt-quick-verify" style="background: #10b981; color: #ffffff; border: none;">
-          <i class="fas fa-check-circle"></i> Verification Log (${pendingInvites} Pending)
+      <div>
+        <button class="btn btn-primary" id="btn-mgmt-quick-verify" style="background: #0284c7; color: #ffffff; border: none; font-weight: 700; border-radius: 8px; padding: 10px 20px; font-size: 0.88rem;">
+          Verification Log (${pendingInvites} Pending)
         </button>
       </div>
     </div>
 
-    <!-- 1. Management Key Metric Stat Cards -->
-    <div class="mock-grid-4">
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">TOTAL ELITES REGISTERED</div>
-          <div class="mock-stat-number">${totalMembers}</div>
-          <div class="mock-stat-sub">Active Accounts</div>
+    <!-- 1. Key Metric Stat Cards -->
+    <div class="mock-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px;">
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">TOTAL ELITES REGISTERED</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${totalMembers}</div>
+          <div style="font-size: 0.78rem; color: #0284c7; font-weight: 600;">Active Accounts</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
           <i class="fas fa-users"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">TOTAL SYSTEM INVITES</div>
-          <div class="mock-stat-number">${totalInvites}</div>
-          <div class="mock-stat-sub">
-            ${pendingInvites} Pending Verification
-          </div>
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">TOTAL SYSTEM INVITES</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${totalInvites}</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">${pendingInvites} Pending Verification</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
           <i class="fas fa-paper-plane"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">VERIFIED & ENROLLED</div>
-          <div class="mock-stat-number">${verifiedInvites} / ${enrolledInvites}</div>
-          <div class="mock-stat-sub">Verified / Enrolled</div>
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">VERIFIED & ENROLLED</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${verifiedInvites} / ${enrolledInvites}</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Verified / Enrolled</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
           <i class="fas fa-check-circle"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">ACCUMULATED UNITS</div>
-          <div class="mock-stat-number">${totalUnits.toFixed(2)}</div>
-          <div class="mock-stat-sub">1 Unit = ₱4,500</div>
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">ACCUMULATED UNITS</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${totalUnits.toFixed(2)}</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">1 Unit = ₱4,500</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
           <i class="fas fa-award"></i>
         </div>
       </div>
     </div>
 
     <!-- 2. Main Verification Panel: ALL ELITE ACCOUNTS & INVITES DIRECTORY -->
-    <div class="mock-card-panel" style="margin-top: 24px;">
-      <div class="mock-panel-header" style="flex-wrap: wrap; gap: 16px; margin-bottom: 20px; align-items: center;">
-        <div>
-          <h3 class="mock-panel-title" style="display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-users-cog" style="color: var(--accent-blue);"></i> ELITE ACCOUNTS & INVITE VERIFICATION MATRIX
-          </h3>
-          <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 4px;">
-            Directly inspect each Elite Member's account, view their submitted invites count, and perform account verification.
-          </p>
+    <div class="mock-card-panel" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+      <div class="mock-panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+        <div style="font-size: 0.92rem; font-weight: 900; color: var(--heading-color); text-transform: uppercase; letter-spacing: 0.05em;">
+          ELITE ACCOUNTS & INVITE VERIFICATION MATRIX
         </div>
 
-        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-          <input type="text" id="search-elite-matrix" class="form-control" placeholder="Search member, email, ID..." style="width: 240px; padding: 7px 14px; font-size: 0.85rem;">
-          <select id="filter-tier-matrix" class="form-control" style="width: 170px; padding: 7px 14px; font-size: 0.85rem;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <input type="text" id="search-elite-matrix" class="form-control" placeholder="Search member, email, or ID..." style="width: 220px; padding: 6px 12px; font-size: 0.82rem;">
+          <select id="filter-tier-matrix" class="form-control" style="width: 140px; padding: 6px 12px; font-size: 0.82rem;">
             <option value="ALL">All Tiers</option>
             <option value="Bronze">Bronze</option>
             <option value="Silver">Silver</option>
@@ -341,17 +331,17 @@ function renderManagementOverview(container, role) {
       </div>
 
       <div class="table-responsive">
-        <table class="custom-table" id="table-elite-matrix" style="width: 100%;">
+        <table class="custom-table" id="table-elite-matrix" style="width: 100%; font-size: 0.84rem;">
           <thead>
             <tr>
-              <th>Elite Account</th>
-              <th>Member ID</th>
-              <th>Calculated Tier</th>
-              <th>Submitted Invites</th>
-              <th>Verified / Enrolled</th>
-              <th>Total Units</th>
-              <th>Available Fees</th>
-              <th style="text-align: right;">Verification Access</th>
+              <th>ELITE ACCOUNT</th>
+              <th>MEMBER ID</th>
+              <th>CALCULATED TIER</th>
+              <th>SUBMITTED INVITES</th>
+              <th>VERIFIED / ENROLLED</th>
+              <th>TOTAL UNITS</th>
+              <th>AVAILABLE FEES</th>
+              <th style="text-align: right;">VERIFICATION ACCESS</th>
             </tr>
           </thead>
           <tbody>
@@ -366,33 +356,41 @@ function renderManagementOverview(container, role) {
                 <tr data-member-id="${m.id}" data-tier="${tier.name}">
                   <td>
                     <div style="display: flex; align-items: center; gap: 12px;">
-                      <img src="${m.avatar}" alt="${m.name}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);">
+                      <img src="${m.avatar}" alt="${m.name}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
                       <div>
-                        <div style="font-weight: 700; color: var(--text-primary);">${m.name}</div>
-                        <div style="font-size: 0.76rem; color: var(--text-muted);">${m.email}</div>
+                        <div style="font-weight: 800; color: var(--text-primary); font-size: 0.88rem;">${m.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>
                       </div>
                     </div>
                   </td>
                   <td><code>${m.id}</code></td>
                   <td>
-                    <span class="mock-gold-badge" style="background: ${tier.badgeColor}; color: #ffffff; font-weight: 600; font-size: 0.78rem; padding: 4px 10px; border-radius: 12px;">
+                    <span class="tier-badge tier-${tier.name.replace(/\s+/g, '')}" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-weight: 700; font-size: 0.76rem; padding: 4px 12px; border-radius: 14px;">
                       <i class="fas ${tier.icon}"></i> ${tier.name}
                     </span>
                   </td>
                   <td>
-                    <strong style="font-size: 1rem;">${mInvites.length} Invites</strong>
-                    ${mPending > 0 ? `<span style="background: rgba(2, 132, 199, 0.12); color: #0284c7; font-size: 0.72rem; padding: 2px 6px; border-radius: 8px; margin-left: 6px; font-weight: 600;">${mPending} Pending</span>` : ''}
+                    <strong style="font-size: 0.88rem;">${mInvites.length} Invites</strong>
+                    ${mPending > 0 ? `<span style="background: #e0f2fe; color: #0284c7; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; margin-left: 6px; font-weight: 700;">${mPending} Pending</span>` : ''}
                   </td>
                   <td>
-                    <span style="font-size: 0.84rem; color: var(--text-primary); font-weight: 600;">✓ ${mVerified} Verified</span> / 
-                    <span style="font-size: 0.84rem; color: var(--text-secondary); font-weight: 600;">${mEnrolled} Enrolled</span>
+                    <span style="font-size: 0.82rem; color: var(--text-primary); font-weight: 600;">✓ ${mVerified} Verified</span> / 
+                    <span style="font-size: 0.82rem; color: var(--text-muted);">${mEnrolled} Enrolled</span>
                   </td>
                   <td><strong>${Number(m.totalUnits || 0).toFixed(2)} Units</strong></td>
                   <td><strong style="color: #0284c7;">₱${(m.availableForRelease || 0).toLocaleString()}</strong></td>
                   <td style="text-align: right;">
-                    <button class="btn btn-primary btn-sm btn-inspect-account" data-id="${m.id}">
-                      <i class="fas fa-id-card"></i> Access Account & Invites
-                    </button>
+                    <div style="display: flex; justify-content: flex-end; gap: 6px;">
+                      <button class="btn btn-secondary btn-xs btn-export-member-data" data-id="${m.id}" style="background: #e0f2fe; color: #0284c7; border: none; font-size: 0.72rem; font-weight: 700; padding: 5px 10px; border-radius: 6px;">
+                        <i class="fas fa-file-export"></i> Export Data
+                      </button>
+                      <button class="btn btn-secondary btn-xs btn-view-member-portfolio" data-id="${m.id}" style="background: #e0f2fe; color: #0284c7; border: none; font-size: 0.72rem; font-weight: 700; padding: 5px 10px; border-radius: 6px;">
+                        <i class="fas fa-folder"></i> Portfolio
+                      </button>
+                      <button class="btn btn-primary btn-xs btn-inspect-account" data-id="${m.id}" style="background: #002355; color: #ffffff; border: none; font-size: 0.72rem; font-weight: 700; padding: 5px 10px; border-radius: 6px;">
+                        <i class="fas fa-eye"></i> View Audit Details
+                      </button>
+                    </div>
                   </td>
                 </tr>
               `;
@@ -455,6 +453,25 @@ function renderManagementOverview(container, role) {
       if (targetMem) {
         db.setRole('Elite Member', memId);
       }
+    });
+  });
+
+  // Handle Export Data button in matrix table
+  container.querySelectorAll('.btn-export-member-data').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const memId = btn.getAttribute('data-id');
+      const reportsTab = document.querySelector('[data-tab="reports"]');
+      if (reportsTab) reportsTab.click();
+    });
+  });
+
+  // Handle Portfolio button in matrix table
+  container.querySelectorAll('.btn-view-member-portfolio').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const memId = btn.getAttribute('data-id');
+      openInspectModal(memId);
     });
   });
 
