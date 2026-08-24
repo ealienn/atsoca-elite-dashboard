@@ -273,30 +273,20 @@ class DBState {
         // School / Company: Column O (row[14])
         const schoolComp = String((isArr ? r[14] : (r.colO || r.schoolCompany || r.schoolAttended)) || 'N/A').trim();
 
-        // Course / Program: Column R (row[17])
-        const courseRaw = String((isArr ? r[17] : (r.colR || r.course || r.trainingType)) || '').toUpperCase();
+        // Course / Program: Column R (row[17]) or whatTrainingCourseWillYouEnroll...
+        const courseRaw = String((isArr ? r[17] : (r.whatTrainingCourseWillYouEnrollChooseOneKindlyVerifyTheTrainingCourseIfCoshOrBosh || r.colR || r.course || r.trainingType)) || '').toUpperCase();
         const courseChoice = courseRaw.includes('COSH') ? 'COSH' : 'BOSH';
 
-        // Conditional Fee & Payment Extraction:
-        // COSH: Fee = Col U (row[20]), Paid = Col V (row[21]), Balance = Col W (row[22])
-        // BOSH: Fee = Col Y (row[24]), Paid = Col Z (row[25]), Balance = Col AA (row[26])
-        let fee = 0;
-        let paid = 0;
-        let bal = 0;
+        // Fee, Paid, and Balance Extraction (combining array index and Apps Script JSON object keys)
+        const fee = Number(isArr ? (courseChoice === 'COSH' ? r[20] : r[24]) : (r.trainingFeeKabuoangBabayaran || r.trainingFee || r.investmentFee || r.fee || (courseChoice === 'COSH' ? r.colU : r.colY))) || (courseChoice === 'COSH' ? 5000 : 4500);
+        const paid = Number(isArr ? (courseChoice === 'COSH' ? r[21] : r[25]) : (r['amountPaidHalagangIbinayad✅'] || r.amountPaidHalagangIbinayadSinceTheTrainingHasLimitedSlotsForReservationYouCannotProceedWithTheEnrollmentFormWithoutProofOfPayment || r.paymentMade || r.paid || (courseChoice === 'COSH' ? r.colV : r.colZ))) || 0;
 
-        if (courseChoice === 'COSH') {
-          fee = Number(isArr ? r[20] : (r.colU || r.investmentFee || r.fee)) || 5000;
-          paid = Number(isArr ? r[21] : (r.colV || r.paymentMade || r.paid)) || 0;
-          bal = (isArr ? r[22] !== undefined : r.colW !== undefined) ? Number(isArr ? r[22] : r.colW) : Math.max(0, fee - paid);
-        } else {
-          fee = Number(isArr ? r[24] : (r.colY || r.investmentFee || r.fee)) || 4500;
-          paid = Number(isArr ? r[25] : (r.colZ || r.paymentMade || r.paid)) || 0;
-          bal = (isArr ? r[26] !== undefined : r.colAA !== undefined) ? Number(isArr ? r[26] : r.colAA) : Math.max(0, fee - paid);
-        }
+        let rawBal = isArr ? (courseChoice === 'COSH' ? r[22] : r[26]) : (r.remainingBalance !== undefined ? r.remainingBalance : (r.balance !== undefined ? r.balance : (courseChoice === 'COSH' ? r.colW : r.colAA)));
+        const bal = (rawBal !== undefined && rawBal !== '' && !isNaN(Number(rawBal))) ? Number(rawBal) : Math.max(0, fee - paid);
 
-        // Payment Status: Column AC (row[28])
-        const payStatusRaw = String((isArr ? r[28] : (r.colAC || r.paymentStatus)) || '').trim();
-        const paymentStatus = payStatusRaw !== '' ? payStatusRaw : (paid >= fee && fee > 0 ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
+        // Payment Status: Column AC (row[28]) or paymentStatus
+        const payStatusRaw = String((isArr ? r[28] : (r.paymentStatus || r.colAC)) || '').trim();
+        const paymentStatus = (payStatusRaw && payStatusRaw !== 'Unpaid') ? payStatusRaw : (paid >= fee && fee > 0 ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
 
         const dateSub = r.dateSubmitted || (r.submittedAt ? String(r.submittedAt).split('T')[0] : new Date().toISOString().split('T')[0]);
 
