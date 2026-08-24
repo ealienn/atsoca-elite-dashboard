@@ -53,9 +53,7 @@ export function renderInvites(container) {
               <th>Training Date</th>
               <th>Date Submitted</th>
               ${isManagerOrAdmin ? '<th>Submitted By</th>' : ''}
-              <th>Verification Status</th>
               <th>Enrollment Status</th>
-              ${isManagerOrAdmin ? '<th>Validation Actions</th>' : ''}
             </tr>
           </thead>
           <tbody>
@@ -68,18 +66,7 @@ export function renderInvites(container) {
                 <td>${inv.trainingDate}</td>
                 <td>${inv.dateSubmitted}</td>
                 ${isManagerOrAdmin ? `<td>${inv.referrerName}</td>` : ''}
-                <td><span class="status-pill status-${inv.verificationStatus}">${inv.verificationStatus}</span></td>
                 <td><span class="status-pill status-${inv.enrollmentStatus.replace(/\s+/g, '')}">${inv.enrollmentStatus}</span></td>
-                ${isManagerOrAdmin ? `
-                  <td>
-                    ${inv.verificationStatus === 'Pending' ? `
-                      <button class="btn btn-emerald btn-sm btn-verify" data-id="${inv.id}"><i class="fas fa-check"></i> Verify</button>
-                      <button class="btn btn-secondary btn-sm btn-reject" data-id="${inv.id}" style="color: var(--accent-rose);"><i class="fas fa-times"></i></button>
-                    ` : `
-                      <span style="font-size: 0.78rem; color: var(--text-muted);"><i class="fas fa-lock"></i> Verified</span>
-                    `}
-                  </td>
-                ` : ''}
               </tr>
             `).join('')}
           </tbody>
@@ -164,23 +151,4 @@ export function renderInvites(container) {
     modal.classList.remove('active');
     renderInvites(container);
   });
-
-  // Manager action triggers
-  if (isManagerOrAdmin) {
-    container.querySelectorAll('.btn-verify').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        db.verifyInvite(id, 'Verified');
-        renderInvites(container);
-      });
-    });
-
-    container.querySelectorAll('.btn-reject').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        db.verifyInvite(id, 'Rejected');
-        renderInvites(container);
-      });
-    });
-  }
 }
