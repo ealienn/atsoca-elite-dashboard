@@ -218,12 +218,7 @@ export function renderProfileModal(container, onSaveSuccess = null) {
       if (modalAlert) {
         modalAlert.style.display = 'block';
       }
-
-      setTimeout(() => {
-        const modal = document.querySelector('#modal-edit-user-profile');
-        if (modal) modal.classList.remove('active');
-        if (onSaveSuccess) onSaveSuccess();
-      }, 700);
+      if (onSaveSuccess) onSaveSuccess();
     });
   }
 }

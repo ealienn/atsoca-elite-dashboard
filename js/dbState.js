@@ -509,9 +509,48 @@ class DBState {
     if (profileData.password !== undefined && profileData.password.trim() !== '') account.password = profileData.password.trim();
     if (profileData.department !== undefined) account.department = profileData.department.trim();
 
+    if (GOOGLE_SHEETS_WEB_APP_URL && account.avatar) {
+      fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_profile', payload: { id: role, avatar: account.avatar, name: account.name } }),
+        mode: 'no-cors'
+      }).catch(err => console.warn('POST management avatar to Google Sheets:', err));
+    }
+
     this.addLog(account.name, 'Updated Management Profile', role, `Updated account profile for ${role} (${account.name})`);
     this.save();
+    this.notify();
     return account;
+  }
+
+  updateMemberProfile(memberId, profileData) {
+    const member = this.data.members.find(m => m.id === memberId);
+    if (!member) return null;
+
+    if (profileData.name !== undefined && profileData.name.trim() !== '') member.name = profileData.name.trim();
+    if (profileData.email !== undefined && profileData.email.trim() !== '') member.email = profileData.email.trim();
+    if (profileData.phone !== undefined) member.phone = profileData.phone.trim();
+    if (profileData.avatar !== undefined && profileData.avatar.trim() !== '') member.avatar = profileData.avatar.trim();
+    if (profileData.password !== undefined && profileData.password.trim() !== '') member.password = profileData.password.trim();
+    if (profileData.gcashNumber !== undefined) member.gcashNumber = profileData.gcashNumber.trim();
+    if (profileData.bankName !== undefined) member.bankName = profileData.bankName.trim();
+    if (profileData.bankAccountName !== undefined) member.bankAccountName = profileData.bankAccountName.trim();
+    if (profileData.bankAccountNumber !== undefined) member.bankAccountNumber = profileData.bankAccountNumber.trim();
+
+    if (GOOGLE_SHEETS_WEB_APP_URL && member.avatar) {
+      fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_profile', payload: { id: member.id, avatar: member.avatar, name: member.name } }),
+        mode: 'no-cors'
+      }).catch(err => console.warn('POST member avatar to Google Sheets:', err));
+    }
+
+    this.addLog(member.name, 'Updated Member Profile', 'Member Settings', `Updated profile for ${member.name}`);
+    this.save();
+    this.notify();
+    return member;
   }
 
   // --- CRUD METHODS ---
@@ -787,6 +826,25 @@ async syncWithGoogleSheets() {
           existing.paymentMade = Number(row.paymentMade || row.Payment_Made || existing.paymentMade || 0);
           existing.balance = Number(row.balance || row.Outstanding_Balance || existing.balance || 0);
           existing.paymentStatus = row.paymentStatus || row.Payment_Status || existing.paymentStatus || 'Unpaid';
+        }
+      });
+    }
+
+    // Parse Cloud Profile Avatars
+    if (data.profiles && typeof data.profiles === 'object') {
+      Object.keys(data.profiles).forEach(key => {
+        const avatarUrl = data.profiles[key];
+        if (!avatarUrl) return;
+
+        // Apply to matching member
+        const member = this.data.members.find(m => m.id === key || (m.email && m.email.toLowerCase() === key.toLowerCase()));
+        if (member) {
+          member.avatar = avatarUrl;
+        }
+
+        // Apply to matching management account
+        if (this.data.managementAccounts && this.data.managementAccounts[key]) {
+          this.data.managementAccounts[key].avatar = avatarUrl;
         }
       });
     }

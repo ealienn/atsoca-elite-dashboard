@@ -67,43 +67,43 @@ function renderEliteMemberOverview(container) {
     </div>
 
     <!-- 1. Top Stat Cards (Grid 4) -->
-    <div class="mock-grid-4">
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">TOTAL INVITES SUBMITTED</div>
-          <div class="mock-stat-number">${totalInvites}</div>
+    <div class="mock-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 24px;">
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #0284c7; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL INVITES SUBMITTED</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${totalInvites}</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(2, 132, 199, 0.06)); color: #0284c7; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(2, 132, 199, 0.2);">
           <i class="fas fa-calendar-alt"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">VERIFIED</div>
-          <div class="mock-stat-number">${verifiedInvites}</div>
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #10b981; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">VERIFIED</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${verifiedInvites}</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.06)); color: #10b981; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(16, 185, 129, 0.2);">
           <i class="fas fa-check"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">ENROLLED</div>
-          <div class="mock-stat-number">${enrolledInvites}</div>
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #8b5cf6; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ENROLLED</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${enrolledInvites}</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(139, 92, 246, 0.06)); color: #8b5cf6; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(139, 92, 246, 0.2);">
           <i class="fas fa-graduation-cap"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card">
-        <div class="mock-stat-content">
-          <div class="mock-stat-title">TOTAL UNITS</div>
-          <div class="mock-stat-number">${displayUnits}</div>
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #f59e0b; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL UNITS</div>
+          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${displayUnits}</div>
         </div>
-        <div class="mock-icon-sky">
+        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.06)); color: #d97706; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(245, 158, 11, 0.2);">
           <i class="fas fa-award"></i>
         </div>
       </div>
@@ -194,47 +194,33 @@ function renderManagementOverview(container, role) {
     </div>
 
     <!-- 1. Key Metric Stat Cards -->
-    <div class="mock-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px;">
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+    <div class="mock-grid-4" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px;">
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #0284c7; border-radius: 14px; padding: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
         <div>
-          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">TOTAL ELITES REGISTERED</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${totalMembers}</div>
-          <div style="font-size: 0.78rem; color: #0284c7; font-weight: 600;">Active Accounts</div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL ELITES REGISTERED</div>
+          <div style="font-size: 2.2rem; font-weight: 900; color: var(--text-primary); margin-top: 6px; line-height: 1.1;">${totalMembers}</div>
         </div>
-        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(2, 132, 199, 0.06)); color: #0284c7; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid rgba(2, 132, 199, 0.2);">
           <i class="fas fa-users"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #10b981; border-radius: 14px; padding: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
         <div>
-          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">TOTAL SYSTEM INVITES</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${totalInvites}</div>
-          <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">${pendingInvites} Pending Verification</div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL SYSTEM INVITES</div>
+          <div style="font-size: 2.2rem; font-weight: 900; color: var(--text-primary); margin-top: 6px; line-height: 1.1;">${totalInvites}</div>
         </div>
-        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.06)); color: #10b981; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid rgba(16, 185, 129, 0.2);">
           <i class="fas fa-paper-plane"></i>
         </div>
       </div>
 
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #f59e0b; border-radius: 14px; padding: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
         <div>
-          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">VERIFIED & ENROLLED</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${verifiedInvites} / ${enrolledInvites}</div>
-          <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Verified / Enrolled</div>
+          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ACCUMULATED UNITS</div>
+          <div style="font-size: 2.2rem; font-weight: 900; color: var(--text-primary); margin-top: 6px; line-height: 1.1;">${totalUnits.toFixed(2)}</div>
         </div>
-        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-          <i class="fas fa-check-circle"></i>
-        </div>
-      </div>
-
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">ACCUMULATED UNITS</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin: 4px 0;">${totalUnits.toFixed(2)}</div>
-          <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">1 Unit = ₱4,500</div>
-        </div>
-        <div style="background: rgba(2, 132, 199, 0.12); color: #0284c7; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.06)); color: #d97706; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid rgba(245, 158, 11, 0.2);">
           <i class="fas fa-award"></i>
         </div>
       </div>
@@ -308,12 +294,6 @@ function renderManagementOverview(container, role) {
                   <td><strong style="color: #0284c7;">₱${(m.availableForRelease || 0).toLocaleString()}</strong></td>
                   <td style="text-align: right;">
                     <div style="display: flex; justify-content: flex-end; gap: 6px;">
-                      <button class="btn btn-secondary btn-xs btn-export-member-data" data-id="${m.id}" style="background: #e0f2fe; color: #0284c7; border: none; font-size: 0.72rem; font-weight: 700; padding: 5px 10px; border-radius: 6px;">
-                        <i class="fas fa-file-export"></i> Export Data
-                      </button>
-                      <button class="btn btn-secondary btn-xs btn-view-member-portfolio" data-id="${m.id}" style="background: #e0f2fe; color: #0284c7; border: none; font-size: 0.72rem; font-weight: 700; padding: 5px 10px; border-radius: 6px;">
-                        <i class="fas fa-folder"></i> Portfolio
-                      </button>
                       <button class="btn btn-primary btn-xs btn-inspect-account" data-id="${m.id}" style="background: #002355; color: #ffffff; border: none; font-size: 0.72rem; font-weight: 700; padding: 5px 10px; border-radius: 6px;">
                         <i class="fas fa-eye"></i> View Audit Details
                       </button>
@@ -383,24 +363,7 @@ function renderManagementOverview(container, role) {
     });
   });
 
-  // Handle Export Data button in matrix table
-  container.querySelectorAll('.btn-export-member-data').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const memId = btn.getAttribute('data-id');
-      const reportsTab = document.querySelector('[data-tab="reports"]');
-      if (reportsTab) reportsTab.click();
-    });
-  });
 
-  // Handle Portfolio button in matrix table
-  container.querySelectorAll('.btn-view-member-portfolio').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const memId = btn.getAttribute('data-id');
-      openInspectModal(memId);
-    });
-  });
 
   // Handle Inspect Account & Invites button
   const modal = container.querySelector('#modal-inspect-account');
@@ -468,13 +431,7 @@ function renderManagementOverview(container, role) {
             <div style="font-size: 0.72rem; color: var(--accent-amber); font-weight: 600;">${pendingCount} Awaiting Verification</div>
           </div>
 
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-sm);">
-            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">VERIFIED & ENROLLED</div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-emerald); margin-top: 2px;">
-              ${verifiedCount} / ${enrolledCount}
-            </div>
-            <div style="font-size: 0.72rem; color: var(--text-muted);">Verified Invites</div>
-          </div>
+
 
           <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-sm); position: relative;">
             <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; align-items: center;">

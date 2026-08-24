@@ -33,9 +33,8 @@ export function renderAnalytics(container) {
     <div class="grid-4">
       <div class="card stat-card">
         <div class="stat-info">
-          <span>Monthly Invites (July 2026)</span>
+          <span>Monthly Invites (August 2026)</span>
           <div class="stat-value">${monthlyInvites}</div>
-          <div class="stat-sub">Recent activity this month</div>
         </div>
         <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
       </div>
@@ -44,7 +43,6 @@ export function renderAnalytics(container) {
         <div class="stat-info">
           <span>Total Invites Cumulative</span>
           <div class="stat-value">${totalInvites}</div>
-          <div class="stat-sub">All time invitations</div>
         </div>
         <div class="stat-icon"><i class="fas fa-paper-plane"></i></div>
       </div>
@@ -53,7 +51,6 @@ export function renderAnalytics(container) {
         <div class="stat-info">
           <span>Verified Invites</span>
           <div class="stat-value">${verifiedInvites}</div>
-          <div class="stat-sub"><i class="fas fa-check"></i> Verification Rate: <strong>${verificationRate}%</strong></div>
         </div>
         <div class="stat-icon"><i class="fas fa-user-check"></i></div>
       </div>
@@ -62,7 +59,6 @@ export function renderAnalytics(container) {
         <div class="stat-info">
           <span>Enrolled Invites</span>
           <div class="stat-value">${enrolledInvites}</div>
-          <div class="stat-sub"><i class="fas fa-graduation-cap"></i> Conversion Rate: <strong>${conversionRate}%</strong></div>
         </div>
         <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
       </div>
@@ -130,11 +126,11 @@ export function renderAnalytics(container) {
       new window.Chart(ctxMonthly, {
         type: 'line',
         data: {
-          labels: ['Mar 2026', 'Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026 (Current)'],
+          labels: ['Aug 2026 (Current)'],
           datasets: [
             {
               label: 'Invites Submitted',
-              data: [3, 5, 8, 12, monthlyInvites],
+              data: [totalInvites],
               borderColor: '#0284c7',
               backgroundColor: 'rgba(2, 132, 199, 0.12)',
               fill: true,
@@ -142,7 +138,7 @@ export function renderAnalytics(container) {
             },
             {
               label: 'Units Accumulated',
-              data: [2, 4, 9, 14, 18],
+              data: [member ? Number(member.totalUnits || 0) : 0],
               borderColor: '#f59e0b',
               backgroundColor: 'rgba(245, 158, 11, 0.12)',
               fill: true,

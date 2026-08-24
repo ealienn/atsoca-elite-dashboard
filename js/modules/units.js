@@ -30,7 +30,6 @@ export function renderUnits(container) {
         <div class="stat-info">
           <span>Monthly Units Earned</span>
           <div class="stat-value">${member.monthlyUnits} Units</div>
-          <div class="stat-sub">Current month accumulation</div>
         </div>
         <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
       </div>
@@ -39,7 +38,6 @@ export function renderUnits(container) {
         <div class="stat-info">
           <span>Total Accumulated Units</span>
           <div class="stat-value">${member.totalUnits} Units</div>
-          <div class="stat-sub">All-time lifetime balance</div>
         </div>
         <div class="stat-icon"><i class="fas fa-award"></i></div>
       </div>
@@ -48,7 +46,6 @@ export function renderUnits(container) {
         <div class="stat-info">
           <span>Next Elite Level</span>
           <div class="stat-value">${levelInfo.nextLevel}</div>
-          <div class="stat-sub">Requires <strong>${levelInfo.unitsNeeded}</strong> additional units</div>
         </div>
         <div class="stat-icon"><i class="fas fa-level-up-alt"></i></div>
       </div>

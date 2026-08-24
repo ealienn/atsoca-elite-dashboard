@@ -70,7 +70,6 @@ export function renderLeaderboard(container) {
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
         <div>
           <h2>Leaderboard & Partner Ranking</h2>
-          <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #cbd5e1;">Real-time performance ranking and unit tracking of official Elite Members</p>
         </div>
         <div style="display: flex; gap: 12px; align-items: center;">
           <span style="background: rgba(255, 255, 255, 0.14); color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.82rem; border: 1px solid rgba(255, 255, 255, 0.3);">
