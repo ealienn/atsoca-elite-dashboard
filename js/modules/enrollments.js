@@ -37,7 +37,6 @@ export function renderEnrollments(container) {
         <div class="stat-info">
           <span>Total Referral Investment Fees</span>
           <div class="stat-value">${formatPHP(totalFee)}</div>
-          <div class="stat-sub">Sum of Gross Fees</div>
         </div>
         <div class="stat-icon"><i class="fas fa-coins"></i></div>
       </div>
@@ -46,7 +45,6 @@ export function renderEnrollments(container) {
         <div class="stat-info">
           <span>Payments Collected</span>
           <div class="stat-value">${formatPHP(totalPaid)}</div>
-          <div class="stat-sub"><i class="fas fa-check-circle"></i> Basis for Units & Referral %</div>
         </div>
         <div class="stat-icon"><i class="fas fa-wallet"></i></div>
       </div>
@@ -55,7 +53,6 @@ export function renderEnrollments(container) {
         <div class="stat-info">
           <span>Outstanding Balance</span>
           <div class="stat-value">${formatPHP(totalBal)}</div>
-          <div class="stat-sub">Pending Student Collections</div>
         </div>
         <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
       </div>

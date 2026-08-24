@@ -130,12 +130,11 @@ export function renderReferralFees(container) {
               <th>Enrollment ID</th>
               <th>Participant Name</th>
               <th>Course / Program</th>
-              <th>Payment Made (Basis)</th>
+              <th>Fee</th>
+              <th>Amount Paid</th>
               <th>Applicable Level</th>
-              <th>Fee Bracket</th>
               <th>Referral %</th>
               <th>Computed Referral Fee</th>
-              <th>Referral Status</th>
             </tr>
           </thead>
           <tbody>
@@ -147,16 +146,11 @@ export function renderReferralFees(container) {
                   <td><code>${enr.id}</code></td>
                   <td><strong>${enr.participantName}</strong></td>
                   <td>${enr.trainingType}</td>
+                  <td><strong>${formatPHP(enr.investmentFee)}</strong></td>
                   <td><span style="color: var(--accent-emerald); font-weight: 700;">${formatPHP(enr.paymentMade)}</span></td>
                   <td><span class="tier-badge tier-${calc.eliteLevel.replace(/\s+/g, '')}">${calc.eliteLevel}</span></td>
-                  <td><small>${calc.feeBracketLabel}</small></td>
                   <td><strong>${calc.percentageFormatted}</strong></td>
                   <td><strong style="color: var(--accent-amber); font-size: 1.05rem;">${formatPHP(calc.referralFee)}</strong></td>
-                  <td>
-                    <span class="status-pill status-${isPaid ? 'Released' : 'Pending'}">
-                      ${isPaid ? 'Available for Release' : 'Pending Full Payment'}
-                    </span>
-                  </td>
                 </tr>
               `;
             }).join('')}

@@ -36,10 +36,17 @@ function renderEliteMemberOverview(container) {
   };
 
   const allInvites = (db && db.data && Array.isArray(db.data.invites)) ? db.data.invites : [];
-  const invites = allInvites.filter(i => i && (i.referrerId === member.id || (i.referrerName && member.name && i.referrerName.toLowerCase() === member.name.toLowerCase())));
+  const invites = allInvites.filter(i => {
+    if (!i) return false;
+    const matchId = i.referrerId && member.id && String(i.referrerId).trim() === String(member.id).trim();
+    const matchEmail = i.referrerEmail && member.email && i.referrerEmail.toLowerCase().trim() === member.email.toLowerCase().trim();
+    const matchName = i.referrerName && member.name && i.referrerName.toLowerCase().trim() === member.name.toLowerCase().trim();
+    return matchId || matchEmail || matchName;
+  });
 
   const totalInvites = invites.length;
-  const monthlyInvites = invites.filter(i => i && i.dateSubmitted && i.dateSubmitted.startsWith('2026-08')).length;
+  const currentYearMonth = new Date().toISOString().slice(0, 7);
+  const monthlyInvites = invites.filter(i => i && i.dateSubmitted && (i.dateSubmitted.startsWith(currentYearMonth) || i.dateSubmitted.startsWith('2026-08'))).length;
   const enrolledInvites = invites.filter(i => i && i.enrollmentStatus === 'Enrolled').length;
   const verifiedInvites = invites.filter(i => i && i.verificationStatus === 'Verified').length;
 
@@ -57,14 +64,6 @@ function renderEliteMemberOverview(container) {
       <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         Welcome back, ${member.name}!
       </div>
-      <div class="welcome-actions">
-        <button class="btn-mock-sky" id="btn-quick-invite">
-          <i class="fas fa-paper-plane"></i> Submit Invite
-        </button>
-        <button class="btn-mock-green" id="btn-quick-release">
-          <i class="fas fa-hand-holding-usd"></i> Request Release
-        </button>
-      </div>
     </div>
 
     <!-- 1. Top Stat Cards (Grid 4) -->
@@ -73,7 +72,6 @@ function renderEliteMemberOverview(container) {
         <div class="mock-stat-content">
           <div class="mock-stat-title">TOTAL INVITES SUBMITTED</div>
           <div class="mock-stat-number">${totalInvites}</div>
-          <div class="mock-stat-sub">Monthly: ${monthlyInvites}</div>
         </div>
         <div class="mock-icon-sky">
           <i class="fas fa-calendar-alt"></i>
@@ -84,7 +82,6 @@ function renderEliteMemberOverview(container) {
         <div class="mock-stat-content">
           <div class="mock-stat-title">VERIFIED</div>
           <div class="mock-stat-number">${verifiedInvites}</div>
-          <div class="mock-stat-sub">Verified</div>
         </div>
         <div class="mock-icon-sky">
           <i class="fas fa-check"></i>
@@ -95,7 +92,6 @@ function renderEliteMemberOverview(container) {
         <div class="mock-stat-content">
           <div class="mock-stat-title">ENROLLED</div>
           <div class="mock-stat-number">${enrolledInvites}</div>
-          <div class="mock-stat-sub">Active</div>
         </div>
         <div class="mock-icon-sky">
           <i class="fas fa-graduation-cap"></i>
@@ -106,7 +102,6 @@ function renderEliteMemberOverview(container) {
         <div class="mock-stat-content">
           <div class="mock-stat-title">TOTAL UNITS</div>
           <div class="mock-stat-number">${displayUnits}</div>
-          <div class="mock-stat-sub">1 Unit = ₱4,500</div>
         </div>
         <div class="mock-icon-sky">
           <i class="fas fa-award"></i>
@@ -136,7 +131,7 @@ function renderEliteMemberOverview(container) {
           <tbody>
             ${invites.length === 0 ? `
               <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No invites submitted yet.</td></tr>
-            ` : invites.slice(0, 5).map(inv => `
+            ` : invites.map(inv => `
               <tr>
                 <td><strong>${inv.inviteName}</strong></td>
                 <td>${inv.schoolCompany}</td>

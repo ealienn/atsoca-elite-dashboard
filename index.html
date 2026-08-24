@@ -132,14 +132,6 @@
           <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             Welcome back, Joshua Villafuerte!
           </div>
-          <div class="welcome-actions">
-            <button class="btn-mock-sky" id="btn-quick-invite">
-              <i class="fas fa-paper-plane"></i> Submit Invite
-            </button>
-            <button class="btn-mock-green" id="btn-quick-release">
-              <i class="fas fa-hand-holding-usd"></i> Request Release
-            </button>
-          </div>
         </div>
 
         <!-- 1. Top Stat Cards (Grid 4) -->
@@ -148,7 +140,6 @@
             <div class="mock-stat-content">
               <div class="mock-stat-title">TOTAL INVITES SUBMITTED</div>
               <div class="mock-stat-number">7</div>
-              <div class="mock-stat-sub">Monthly: 7</div>
             </div>
             <div class="mock-icon-sky">
               <i class="fas fa-calendar-alt"></i>
@@ -159,7 +150,6 @@
             <div class="mock-stat-content">
               <div class="mock-stat-title">VERIFIED</div>
               <div class="mock-stat-number">5</div>
-              <div class="mock-stat-sub">Verified</div>
             </div>
             <div class="mock-icon-sky">
               <i class="fas fa-check"></i>
@@ -170,7 +160,6 @@
             <div class="mock-stat-content">
               <div class="mock-stat-title">ENROLLED</div>
               <div class="mock-stat-number">5</div>
-              <div class="mock-stat-sub">Active</div>
             </div>
             <div class="mock-icon-sky">
               <i class="fas fa-graduation-cap"></i>
@@ -499,14 +488,6 @@
               <div class="welcome-text" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 Welcome back, Joshua Villafuerte!
               </div>
-              <div class="welcome-actions">
-                <button class="btn-mock-sky" id="btn-quick-invite" onclick="window.switchTab('invites');">
-                  <i class="fas fa-paper-plane"></i> Submit Invite
-                </button>
-                <button class="btn-mock-green" id="btn-quick-release" onclick="window.switchTab('releases');">
-                  <i class="fas fa-hand-holding-usd"></i> Request Release
-                </button>
-              </div>
             </div>
 
             <div class="mock-grid-4">
@@ -514,7 +495,6 @@
                 <div class="mock-stat-content">
                   <div class="mock-stat-title">TOTAL INVITES SUBMITTED</div>
                   <div class="mock-stat-number">7</div>
-                  <div class="mock-stat-sub">Monthly: 7</div>
                 </div>
                 <div class="mock-icon-sky">
                   <i class="fas fa-calendar-alt"></i>
@@ -525,7 +505,6 @@
                 <div class="mock-stat-content">
                   <div class="mock-stat-title">VERIFIED</div>
                   <div class="mock-stat-number">5</div>
-                  <div class="mock-stat-sub">Verified</div>
                 </div>
                 <div class="mock-icon-sky">
                   <i class="fas fa-check"></i>
@@ -536,7 +515,6 @@
                 <div class="mock-stat-content">
                   <div class="mock-stat-title">ENROLLED</div>
                   <div class="mock-stat-number">5</div>
-                  <div class="mock-stat-sub">Active</div>
                 </div>
                 <div class="mock-icon-sky">
                   <i class="fas fa-graduation-cap"></i>
@@ -547,7 +525,6 @@
                 <div class="mock-stat-content">
                   <div class="mock-stat-title">TOTAL UNITS</div>
                   <div class="mock-stat-number">42</div>
-                  <div class="mock-stat-sub">1 Unit = ₱4,500</div>
                 </div>
                 <div class="mock-icon-sky">
                   <i class="fas fa-award"></i>
@@ -735,21 +712,18 @@
                 <div class="stat-info">
                   <span>TOTAL REFERRAL INVESTMENT FEES</span>
                   <div class="stat-value">₱7,700.00</div>
-                  <div class="stat-sub">Sum of Gross Fees</div>
                 </div>
               </div>
               <div class="card stat-card">
                 <div class="stat-info">
                   <span>PAYMENTS COLLECTED</span>
                   <div class="stat-value" style="color: var(--accent-emerald);">₱6,100.00</div>
-                  <div class="stat-sub">Basis for Units & Referral %</div>
                 </div>
               </div>
               <div class="card stat-card">
                 <div class="stat-info">
                   <span>OUTSTANDING BALANCE</span>
                   <div class="stat-value" style="color: var(--accent-rose);">₱1,600.00</div>
-                  <div class="stat-sub">Pending Student Collections</div>
                 </div>
               </div>
             </div>
@@ -1240,12 +1214,11 @@
                       <th>Enrollment ID</th>
                       <th>Participant Name</th>
                       <th>Course / Program</th>
-                      <th>Payment Made (Basis)</th>
+                      <th>Fee</th>
+                      <th>Amount Paid</th>
                       <th>Applicable Level</th>
-                      <th>Fee Bracket</th>
                       <th>Referral %</th>
                       <th>Computed Referral Fee</th>
-                      <th>Referral Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1253,23 +1226,21 @@
                       <td><strong>ENR-8801</strong></td>
                       <td><strong>Engr. Robert Tan</strong></td>
                       <td>Advanced ISO 9001 Auditor Certification</td>
+                      <td><strong>₱4,500.00</strong></td>
                       <td style="color: var(--accent-emerald); font-weight: 600;">₱4,500.00</td>
                       <td><span class="tier-badge tier-Bronze">Bronze</span></td>
-                      <td>> ₱3,000</td>
                       <td><strong>16%</strong></td>
                       <td style="color: var(--accent-amber); font-weight: 700;">₱720.00</td>
-                      <td><span class="status-pill status-FullyPaid">Available for Release</span></td>
                     </tr>
                     <tr>
                       <td><strong>ENR-8802</strong></td>
                       <td><strong>Dr. Sofia Garcia</strong></td>
                       <td>Healthcare Safety & Compliance Masterclass</td>
+                      <td><strong>₱2,000.00</strong></td>
                       <td style="color: var(--accent-emerald); font-weight: 600;">₱1,600.00</td>
                       <td><span class="tier-badge tier-Bronze">Bronze</span></td>
-                      <td>≤ ₱1,999</td>
                       <td><strong>8%</strong></td>
                       <td style="color: var(--accent-amber); font-weight: 700;">₱128.00</td>
-                      <td><span class="status-pill status-Partial">Pending Full Payment</span></td>
                     </tr>
                   </tbody>
                 </table>

@@ -551,7 +551,12 @@ class DBState {
     }
 
     this.save();
+    this.notify();
     return newInvite;
+  }
+
+  submitInvite(inviteData) {
+    return this.addInvite(inviteData);
   }
 
   verifyInvite(inviteId, status, enrollmentStatus = null) {

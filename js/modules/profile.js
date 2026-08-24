@@ -19,46 +19,30 @@ export function renderProfileModal(container, onSaveSuccess = null) {
     levelInfo = getEliteLevel(account ? account.totalUnits : 0);
   }
 
-  const presetAvatars = [
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80'
-  ];
-
   container.innerHTML = `
-    <!-- Header Avatar & Account Summary -->
-    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; background: var(--box-inner-bg); padding: 14px; border-radius: 12px; border: 1px solid var(--border-color);">
-      <img src="${account.avatar || presetAvatars[0]}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue);">
-      <div>
-        <h4 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-primary);">${account.name}</h4>
-        ${isManagementRole ? `
-          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">
-            Role Account: <strong>${activeRole}</strong> &bull; Email: ${account.email}
-          </div>
-        ` : ''}
-        <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
-          ${isManagementRole ? `
-            <span class="status-pill status-Verified" style="font-size: 0.75rem; padding: 2px 10px;">
-              <i class="fas fa-shield-alt"></i> ${activeRole} Account (${account.department || 'Management'})
-            </span>
-          ` : `
-            <span class="tier-badge tier-${levelInfo.name.replace(/\s+/g, '')}" style="font-size: 0.75rem; padding: 2px 8px;">
-              ${levelInfo.name} Partner
-            </span>
-            <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">
-              ${Number(account.totalUnits || 0).toFixed(2)} Units
-            </span>
-          `}
+    <!-- Prominent Profile Picture with Camera Icon Overlay (Reference Design) -->
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">
+      <div id="profile-avatar-trigger" style="position: relative; width: 110px; height: 110px; cursor: pointer;" title="Click to upload profile photo">
+        <img src="${account.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+        
+        <!-- Camera Icon Overlay Badge -->
+        <div style="position: absolute; bottom: 2px; right: 2px; width: 34px; height: 34px; background: #ffffff; color: #000000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.3); border: 2px solid #ffffff;">
+          <i class="fas fa-camera" style="font-size: 0.95rem; color: #000000;"></i>
         </div>
+      </div>
+
+      <!-- Hidden File Input for Device Upload -->
+      <input type="file" id="modal-prof-file-input" accept="image/*" style="display: none;">
+      <input type="hidden" id="modal-prof-avatar-url" value="${account.avatar || ''}">
+
+      <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; font-weight: 600;">
+        Click photo or camera icon to upload new picture
       </div>
     </div>
 
     <!-- Alert Notification -->
-    <div id="modal-profile-save-alert" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-emerald); color: var(--accent-emerald); padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; font-size: 0.85rem;">
-      <i class="fas fa-check-circle"></i> Profile settings for ${account.name} saved successfully!
+    <div id="modal-profile-save-alert" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-emerald); color: var(--accent-emerald); padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; font-size: 0.85rem; text-align: center;">
+      <i class="fas fa-check-circle"></i> Profile settings saved successfully!
     </div>
 
     <!-- Profile Form -->
@@ -94,16 +78,6 @@ export function renderProfileModal(container, onSaveSuccess = null) {
               <input type="password" id="modal-prof-password" class="form-control" value="${account.password || '12345'}" required placeholder="Set password">
               <small style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 4px; display: block;">Default password is 12345.</small>
             </div>
-
-            <div class="form-group">
-              <label><i class="fas fa-image"></i> Avatar Selection</label>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;" id="modal-preset-avatar-container">
-                ${presetAvatars.map((url, idx) => `
-                  <img src="${url}" data-url="${url}" class="preset-avatar-item ${account.avatar === url ? 'selected' : ''}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid ${account.avatar === url ? 'var(--accent-blue)' : 'transparent'};" title="Avatar ${idx + 1}">
-                `).join('')}
-              </div>
-              <input type="url" id="modal-prof-avatar-url" class="form-control" value="${account.avatar || ''}" placeholder="Custom Image URL">
-            </div>
           </div>
         </div>
       ` : `
@@ -128,16 +102,6 @@ export function renderProfileModal(container, onSaveSuccess = null) {
             <div class="form-group">
               <label><i class="fas fa-key"></i> Password</label>
               <input type="password" id="modal-prof-password" class="form-control" value="${account.password || '12345'}" required placeholder="Set password">
-            </div>
-
-            <div class="form-group">
-              <label><i class="fas fa-image"></i> Preset Avatars</label>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;" id="modal-preset-avatar-container">
-                ${presetAvatars.map((url, idx) => `
-                  <img src="${url}" data-url="${url}" class="preset-avatar-item ${account.avatar === url ? 'selected' : ''}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid ${account.avatar === url ? 'var(--accent-blue)' : 'transparent'};" title="Avatar ${idx + 1}">
-                `).join('')}
-              </div>
-              <input type="url" id="modal-prof-avatar-url" class="form-control" value="${account.avatar || ''}" placeholder="Custom Image URL">
             </div>
           </div>
 
@@ -174,25 +138,30 @@ export function renderProfileModal(container, onSaveSuccess = null) {
     </form>
   `;
 
-  // Bind Avatar Selection
+  // Bind Photo Upload & Camera Trigger
+  const avatarTrigger = container.querySelector('#profile-avatar-trigger');
+  const fileInput = container.querySelector('#modal-prof-file-input');
   const avatarUrlInput = container.querySelector('#modal-prof-avatar-url');
   const avatarPreview = container.querySelector('#modal-profile-preview-avatar');
-  const presetItems = container.querySelectorAll('.preset-avatar-item');
 
-  presetItems.forEach(item => {
-    item.addEventListener('click', () => {
-      presetItems.forEach(i => i.style.borderColor = 'transparent');
-      item.style.borderColor = 'var(--accent-blue)';
-      const selectedUrl = item.getAttribute('data-url');
-      if (avatarUrlInput) avatarUrlInput.value = selectedUrl;
-      if (avatarPreview) avatarPreview.src = selectedUrl;
+  if (avatarTrigger && fileInput) {
+    avatarTrigger.addEventListener('click', () => {
+      fileInput.click();
     });
-  });
+  }
 
-  if (avatarUrlInput && avatarPreview) {
-    avatarUrlInput.addEventListener('input', (e) => {
-      const val = e.target.value.trim();
-      if (val) avatarPreview.src = val;
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target.result;
+          if (avatarPreview) avatarPreview.src = dataUrl;
+          if (avatarUrlInput) avatarUrlInput.value = dataUrl;
+        };
+        reader.readAsDataURL(file);
+      }
     });
   }
 
@@ -214,7 +183,7 @@ export function renderProfileModal(container, onSaveSuccess = null) {
       const email = container.querySelector('#modal-prof-email').value;
       const phone = container.querySelector('#modal-prof-phone').value;
       const password = container.querySelector('#modal-prof-password').value;
-      const avatar = container.querySelector('#modal-prof-avatar-url').value;
+      const avatar = avatarPreview ? avatarPreview.src : (avatarUrlInput ? avatarUrlInput.value : '');
 
       if (isManagementRole) {
         const department = container.querySelector('#modal-prof-dept') ? container.querySelector('#modal-prof-dept').value : '';
