@@ -224,16 +224,25 @@ class AppController {
       });
     }
 
-    // Logout Button Listener
+    // Global Logout Handler
+    window.handleLogout = () => {
+      localStorage.setItem('atsoca_logged_in', 'false');
+      const loginScreen = document.querySelector('#login-screen');
+      if (loginScreen) {
+        loginScreen.classList.remove('hidden');
+        loginScreen.style.display = 'flex';
+      } else {
+        window.location.reload();
+      }
+    };
+
+    // Logout Button Event Delegation
     document.addEventListener('click', (e) => {
       const logoutBtn = e.target.closest('#btn-logout');
       if (logoutBtn) {
         e.preventDefault();
-        localStorage.setItem('atsoca_logged_in', 'false');
-        if (loginScreen) {
-          loginScreen.classList.remove('hidden');
-          loginScreen.style.display = 'flex';
-        }
+        e.stopPropagation();
+        window.handleLogout();
       }
     });
   }
