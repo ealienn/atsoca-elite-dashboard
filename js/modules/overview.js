@@ -346,31 +346,17 @@ function renderManagementOverview(container, role) {
     btnCloseModal.addEventListener('click', () => modal.classList.remove('active'));
   }
 
-  // Attach direct button listeners
   container.querySelectorAll('.btn-inspect-account').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    btn.addEventListener('click', () => {
       const memId = btn.getAttribute('data-id');
-      if (memId) openInspectModal(memId);
+      openInspectModal(memId);
     });
-  });
-
-  // Attach delegated listener on container for reliability
-  container.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-inspect-account');
-    if (btn) {
-      e.preventDefault();
-      e.stopPropagation();
-      const memId = btn.getAttribute('data-id');
-      if (memId) openInspectModal(memId);
-    }
   });
 
   // Function to open and populate inspect account modal
   function openInspectModal(memId) {
     const targetMember = db.data.members.find(m => m.id === memId);
-    if (!targetMember) return;
+    if (!targetMember || !modal || !modalBody) return;
 
     const tier = getEliteLevel(targetMember.totalUnits);
     const memberInvites = (db.data.invites || []).filter(i => 
@@ -378,9 +364,7 @@ function renderManagementOverview(container, role) {
       (i.referrerName && i.referrerName.toLowerCase() === targetMember.name.toLowerCase())
     );
 
-    const verifiedCount = memberInvites.filter(i => i.verificationStatus === 'Verified').length;
-    const enrolledCount = memberInvites.filter(i => i.enrollmentStatus === 'Enrolled').length;
-    const pendingCount = memberInvites.filter(i => i.verificationStatus === 'Pending').length;
+    const isEliteMember = db && db.activeRole === 'Elite Member';
 
     modalBody.innerHTML = `
       <!-- Member Overview Header Box -->
@@ -405,8 +389,6 @@ function renderManagementOverview(container, role) {
               ` : ''}
             </div>
           </div>
-
-
         </div>
 
         <!-- 4 Metric Cards for this Member -->
@@ -417,8 +399,6 @@ function renderManagementOverview(container, role) {
               ${memberInvites.length} Total
             </div>
           </div>
-
-
 
           <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-sm); position: relative;">
             <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
@@ -431,22 +411,10 @@ function renderManagementOverview(container, role) {
               ${Number(targetMember.totalUnits || 0).toFixed(2)} Units
             </div>
           </div>
-
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-sm); position: relative;">
-            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
-              AVAILABLE PAYOUT
-              <button class="btn btn-secondary btn-xs btn-adjust-payout" data-id="${targetMember.id}" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px;" title="Adjust Payout">
-                <i class="fas fa-edit"></i> Edit
-              </button>
-            </div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-emerald); margin-top: 2px;">
-              ₱${(targetMember.availableForRelease || 0).toLocaleString()}
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- Invites & Enrollments Table for Verification (12-Column Schema) -->
+      <!-- Invites & Enrollments Table -->
       <div style="margin-top: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h4 style="margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
@@ -456,55 +424,49 @@ function renderManagementOverview(container, role) {
         </div>
 
         <div class="table-responsive" style="max-height: 340px; overflow-y: auto;">
-          <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
+          <table class="custom-table" style="width: 100%; font-size: 0.8rem;">
             <thead>
               <tr>
-                <th>Respondent ID</th>
-                <th>Participant Name</th>
-                <th>Duplicate Checker</th>
+                <th>ID</th>
+                <th>Participant</th>
+                <th>Email / Phone</th>
                 <th>School / Company</th>
-                <th>Training Program</th>
-                <th>Referrer</th>
-                <th>Unit Accumulation</th>
-                <th>Training Fee</th>
-                <th>Amount Paid</th>
-                <th>Balance</th>
-                <th>Status</th>
+                <th>Program / Course</th>
+                <th>Payment Fee</th>
+                <th>Payment Made</th>
+                <th>Verification</th>
+                <th>Units</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               ${memberInvites.length === 0 ? `
-                <tr><td colspan="12" style="text-align: center; color: var(--text-muted); padding: 28px;">No enrollment / invite records found for this Elite Member yet.</td></tr>
-              ` : memberInvites.map(inv => {
-                const enrRecord = (db.data.enrollments || []).find(e => e.id === inv.id || e.respondentId === inv.respondentId) || inv;
-                const isDup = inv.duplicateChecker === 'DUPLICATE' || String(inv.duplicateChecker).toUpperCase().includes('DUP');
-                const unitsEarned = Number(enrRecord.unitsEarned || ((enrRecord.paymentMade || 0) / 4500)).toFixed(2);
-                const fee = Number(enrRecord.investmentFee || inv.investmentFee || 4500);
-                const paid = Number(enrRecord.paymentMade || inv.paymentMade || 0);
-                const bal = Math.max(0, fee - paid);
-                const payStatus = enrRecord.paymentStatus || inv.paymentStatus || (paid >= fee ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
-                const displayId = inv.respondentId || inv.id.replace(/^(INV|ENR)-/, '');
+                <tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 24px;">No invites or enrollments submitted yet by this Elite Member.</td></tr>
+              ` : memberInvites.map(i => {
+                const enr = (db.data.enrollments || []).find(e => String(e.id) === String(i.id));
+                const paidAmt = enr ? enr.paymentMade : (i.enrollmentStatus === 'Enrolled' ? 4500 : 0);
+                const feeAmt = enr ? enr.trainingFee : 4500;
+                const unitsEarned = enr ? enr.unitsEarned : (paidAmt / 4500);
 
                 return `
                   <tr>
-                    <td><code>${displayId}</code></td>
-                    <td><strong>${inv.inviteName || inv.participantName}</strong></td>
+                    <td><code>${i.id}</code></td>
+                    <td><strong>${i.participantName}</strong></td>
+                    <td><div style="font-size: 0.75rem; color: var(--text-secondary);">${i.email}</div></td>
+                    <td>${i.schoolCompany || '-'}</td>
+                    <td>${i.courseName || '-'}</td>
+                    <td><strong>${formatPHP(feeAmt)}</strong></td>
+                    <td><strong style="color: var(--accent-emerald);">${formatPHP(paidAmt)}</strong></td>
                     <td>
-                      <span class="status-pill ${isDup ? 'status-Rejected' : 'status-Verified'}" style="font-size: 0.72rem; padding: 2px 8px;">
-                        ${isDup ? 'DUPLICATE' : 'UNIQUE'}
-                      </span>
+                      <select class="form-control select-verify-status" data-id="${i.id}" style="padding: 2px 6px; font-size: 0.78rem; font-weight: 700; height: 28px;">
+                        <option value="Pending" ${i.verificationStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Verified" ${i.verificationStatus === 'Verified' ? 'selected' : ''}>Verified</option>
+                        <option value="Rejected" ${i.verificationStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                      </select>
                     </td>
-                    <td>${inv.schoolCompany || 'N/A'}</td>
-                    <td><small>${inv.trainingType}</small></td>
-                    <td>${inv.referrerName || targetMember.name}</td>
-                    <td><span class="unit-badge" style="font-size: 0.75rem;"><i class="fas fa-star"></i> +${unitsEarned} Units</span></td>
-                    <td><strong>${formatPHP(fee)}</strong></td>
-                    <td><span style="color: var(--accent-emerald); font-weight: 700;">${formatPHP(paid)}</span></td>
-                    <td><span style="color: ${bal > 0 ? 'var(--accent-rose)' : 'var(--text-muted)'}; font-weight: 600;">${formatPHP(bal)}</span></td>
-                    <td><span class="status-pill status-${payStatus.replace(/\s+/g, '')}">${payStatus}</span></td>
+                    <td><span class="unit-badge" style="font-size: 0.75rem;">+${unitsEarned} Units</span></td>
                     <td>
-                      <button class="btn btn-secondary btn-xs btn-edit-inspect-pay" data-id="${enrRecord.id || inv.id}" style="padding: 3px 8px; font-size: 0.72rem;">
+                      <button class="btn btn-secondary btn-xs btn-edit-payment" data-id="${i.id}" style="padding: 3px 8px; font-size: 0.72rem;">
                         <i class="fas fa-edit"></i> Edit Payment
                       </button>
                     </td>
@@ -517,15 +479,24 @@ function renderManagementOverview(container, role) {
       </div>
     `;
 
-    modal.classList.add('active');
+    // Bind dropdown handlers inside modal
+    modalBody.querySelectorAll('.select-verify-status').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const invId = sel.getAttribute('data-id');
+        const newStatus = e.target.value;
+        db.updateInviteVerification(invId, newStatus);
+        openInspectModal(memId);
+        renderManagementOverview(container, role);
+      });
+    });
 
-    // Bind Edit Payment action triggers inside verification table
-    modalBody.querySelectorAll('.btn-edit-inspect-pay').forEach(btn => {
+    // Bind Edit Payment buttons inside modal
+    modalBody.querySelectorAll('.btn-edit-payment').forEach(btn => {
       btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-id');
-        const enr = (db.data.enrollments || []).find(e => e.id === targetId || e.respondentId === targetId || e.id.replace('ENR-', '') === targetId);
+        const invId = btn.getAttribute('data-id');
+        const enr = (db.data.enrollments || []).find(e => String(e.id) === String(invId));
         const currentPaid = enr ? enr.paymentMade : 0;
-        const currentFee = enr ? enr.investmentFee : 4500;
+        const currentFee = enr ? enr.trainingFee : 4500;
         const targetName = enr ? enr.participantName : 'Participant';
 
         const val = prompt(`Enter updated Payment Amount Made for ${targetName} (Total Investment Fee: ${formatPHP(currentFee)}):`, currentPaid);
@@ -539,7 +510,7 @@ function renderManagementOverview(container, role) {
       });
     });
 
-    // Bind Units adjust button to open Unit History Audit Trail Ledger Modal
+    // Bind Units adjust button
     const btnAdjUnits = modalBody.querySelector('.btn-adjust-units');
     if (btnAdjUnits) {
       btnAdjUnits.addEventListener('click', () => {
@@ -547,26 +518,7 @@ function renderManagementOverview(container, role) {
       });
     }
 
-    // Bind Payout adjust button
-    const btnAdjPayout = modalBody.querySelector('.btn-adjust-payout');
-    if (btnAdjPayout) {
-      btnAdjPayout.addEventListener('click', () => {
-        const current = targetMember.availableForRelease || 0;
-        const val = prompt(`Adjust Available Payout (₱) for ${targetMember.name}:`, current);
-        if (val !== null && !isNaN(parseFloat(val))) {
-          db.updateMemberUnitsAndFees(targetMember.id, targetMember.totalUnits, parseFloat(val));
-          openInspectModal(memId);
-          renderManagementOverview(container, role);
-        }
-      });
-    }
-
-    // Activate and show modal overlay
-    if (typeof window.openModal === 'function') {
-      window.openModal(modal);
-    } else {
-      modal.classList.add('active');
-    }
+    modal.classList.add('active');
   }
 
   // Function to open Unit History Audit Trail Ledger Modal
