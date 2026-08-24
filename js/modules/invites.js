@@ -59,7 +59,7 @@ export function renderInvites(container) {
           <tbody>
             ${invites.map(inv => `
               <tr>
-                <td><code>${inv.id}</code></td>
+                <td><code>${inv.respondentId || inv.id.replace('INV-', '')}</code></td>
                 <td><strong>${inv.inviteName}</strong></td>
                 <td>${inv.schoolCompany}</td>
                 <td><small>${inv.trainingType}</small></td>

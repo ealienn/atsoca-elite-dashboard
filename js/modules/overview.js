@@ -608,17 +608,18 @@ function renderManagementOverview(container, role) {
               ${memberInvites.length === 0 ? `
                 <tr><td colspan="12" style="text-align: center; color: var(--text-muted); padding: 28px;">No enrollment / invite records found for this Elite Member yet.</td></tr>
               ` : memberInvites.map(inv => {
-                const enrRecord = (db.data.enrollments || []).find(e => e.id === inv.id || e.id === `ENR-${inv.id}`) || inv;
+                const enrRecord = (db.data.enrollments || []).find(e => e.id === inv.id || e.respondentId === inv.respondentId) || inv;
                 const isDup = inv.duplicateChecker === 'DUPLICATE' || String(inv.duplicateChecker).toUpperCase().includes('DUP');
                 const unitsEarned = Number(enrRecord.unitsEarned || ((enrRecord.paymentMade || 0) / 4500)).toFixed(2);
                 const fee = Number(enrRecord.investmentFee || inv.investmentFee || 4500);
                 const paid = Number(enrRecord.paymentMade || inv.paymentMade || 0);
                 const bal = Math.max(0, fee - paid);
                 const payStatus = enrRecord.paymentStatus || inv.paymentStatus || (paid >= fee ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
+                const displayId = inv.respondentId || inv.id.replace(/^(INV|ENR)-/, '');
 
                 return `
                   <tr>
-                    <td><code>${inv.id}</code></td>
+                    <td><code>${displayId}</code></td>
                     <td><strong>${inv.inviteName || inv.participantName}</strong></td>
                     <td>
                       <span class="status-pill ${isDup ? 'status-Rejected' : 'status-Verified'}" style="font-size: 0.72rem; padding: 2px 8px;">
@@ -653,7 +654,7 @@ function renderManagementOverview(container, role) {
     modalBody.querySelectorAll('.btn-edit-inspect-pay').forEach(btn => {
       btn.addEventListener('click', () => {
         const targetId = btn.getAttribute('data-id');
-        const enr = (db.data.enrollments || []).find(e => e.id === targetId || e.id === `ENR-${targetId}`);
+        const enr = (db.data.enrollments || []).find(e => e.id === targetId || e.respondentId === targetId || e.id.replace('ENR-', '') === targetId);
         const currentPaid = enr ? enr.paymentMade : 0;
         const currentFee = enr ? enr.investmentFee : 4500;
         const targetName = enr ? enr.participantName : 'Participant';

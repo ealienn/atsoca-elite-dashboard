@@ -301,7 +301,7 @@ class DBState {
         const dateSub = r.dateSubmitted || (r.submittedAt ? String(r.submittedAt).split('T')[0] : new Date().toISOString().split('T')[0]);
 
         syncedInvites.push({
-          id: `INV-${respId}`,
+          id: respId,
           respondentId: respId,
           eliteCode: eliteCode,
           inviteName: partName,
@@ -318,7 +318,7 @@ class DBState {
         });
 
         syncedEnrollments.push({
-          id: `ENR-${respId}`,
+          id: respId,
           respondentId: respId,
           eliteCode: eliteCode,
           participantName: partName,
