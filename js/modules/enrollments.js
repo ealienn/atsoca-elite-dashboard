@@ -33,28 +33,25 @@ export function renderEnrollments(container) {
 
     <!-- Summary Metrics -->
     <div class="grid-3">
-      <div class="card stat-card">
-        <div class="stat-info">
-          <span>Total Referral Investment Fees</span>
-          <div class="stat-value">${formatPHP(totalFee)}</div>
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Referral Investment Fees</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px;">${formatPHP(totalFee)}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-coins"></i></div>
       </div>
 
-      <div class="card stat-card emerald">
-        <div class="stat-info">
-          <span>Payments Collected</span>
-          <div class="stat-value">${formatPHP(totalPaid)}</div>
+      <div class="card stat-card emerald" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Payments Collected</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #10b981;">${formatPHP(totalPaid)}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
       </div>
 
-      <div class="card stat-card rose">
-        <div class="stat-info">
-          <span>Outstanding Balance</span>
-          <div class="stat-value">${formatPHP(totalBal)}</div>
+      <div class="card stat-card rose" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Outstanding Balance</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #f43f5e;">${formatPHP(totalBal)}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
       </div>
     </div>
 

@@ -31,36 +31,32 @@ export function renderAnalytics(container) {
 
     <!-- Monthly Summary Stat Cards -->
     <div class="grid-4">
-      <div class="card stat-card">
-        <div class="stat-info">
-          <span>Monthly Invites (August 2026)</span>
-          <div class="stat-value">${monthlyInvites}</div>
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Monthly Invites (August 2026)</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px;">${monthlyInvites}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
       </div>
 
-      <div class="card stat-card emerald">
-        <div class="stat-info">
-          <span>Total Invites Cumulative</span>
-          <div class="stat-value">${totalInvites}</div>
+      <div class="card stat-card emerald" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Invites Cumulative</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #10b981;">${totalInvites}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-paper-plane"></i></div>
       </div>
 
-      <div class="card stat-card purple">
-        <div class="stat-info">
-          <span>Verified Invites</span>
-          <div class="stat-value">${verifiedInvites}</div>
+      <div class="card stat-card purple" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Verified Invites</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #8b5cf6;">${verifiedInvites}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
       </div>
 
-      <div class="card stat-card amber">
-        <div class="stat-info">
-          <span>Enrolled Invites</span>
-          <div class="stat-value">${enrolledInvites}</div>
+      <div class="card stat-card amber" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Enrolled Invites</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #f59e0b;">${enrolledInvites}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
       </div>
     </div>
 

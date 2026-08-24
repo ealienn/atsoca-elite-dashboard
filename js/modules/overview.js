@@ -66,46 +66,30 @@ function renderEliteMemberOverview(container) {
       </div>
     </div>
 
-    <!-- 1. Top Stat Cards (Grid 4) -->
+    <!-- 1. Top Stat Cards (Grid 4 - Centered Minimal Layout) -->
     <div class="mock-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 24px;">
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #0284c7; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-        <div>
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL INVITES SUBMITTED</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${totalInvites}</div>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(2, 132, 199, 0.06)); color: #0284c7; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(2, 132, 199, 0.2);">
-          <i class="fas fa-calendar-alt"></i>
-        </div>
+      <!-- Member Card 1: Invites Submitted -->
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOTAL INVITES SUBMITTED</div>
+        <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalInvites}</div>
       </div>
 
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #10b981; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-        <div>
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">VERIFIED</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${verifiedInvites}</div>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.06)); color: #10b981; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(16, 185, 129, 0.2);">
-          <i class="fas fa-check"></i>
-        </div>
+      <!-- Member Card 2: Verified -->
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">VERIFIED</div>
+        <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${verifiedInvites}</div>
       </div>
 
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #8b5cf6; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-        <div>
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ENROLLED</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${enrolledInvites}</div>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(139, 92, 246, 0.06)); color: #8b5cf6; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(139, 92, 246, 0.2);">
-          <i class="fas fa-graduation-cap"></i>
-        </div>
+      <!-- Member Card 3: Enrolled -->
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">ENROLLED</div>
+        <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${enrolledInvites}</div>
       </div>
 
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #f59e0b; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-        <div>
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL UNITS</div>
-          <div style="font-size: 2.1rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${displayUnits}</div>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.06)); color: #d97706; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid rgba(245, 158, 11, 0.2);">
-          <i class="fas fa-award"></i>
-        </div>
+      <!-- Member Card 4: Total Units -->
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOTAL UNITS</div>
+        <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${displayUnits}</div>
       </div>
     </div>
 
@@ -193,36 +177,24 @@ function renderManagementOverview(container, role) {
       </div>
     </div>
 
-    <!-- 1. Key Metric Stat Cards -->
+    <!-- 1. Key Metric Stat Cards (Centered Minimalist Layout) -->
     <div class="mock-grid-4" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px;">
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #0284c7; border-radius: 14px; padding: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-        <div>
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL ELITES REGISTERED</div>
-          <div style="font-size: 2.2rem; font-weight: 900; color: var(--text-primary); margin-top: 6px; line-height: 1.1;">${totalMembers}</div>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(2, 132, 199, 0.06)); color: #0284c7; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid rgba(2, 132, 199, 0.2);">
-          <i class="fas fa-users"></i>
-        </div>
+      <!-- Card 1: Total Elites Registered -->
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 24px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOTAL ELITES REGISTERED</div>
+        <div style="font-size: 2.4rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalMembers}</div>
       </div>
 
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #10b981; border-radius: 14px; padding: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-        <div>
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">TOTAL SYSTEM INVITES</div>
-          <div style="font-size: 2.2rem; font-weight: 900; color: var(--text-primary); margin-top: 6px; line-height: 1.1;">${totalInvites}</div>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.06)); color: #10b981; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid rgba(16, 185, 129, 0.2);">
-          <i class="fas fa-paper-plane"></i>
-        </div>
+      <!-- Card 2: Total System Invites -->
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 24px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOTAL SYSTEM INVITES</div>
+        <div style="font-size: 2.4rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalInvites}</div>
       </div>
 
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-top: 3px solid #f59e0b; border-radius: 14px; padding: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-        <div>
-          <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ACCUMULATED UNITS</div>
-          <div style="font-size: 2.2rem; font-weight: 900; color: var(--text-primary); margin-top: 6px; line-height: 1.1;">${totalUnits.toFixed(2)}</div>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.06)); color: #d97706; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid rgba(245, 158, 11, 0.2);">
-          <i class="fas fa-award"></i>
-        </div>
+      <!-- Card 3: Accumulated Units -->
+      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 24px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">ACCUMULATED UNITS</div>
+        <div style="font-size: 2.4rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalUnits.toFixed(2)}</div>
       </div>
     </div>
 

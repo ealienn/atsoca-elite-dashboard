@@ -42,37 +42,26 @@ export function renderPublicEnrollments(container) {
       </div>
     </div>
 
-    <div class="grid-4">
-      <div class="card stat-card">
-        <div class="stat-info">
-          <span>Total Participants Enrolled</span>
-          <div class="stat-value">${totalEnrolled}</div>
+    <div class="grid-3">
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Participants Enrolled</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px;">${totalEnrolled}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-users"></i></div>
       </div>
 
-      <div class="card stat-card emerald">
-        <div class="stat-info">
-          <span>Total Payments Collected</span>
-          <div class="stat-value">${formatPHP(totalCollected)}</div>
+      <div class="card stat-card emerald" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Payments Collected</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #10b981;">${formatPHP(totalCollected)}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-cash-register"></i></div>
       </div>
 
-      <div class="card stat-card rose">
-        <div class="stat-info">
-          <span>Outstanding Balances</span>
-          <div class="stat-value">${formatPHP(totalOutstanding)}</div>
+      <div class="card stat-card rose" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Outstanding Balances</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #f43f5e;">${formatPHP(totalOutstanding)}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-      </div>
-
-      <div class="card stat-card purple">
-        <div class="stat-info">
-          <span>Referred Ratio</span>
-          <div class="stat-value">${totalEnrolled > 0 ? Math.round((referredCount / totalEnrolled) * 100) : 0}%</div>
-        </div>
-        <div class="stat-icon"><i class="fas fa-percentage"></i></div>
       </div>
     </div>
 

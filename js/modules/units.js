@@ -26,48 +26,43 @@ export function renderUnits(container) {
 
     <!-- Unit Stat Cards -->
     <div class="grid-3">
-      <div class="card stat-card amber">
-        <div class="stat-info">
-          <span>Monthly Units Earned</span>
-          <div class="stat-value">${member.monthlyUnits} Units</div>
+      <div class="card stat-card amber" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Monthly Units Earned</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px;">${member.monthlyUnits} Units</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
       </div>
 
-      <div class="card stat-card emerald">
-        <div class="stat-info">
-          <span>Total Accumulated Units</span>
-          <div class="stat-value">${member.totalUnits} Units</div>
+      <div class="card stat-card emerald" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Accumulated Units</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #10b981;">${member.totalUnits} Units</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-award"></i></div>
       </div>
 
-      <div class="card stat-card purple">
-        <div class="stat-info">
-          <span>Next Elite Level</span>
-          <div class="stat-value">${levelInfo.nextLevel}</div>
+      <div class="card stat-card purple" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+        <div class="stat-info" style="text-align: center;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Next Elite Level</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #8b5cf6;">${levelInfo.nextLevel}</div>
         </div>
-        <div class="stat-icon"><i class="fas fa-level-up-alt"></i></div>
       </div>
     </div>
 
     <!-- Tier Progression Card -->
     <div class="card" style="margin-bottom: 28px;">
       <div class="card-header">
-        <div class="card-title"><i class="fas fa-running"></i> Tier Elevation Track (${levelInfo.name} Rank)</div>
+        <div class="card-title">Tier Elevation Track (${levelInfo.name} Rank)</div>
         <span class="tier-badge tier-${levelInfo.name.replace(/\s+/g, '')}"><i class="fas ${levelInfo.icon}"></i> ${levelInfo.name}</span>
       </div>
 
       <div class="progress-container" style="margin-bottom: 12px;">
         <div class="progress-labels">
           <span>Current Units: <strong>${member.totalUnits}</strong></span>
-          <span>Next Level Target: <strong>${levelInfo.maxUnits === Infinity ? 'MAX' : levelInfo.maxUnits + 1} Units</strong></span>
         </div>
         <div class="progress-track" style="height: 14px;">
           <div class="progress-bar" style="width: ${levelInfo.progressPercent}%;"></div>
         </div>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted); text-align: right;">${levelInfo.progressPercent}% achieved toward next level upgrade.</p>
     </div>
 
     <!-- Verified Payment to Unit Conversion Ledger -->

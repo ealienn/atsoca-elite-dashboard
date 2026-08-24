@@ -65,6 +65,15 @@ class AppController {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('atsoca_theme', theme);
 
+    const brandLogos = document.querySelectorAll('.brand-logo-img, .sidebar-logo-img, .top-logo-mark-img');
+    brandLogos.forEach(img => {
+      if (theme === 'light') {
+        img.src = 'assets/logo.png';
+      } else {
+        img.src = 'assets/logo_white.png';
+      }
+    });
+
     const icon = document.querySelector('#theme-toggle-icon');
     const btn = document.querySelector('#btn-theme-toggle');
 
@@ -747,7 +756,7 @@ class AppController {
 
     const publicEnrollmentLink = document.querySelector('.nav-item[data-tab="public-enrollments"]');
     if (publicEnrollmentLink) {
-      publicEnrollmentLink.style.display = isFinanceOrAdmin ? 'flex' : 'none';
+      publicEnrollmentLink.style.display = !isEliteMember ? 'flex' : 'none';
     }
 
     const reportsLink = document.querySelector('.nav-item[data-tab="reports"]');
@@ -765,8 +774,19 @@ class AppController {
       adminLink.style.display = isAdmin ? 'flex' : 'none';
     }
 
+    const restrictedTabsForNonAdmin = ['admin'];
     const restrictedTabsForElite = ['notifications', 'public-enrollments', 'reports', 'admin'];
-    if (isEliteMember && restrictedTabsForElite.includes(this.currentTab)) {
+
+    if (!isAdmin && this.currentTab === 'admin') {
+      this.currentTab = 'overview';
+      this.navItems.forEach(item => {
+        if (item.getAttribute('data-tab') === 'overview') {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    } else if (isEliteMember && restrictedTabsForElite.includes(this.currentTab)) {
       this.currentTab = 'overview';
       this.navItems.forEach(item => {
         if (item.getAttribute('data-tab') === 'overview') {
@@ -917,6 +937,10 @@ class AppController {
           renderReports(this.contentContainer);
           break;
         case 'admin':
+          if (!db || db.activeRole !== 'Administrator') {
+            this.switchTab('overview');
+            return;
+          }
           renderAdmin(this.contentContainer);
           break;
         default:
