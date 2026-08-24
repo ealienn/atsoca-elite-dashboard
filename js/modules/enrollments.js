@@ -71,31 +71,31 @@ export function renderEnrollments(container) {
         <table class="custom-table">
           <thead>
             <tr>
-              <th>Enrollment ID</th>
+              <th>Respondent ID</th>
+              <th>Elite Code</th>
               <th>Participant Name</th>
               <th>School / Company</th>
-              <th>Training Date</th>
-              ${isFinanceOrAdmin ? '<th>Referrer</th>' : ''}
-              <th>Investment Fee</th>
-              <th>Payment Made</th>
-              <th>Outstanding Balance</th>
-              <th>Units Credit</th>
+              <th>Course</th>
+              <th>Fee</th>
+              <th>Paid</th>
+              <th>Balance</th>
+              <th>Enrollment Status</th>
               <th>Payment Status</th>
-              ${isFinanceOrAdmin ? '<th>Finance Action</th>' : ''}
+              ${isFinanceOrAdmin ? '<th>Actions</th>' : ''}
             </tr>
           </thead>
           <tbody>
             ${enrollments.map(enr => `
               <tr>
-                <td><code>${enr.id}</code></td>
+                <td><code>${enr.respondentId || enr.id.replace('ENR-', '')}</code></td>
+                <td><span style="font-weight: 800; color: #0284c7;">${enr.eliteCode || enr.referrerId}</span></td>
                 <td><strong>${enr.participantName}</strong></td>
                 <td>${enr.schoolCompany}</td>
-                <td>${enr.trainingDate}</td>
-                ${isFinanceOrAdmin ? `<td>${enr.referrerName}</td>` : ''}
+                <td><span style="font-size: 0.8rem; font-weight: 700;">${enr.course || enr.trainingType}</span></td>
                 <td><strong>${formatPHP(enr.investmentFee)}</strong></td>
                 <td><span style="color: var(--accent-emerald); font-weight: 700;">${formatPHP(enr.paymentMade)}</span></td>
                 <td><span style="color: ${enr.balance > 0 ? 'var(--accent-rose)' : 'var(--text-muted)'}; font-weight: 600;">${formatPHP(enr.balance)}</span></td>
-                <td><span class="unit-badge"><i class="fas fa-star"></i> +${enr.unitsEarned} Units</span></td>
+                <td><span class="status-pill status-${(enr.enrollmentStatus || 'Enrolled').replace(/\s+/g, '')}">${enr.enrollmentStatus || 'Enrolled'}</span></td>
                 <td><span class="status-pill status-${enr.paymentStatus.replace(/\s+/g, '')}">${enr.paymentStatus}</span></td>
                 ${isFinanceOrAdmin ? `
                   <td>

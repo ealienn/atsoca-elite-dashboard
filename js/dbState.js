@@ -237,15 +237,22 @@ class DBState {
       const syncedEnrollments = [];
 
       rawItems.forEach((r, idx) => {
-        let codeStr = String(r.code || r.eliteCode || r.referrerId || r.colH || '').trim();
-        let eliteCode = null;
-        if (codeStr === '4' || codeStr === '004') eliteCode = '004';
-        else if (codeStr === '5' || codeStr === '005') eliteCode = '005';
-        else if (codeStr === '6' || codeStr === '006') eliteCode = '006';
-        else if (codeStr === '7' || codeStr === '007') eliteCode = '007';
-        else if (codeStr === '8' || codeStr === '008') eliteCode = '008';
+        const isArr = Array.isArray(r);
 
-        if (!eliteCode && (!codeStr || isNaN(codeStr))) {
+        // Respondent ID: Column B (row[1])
+        const respId = String((isArr ? r[1] : (r.colB || r.respondentId || r.id || r.submissionId)) || '').trim() || `GS-${idx + 1}`;
+
+        // Elite Code / Routing: Column H (row[7]) -> strictly normalized as 3-digit string ("004", "005", "006", "007", "008")
+        let rawCode = String((isArr ? r[7] : (r.colH || r.eliteCode || r.code || r.referrerId)) || '').trim();
+        let eliteCode = null;
+
+        if (rawCode === '4' || rawCode === '004') eliteCode = '004';
+        else if (rawCode === '5' || rawCode === '005') eliteCode = '005';
+        else if (rawCode === '6' || rawCode === '006') eliteCode = '006';
+        else if (rawCode === '7' || rawCode === '007') eliteCode = '007';
+        else if (rawCode === '8' || rawCode === '008') eliteCode = '008';
+
+        if (!eliteCode && (!rawCode || isNaN(rawCode))) {
           const textTarget = (String(r.completeName || '') + ' ' + String(r.participantName || '') + ' ' + String(r.referrerName || '')).toLowerCase();
           if (textTarget.includes('joshua') || textTarget.includes('villafuerte')) eliteCode = '004';
           else if (textTarget.includes('kent') || textTarget.includes('lontok')) eliteCode = '005';
@@ -256,24 +263,52 @@ class DBState {
 
         if (!eliteCode) return;
 
-        const partName = String(r.completeName || r.participantName || r.inviteName || r.name || `Participant ${idx + 1}`).trim();
-        const schoolComp = String(r.schoolCompany || r.schoolAttended || r.school || 'N/A').trim();
-        const courseRaw = String(r.whatTrainingCourseWillYouEnrollChooseOneKindlyVerifyTheTrainingCourseIfCoshOrBosh || r.trainingType || r.course || '').toUpperCase();
-        const courseChoice = courseRaw.includes('COSH') ? 'COSH SO2' : (courseRaw.includes('BOSH') ? 'BOSH SO2' : 'COSH SO2');
+        // Enrollment Status: Column C (row[2])
+        const enrStatusRaw = String((isArr ? r[2] : (r.colC || r.enrollmentStatus)) || '').trim();
+        const enrollmentStatus = enrStatusRaw !== '' ? enrStatusRaw : 'Enrolled';
 
-        const paid = Number(r.paymentMade || r.paid || r['amountPaidHalagangIbinayad✅'] || r.amountPaidHalagangIbinayadSinceTheTrainingHasLimitedSlotsForReservationYouCannotProceedWithTheEnrollmentFormWithoutProofOfPayment) || 0;
-        const fee = Number(r.investmentFee || r.fee || r.trainingFeeKabuoangBabayaran) || (paid > 0 ? Math.max(4500, paid) : 4500);
-        const bal = Math.max(0, fee - paid);
-        const paymentStatus = r.paymentStatus || (paid >= fee && fee > 0 ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
-        const enrollmentStatus = r.enrollmentStatus || (paid > 0 ? 'Enrolled' : 'Not Enrolled');
+        // Participant Name: Column M (row[12])
+        const partName = String((isArr ? r[12] : (r.colM || r.participantName || r.completeName || r.name)) || `Participant ${idx + 1}`).trim();
+
+        // School / Company: Column O (row[14])
+        const schoolComp = String((isArr ? r[14] : (r.colO || r.schoolCompany || r.schoolAttended)) || 'N/A').trim();
+
+        // Course / Program: Column R (row[17])
+        const courseRaw = String((isArr ? r[17] : (r.colR || r.course || r.trainingType)) || '').toUpperCase();
+        const courseChoice = courseRaw.includes('COSH') ? 'COSH' : 'BOSH';
+
+        // Conditional Fee & Payment Extraction:
+        // COSH: Fee = Col U (row[20]), Paid = Col V (row[21]), Balance = Col W (row[22])
+        // BOSH: Fee = Col Y (row[24]), Paid = Col Z (row[25]), Balance = Col AA (row[26])
+        let fee = 0;
+        let paid = 0;
+        let bal = 0;
+
+        if (courseChoice === 'COSH') {
+          fee = Number(isArr ? r[20] : (r.colU || r.investmentFee || r.fee)) || 5000;
+          paid = Number(isArr ? r[21] : (r.colV || r.paymentMade || r.paid)) || 0;
+          bal = (isArr ? r[22] !== undefined : r.colW !== undefined) ? Number(isArr ? r[22] : r.colW) : Math.max(0, fee - paid);
+        } else {
+          fee = Number(isArr ? r[24] : (r.colY || r.investmentFee || r.fee)) || 4500;
+          paid = Number(isArr ? r[25] : (r.colZ || r.paymentMade || r.paid)) || 0;
+          bal = (isArr ? r[26] !== undefined : r.colAA !== undefined) ? Number(isArr ? r[26] : r.colAA) : Math.max(0, fee - paid);
+        }
+
+        // Payment Status: Column AC (row[28])
+        const payStatusRaw = String((isArr ? r[28] : (r.colAC || r.paymentStatus)) || '').trim();
+        const paymentStatus = payStatusRaw !== '' ? payStatusRaw : (paid >= fee && fee > 0 ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
+
         const dateSub = r.dateSubmitted || (r.submittedAt ? String(r.submittedAt).split('T')[0] : new Date().toISOString().split('T')[0]);
-        const id = r.id || r.submissionId || r.respondentId || `GS-${idx + 1}`;
 
         syncedInvites.push({
-          id: `INV-${id}`,
+          id: `INV-${respId}`,
+          respondentId: respId,
+          eliteCode: eliteCode,
           inviteName: partName,
+          participantName: partName,
           schoolCompany: schoolComp,
           trainingType: courseChoice,
+          course: courseChoice,
           trainingDate: dateSub,
           dateSubmitted: dateSub,
           referrerId: eliteCode,
@@ -283,10 +318,13 @@ class DBState {
         });
 
         syncedEnrollments.push({
-          id: `ENR-${id}`,
+          id: `ENR-${respId}`,
+          respondentId: respId,
+          eliteCode: eliteCode,
           participantName: partName,
           schoolCompany: schoolComp,
           trainingType: courseChoice,
+          course: courseChoice,
           trainingDate: dateSub,
           isReferred: true,
           referrerId: eliteCode,
@@ -295,6 +333,7 @@ class DBState {
           paymentMade: paid,
           balance: bal,
           paymentStatus: paymentStatus,
+          enrollmentStatus: enrollmentStatus,
           unitsEarned: Number((paid / 4500).toFixed(2)),
           verifiedDate: dateSub
         });
