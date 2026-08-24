@@ -14,30 +14,30 @@ body[data-theme="light"] {
   --text-secondary: #000000;
   --text-muted: #000000;
 
-  --heading-color: #002355;
-  --stat-title-color: #002355;
-  --stat-num-color: #002355;
+  --heading-color: #000000;
+  --stat-title-color: #000000;
+  --stat-num-color: #000000;
 
   --table-th-bg: #f8fafc;
-  --table-th-color: #002355;
-  --table-td-color: #0f172a;
+  --table-th-color: #000000;
+  --table-td-color: #000000;
   --table-td-border: #f1f5f9;
 
   --form-control-bg: #ffffff;
   --form-control-border: #cbd5e1;
-  --form-control-text: #0f172a;
+  --form-control-text: #000000;
 
   --box-inner-bg: #f8fafc;
   --box-inner-border: #e2e8f0;
-  --box-inner-text: #0f172a;
+  --box-inner-text: #000000;
 
   --modal-bg: #ffffff;
   --modal-border: #cbd5e1;
-  --modal-text: #0f172a;
+  --modal-text: #000000;
 
   --header-btn-bg: #f8fafc;
   --header-btn-border: #e2e8f0;
-  --header-btn-color: #002355;
+  --header-btn-color: #000000;
 
   --accent-blue: #0284c7;
   --accent-emerald: #10b981;
