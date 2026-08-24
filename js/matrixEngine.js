@@ -3,7 +3,7 @@
  * Memo 1: Atsoca Elite Matrix 2026 Computation Engine
  */
 
-export const UNIT_VALUATION = 4500; // 1 Unit = ₱4,500 Net Investment Fee
+export const UNIT_VALUATION = 4500; // 1 Unit = ₱4,500 Training Fee
 
 export const ELITE_LEVELS = [
   { name: 'Bronze', minUnits: 1, maxUnits: 50, icon: 'fa-award', badgeColor: '#b45309', bgLight: '#fef3c7' },

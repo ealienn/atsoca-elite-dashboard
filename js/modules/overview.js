@@ -597,8 +597,8 @@ function renderManagementOverview(container, role) {
                 <th>Training Program</th>
                 <th>Referrer</th>
                 <th>Unit Accumulation</th>
-                <th>Investment Fee</th>
-                <th>Payment Made</th>
+                <th>Training Fee</th>
+                <th>Amount Paid</th>
                 <th>Balance</th>
                 <th>Status</th>
                 <th>Actions</th>

@@ -101,8 +101,8 @@ export function renderPublicEnrollments(container) {
               <th>Training Program</th>
               <th>Enrollment Type</th>
               <th>Referrer</th>
-              <th>Investment Fee</th>
-              <th>Payment Made</th>
+              <th>Training Fee</th>
+              <th>Amount Paid</th>
               <th>Balance</th>
               <th>Status</th>
               <th>Actions</th>
@@ -166,11 +166,11 @@ export function renderPublicEnrollments(container) {
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div class="form-group">
-              <label>Net Investment Fee (₱)</label>
+              <label>Training Fee (₱)</label>
               <input type="number" class="form-control" id="pub-fee" required value="4500" min="0">
             </div>
             <div class="form-group">
-              <label>Initial Payment Made (₱)</label>
+              <label>Initial Amount Paid (₱)</label>
               <input type="number" class="form-control" id="pub-payment" required value="4500" min="0">
             </div>
           </div>

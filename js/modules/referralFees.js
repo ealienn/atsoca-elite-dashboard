@@ -79,7 +79,7 @@ export function renderReferralFees(container) {
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div class="form-group">
-              <label>Net Investment Fee per Pax (₱)</label>
+              <label>Training Fee per Pax (₱)</label>
               <input type="number" id="sim-fee" class="form-control" value="4500" min="0" step="100">
             </div>
             <div class="form-group">

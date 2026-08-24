@@ -86,8 +86,8 @@ export function renderUnits(container) {
               <th>Enrollment ID</th>
               <th>Participant</th>
               <th>Course / Program</th>
-              <th>Net Investment Fee</th>
-              <th>Verified Payment Made</th>
+              <th>Training Fee</th>
+              <th>Amount Paid</th>
               <th>Unit Conversion Formula</th>
               <th>Units Earned</th>
             </tr>
