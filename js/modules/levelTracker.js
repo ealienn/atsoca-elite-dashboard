@@ -65,7 +65,7 @@ export function renderLevelTracker(container) {
                 <tr style="${isCurrent ? 'background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent-blue);' : ''}">
                   <td>
                     <span class="tier-badge tier-${level.name.replace(/\s+/g, '')}">
-                      <i class="fas ${level.icon}"></i> ${level.name}
+                      ${level.name}
                     </span>
                   </td>
                   <td><strong>${level.minUnits} – ${level.maxUnits === Infinity ? '1501+' : level.maxUnits} Units</strong></td>

@@ -192,9 +192,14 @@ class AppController {
         if (passwordInput) passwordInput.value = '12345';
 
         const matchedMember = db.data.members.find(m => m.email && m.email.toLowerCase() === targetEmail.toLowerCase());
-        const memberId = matchedMember ? matchedMember.id : (db.data.members[0]?.id || 'ELITE-101');
+        const memberId = matchedMember ? matchedMember.id : (db.data.members[0]?.id || '004');
 
         localStorage.setItem('atsoca_logged_in', 'true');
+        
+        if (db) {
+          if (!db.activeRole) db.activeRole = 'Administrator';
+          if (!db.currentMemberId) db.currentMemberId = '004';
+        }
         db.setRole(targetRole, memberId);
 
         if (loginScreen) {
@@ -549,11 +554,33 @@ class AppController {
 
   subscribeState() {
     db.subscribe(() => {
+      const inspectMemId = window.activeModalState ? window.activeModalState.inspectMemberId : null;
+      const unitsMemId = window.activeModalState ? window.activeModalState.unitsMemberId : null;
+      const openIds = (window.activeModalState && window.activeModalState.activeModalIds) ? Array.from(window.activeModalState.activeModalIds) : [];
+
       this.populateMemberSelect();
       this.updateProfileWidget();
       this.updateAdminNavVisibility();
       this.updateNotificationBadge();
       this.renderActiveTab();
+
+      // Restore active inspect account modal if it was open
+      if (inspectMemId && typeof window.reopenInspectModal === 'function') {
+        window.reopenInspectModal(inspectMemId);
+      }
+      // Restore active units adjustment modal if it was open
+      if (unitsMemId && typeof window.reopenUnitsAdjustmentModal === 'function') {
+        window.reopenUnitsAdjustmentModal(unitsMemId);
+      }
+      // Restore any generic open modals
+      openIds.forEach(id => {
+        if (id !== 'modal-inspect-account' && id !== 'modal-adjust-units') {
+          const el = document.querySelector(`#${id}`);
+          if (el && typeof window.openModal === 'function') {
+            window.openModal(el);
+          }
+        }
+      });
     });
   }
 

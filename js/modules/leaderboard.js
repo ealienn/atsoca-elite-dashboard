@@ -52,20 +52,16 @@ export function renderLeaderboard(container) {
     <div class="card" style="margin-bottom: 24px; background: #002355; border: 1px solid var(--border-color); color: #ffffff;">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div style="display: flex; align-items: center; gap: 18px;">
-          <div class="user-rank-circle-badge">
-            <span class="user-rank-number">#${userRank}</span>
-            <span class="user-rank-label">YOUR RANK</span>
+          <div style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);">
+            <i class="fas fa-crown"></i> #${userRank}
           </div>
           <div>
             <h2 style="color: #ffffff; margin: 0; font-size: 1.4rem; display: flex; align-items: center; gap: 10px;">
               ${currentMember.name}
               <span class="tier-badge tier-${userLevel.name.replace(/\s+/g, '')}" style="font-size: 0.78rem; padding: 4px 12px;">
-                <i class="fas ${userLevel.icon}"></i> ${userLevel.name}
+                ${userLevel.name}
               </span>
             </h2>
-            <p style="margin: 6px 0 0 0; color: rgba(255, 255, 255, 0.85); font-size: 0.88rem;">
-              <i class="fas fa-trophy" style="color: #f59e0b; margin-right: 4px;"></i> ${rankGapMessage}
-            </p>
           </div>
         </div>
 
@@ -98,7 +94,7 @@ export function renderLeaderboard(container) {
     <div class="card">
       <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
         <div class="card-title">
-          <i class="fas fa-list-ol" style="color: #002355;"></i> Complete Partner Performance Leaderboard
+          <i class="fas fa-list-ol" style="color: var(--text-primary);"></i> Complete Partner Performance Leaderboard
         </div>
 
         <!-- Sorting Filter Buttons -->
@@ -145,17 +141,17 @@ export function renderLeaderboard(container) {
                     <div style="display: flex; align-items: center; gap: 12px;">
                       <img src="${m.avatar}" class="table-user-avatar" alt="${m.name}">
                       <div>
-                        <div style="font-weight: 800; color: #002355; display: flex; align-items: center; gap: 6px;">
+                        <div style="font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
                           ${m.name}
                           ${isCurrentUser ? '<span class="you-pill-badge">YOU</span>' : ''}
                         </div>
-                        <div style="font-size: 0.75rem; color: #64748b;">${m.email} • ID: ${m.id}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">${m.email} • ID: ${m.id}</div>
                       </div>
                     </div>
                   </td>
                   <td>
                     <span class="tier-badge tier-${level.name.replace(/\s+/g, '')}">
-                      <i class="fas ${level.icon}"></i> ${level.name}
+                      ${level.name}
                     </span>
                   </td>
                   <td style="text-align: center; font-weight: 700; color: #0284c7;">
@@ -212,7 +208,7 @@ function renderPodiumCard(member, rank, type, badgeTitle) {
       </div>
       <h3 class="podium-member-name">${member.name}</h3>
       <span class="tier-badge tier-${level.name.replace(/\s+/g, '')}" style="margin-bottom: 12px; display: inline-flex;">
-        <i class="fas ${level.icon}"></i> ${level.name}
+        ${level.name}
       </span>
       <div class="podium-stat-box">
         <div class="podium-stat-unit">${member.totalUnits} Units</div>

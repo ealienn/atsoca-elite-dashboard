@@ -6,6 +6,8 @@
 import { db } from '../dbState.js';
 import { getEliteLevel } from '../matrixEngine.js';
 
+const formatPHP = (amt) => '₱' + Number(amt || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 export function renderOverview(container) {
   const role = db.activeRole;
   const isManagerOrAdmin = role === 'Elite Manager' || role === 'Finance' || role === 'Administrator';
@@ -121,7 +123,7 @@ function renderEliteMemberOverview(container) {
         <div class="mock-panel-header">
           <h3 class="mock-panel-title">LEVEL AND TIER PROGRESS</h3>
           <span class="tier-badge tier-${currentLevelInfo.name.replace(/\s+/g, '')}">
-            <i class="fas ${currentLevelInfo.icon}"></i> ${currentLevelInfo.name} Tier
+            ${currentLevelInfo.name} Tier
           </span>
         </div>
 
@@ -404,7 +406,7 @@ function renderManagementOverview(container, role) {
     <div class="modal-overlay" id="modal-inspect-account">
       <div class="modal-content modal-lg">
         <div class="modal-header">
-          <h3><i class="fas fa-user-shield" style="color: var(--accent-blue);"></i> Elite Account & Invite Verification View</h3>
+          <h3>Elite Account & Invite Verification View</h3>
           <button class="modal-close" id="close-modal-inspect">&times;</button>
         </div>
         <div id="modal-inspect-body">
@@ -497,7 +499,7 @@ function renderManagementOverview(container, role) {
               <h3 style="margin: 0; font-size: 1.25rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
                 ${targetMember.name}
                 <span class="mock-gold-badge" style="background: ${tier.badgeColor}; color: #ffffff; font-size: 0.72rem; padding: 2px 8px; border-radius: 12px;">
-                  <i class="fas ${tier.icon}"></i> ${tier.name} Tier
+                  ${tier.name} Tier
                 </span>
               </h3>
               <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">

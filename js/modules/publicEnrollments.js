@@ -47,7 +47,6 @@ export function renderPublicEnrollments(container) {
         <div class="stat-info">
           <span>Total Participants Enrolled</span>
           <div class="stat-value">${totalEnrolled}</div>
-          <div class="stat-sub">Referred: ${referredCount} | Direct Public: ${nonReferredCount}</div>
         </div>
         <div class="stat-icon"><i class="fas fa-users"></i></div>
       </div>
@@ -56,7 +55,6 @@ export function renderPublicEnrollments(container) {
         <div class="stat-info">
           <span>Total Payments Collected</span>
           <div class="stat-value">${formatPHP(totalCollected)}</div>
-          <div class="stat-sub"><i class="fas fa-check-double"></i> Verified by Finance</div>
         </div>
         <div class="stat-icon"><i class="fas fa-cash-register"></i></div>
       </div>
@@ -65,7 +63,6 @@ export function renderPublicEnrollments(container) {
         <div class="stat-info">
           <span>Outstanding Balances</span>
           <div class="stat-value">${formatPHP(totalOutstanding)}</div>
-          <div class="stat-sub">Pending Collection</div>
         </div>
         <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
       </div>
@@ -74,7 +71,6 @@ export function renderPublicEnrollments(container) {
         <div class="stat-info">
           <span>Referred Ratio</span>
           <div class="stat-value">${totalEnrolled > 0 ? Math.round((referredCount / totalEnrolled) * 100) : 0}%</div>
-          <div class="stat-sub">Elite Referrals Share</div>
         </div>
         <div class="stat-icon"><i class="fas fa-percentage"></i></div>
       </div>
@@ -99,7 +95,7 @@ export function renderPublicEnrollments(container) {
         <table class="custom-table" id="table-public-enrollments">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>RESPONDENT ID</th>
               <th>Participant Name</th>
               <th>School / Company</th>
               <th>Training Program</th>

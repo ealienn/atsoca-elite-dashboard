@@ -3023,15 +3023,132 @@ body[data-theme="dark"] .btn-link-signin {
 
 .btn-link-signin:hover,
 html[data-theme="dark"] .btn-link-signin:hover,
-body[data-theme="dark"] .btn-link-signin:hover {
-  background: #f1f5f9 !important;
-  border-color: #94a3b8 !important;
-  color: #002355 !important;
-}
-
-.preset-avatar-item:hover {
+body[data-theme="dark"] .preset-avatar-item:hover {
   transform: scale(1.1);
   box-shadow: var(--shadow-md);
+}
+
+/* Explicit Button Text & Icon Readability Overrides */
+.btn-primary,
+.btn-primary *,
+.btn-danger,
+.btn-danger *,
+.btn-inspect-member,
+.btn-inspect-member *,
+.btn-modal-export-pdf,
+.btn-modal-export-pdf *,
+.btn-delete-member,
+.btn-delete-member * {
+  color: #ffffff !important;
+}
+
+/* Universal Date Input & White Calendar Picker Icon */
+input[type="date"] {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 5;
+}
+
+body[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(200%) !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+}
+
+body[data-theme="dark"] input[type="date"] {
+  color-scheme: dark !important;
+  color: #ffffff !important;
+  background-color: var(--bg-card) !important;
+}
+
+body[data-theme="light"] input[type="date"] {
+  color-scheme: light !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+/* ==========================================================================
+   GLOBAL THEME FONT COLOR ENGINE (PURE WHITE IN DARK MODE, BLACK IN LIGHT MODE)
+   ========================================================================== */
+
+/* Light Mode: All font text in main content, cards, tables, modals, inputs = BLACK (#000000) */
+:root[data-theme="light"],
+html[data-theme="light"],
+body[data-theme="light"] {
+  --text-primary: #000000;
+  --text-secondary: #000000;
+  --text-muted: #1e293b;
+  --heading-color: #000000;
+  --stat-num-color: #000000;
+  --table-th-color: #000000;
+  --table-td-color: #000000;
+  --form-control-text: #000000;
+  --box-inner-text: #000000;
+  --modal-text: #000000;
+}
+
+body[data-theme="light"] .main-content h1,
+body[data-theme="light"] .main-content h2,
+body[data-theme="light"] .main-content h3,
+body[data-theme="light"] .main-content h4,
+body[data-theme="light"] .main-content h5,
+body[data-theme="light"] .main-content h6,
+body[data-theme="light"] .main-content p,
+body[data-theme="light"] .main-content code,
+body[data-theme="light"] .main-content strong,
+body[data-theme="light"] .modal-content h1,
+body[data-theme="light"] .modal-content h2,
+body[data-theme="light"] .modal-content h3,
+body[data-theme="light"] .modal-content h4,
+body[data-theme="light"] .modal-content h5,
+body[data-theme="light"] .modal-content h6,
+body[data-theme="light"] .modal-content p,
+body[data-theme="light"] .modal-content code,
+body[data-theme="light"] .modal-content strong,
+body[data-theme="light"] .custom-table th,
+body[data-theme="light"] table th {
+  color: #000000 !important;
+}
+
+/* Dark Mode: All font text in main content, cards, tables, modals, inputs = PURE WHITE (#ffffff) */
+:root[data-theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  --text-primary: #ffffff;
+  --text-secondary: #ffffff;
+  --text-muted: #e2e8f0;
+  --heading-color: #ffffff;
+  --stat-num-color: #ffffff;
+  --table-th-color: #ffffff;
+  --table-td-color: #ffffff;
+  --form-control-text: #ffffff;
+  --box-inner-text: #ffffff;
+  --modal-text: #ffffff;
+}
+
+body[data-theme="dark"] .main-content h1,
+body[data-theme="dark"] .main-content h2,
+body[data-theme="dark"] .main-content h3,
+body[data-theme="dark"] .main-content h4,
+body[data-theme="dark"] .main-content h5,
+body[data-theme="dark"] .main-content h6,
+body[data-theme="dark"] .main-content p,
+body[data-theme="dark"] .main-content code,
+body[data-theme="dark"] .main-content strong,
+body[data-theme="dark"] .modal-content h1,
+body[data-theme="dark"] .modal-content h2,
+body[data-theme="dark"] .modal-content h3,
+body[data-theme="dark"] .modal-content h4,
+body[data-theme="dark"] .modal-content h5,
+body[data-theme="dark"] .modal-content h6,
+body[data-theme="dark"] .modal-content p,
+body[data-theme="dark"] .modal-content code,
+body[data-theme="dark"] .modal-content strong,
+body[data-theme="dark"] .custom-table th,
+body[data-theme="dark"] table th {
+  color: #ffffff !important;
 }
 
 

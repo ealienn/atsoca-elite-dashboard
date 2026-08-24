@@ -72,25 +72,6 @@ export function renderAdmin(container) {
           </table>
         </div>
       </div>
-
-      <!-- System Audit Logs -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">System Audit Trail</div>
-        </div>
-        <div style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-          ${db.data.logs.map(log => `
-            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius-sm); font-size: 0.8rem;">
-              <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.72rem; margin-bottom: 4px;">
-                <span><i class="fas fa-user-tag"></i> ${log.user} (${log.module})</span>
-                <span>${log.timestamp}</span>
-              </div>
-              <div style="font-weight: 700; color: var(--text-primary);">${log.action}</div>
-              <div style="color: var(--text-secondary); margin-top: 2px;">${log.details}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
     </div>
 
     <!-- Modal: Add New Member Profile -->

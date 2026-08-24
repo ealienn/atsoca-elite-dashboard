@@ -5,6 +5,7 @@ import { db } from '../dbState.js';
 
 export function renderInvites(container) {
   if (!container) return;
+  const isManagerOrAdmin = (db && (db.activeRole === 'Elite Manager' || db.activeRole === 'Finance' || db.activeRole === 'Administrator'));
   const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: 'ELITE-101', name: 'Ellaine Joyce' };
   const allInvites = (db && db.data && Array.isArray(db.data.invites)) ? db.data.invites : [];
 

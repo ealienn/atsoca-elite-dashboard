@@ -34,9 +34,11 @@ export function renderProfileModal(container, onSaveSuccess = null) {
       <img src="${account.avatar || presetAvatars[0]}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue);">
       <div>
         <h4 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-primary);">${account.name}</h4>
-        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">
-          ${isManagementRole ? `Role Account: <strong>${activeRole}</strong> &bull; Email: ${account.email}` : `ID: <code>${account.id}</code> &bull; Email: ${account.email}`}
-        </div>
+        ${isManagementRole ? `
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">
+            Role Account: <strong>${activeRole}</strong> &bull; Email: ${account.email}
+          </div>
+        ` : ''}
         <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
           ${isManagementRole ? `
             <span class="status-pill status-Verified" style="font-size: 0.75rem; padding: 2px 10px;">
@@ -44,7 +46,7 @@ export function renderProfileModal(container, onSaveSuccess = null) {
             </span>
           ` : `
             <span class="tier-badge tier-${levelInfo.name.replace(/\s+/g, '')}" style="font-size: 0.75rem; padding: 2px 8px;">
-              <i class="fas ${levelInfo.icon}"></i> ${levelInfo.name} Partner
+              ${levelInfo.name} Partner
             </span>
             <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">
               ${Number(account.totalUnits || 0).toFixed(2)} Units

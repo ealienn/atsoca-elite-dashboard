@@ -3,26 +3,86 @@
  */
 import { calculateUnitsFromAmount, calculateReferralFee, getEliteLevel } from './matrixEngine.js';
 
-const STORAGE_KEY = 'atsoca_elite_db_v30';
+const STORAGE_KEY = 'atsoca_elite_db_v100';
 
 // OPTIONAL: Paste your deployed Google Apps Script Web App URL here to sync with Google Sheets
 export const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzHpxPOjDQ6gE1fdorKIA7yw-p4Sg3CGnDu9KDKQ98vn6GPEc4pBxZsk2deYXizpIXnKg/exec';
 
 const INITIAL_MEMBERS = [
   {
-    id: 'ELITE-101',
-    referralCode: 'ATS-REF-101',
-    name: 'Ellaine Joyce',
-    email: 'ellaine.joyce@atsoca.ph',
+    id: '004',
+    referralCode: 'ATS-REF-004',
+    name: 'Joshua Villafuerte',
+    email: 'joshua.villafuerte@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    totalUnits: 42,
-    monthlyUnits: 18,
-    pendingFees: 12500,
-    availableForRelease: 28400,
-    releasedFees: 84500,
-    joinDate: '2025-01-15'
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    totalUnits: 0.73,
+    monthlyUnits: 0.73,
+    pendingFees: 0,
+    availableForRelease: 24050,
+    releasedFees: 0,
+    joinDate: '2025-02-01'
+  },
+  {
+    id: '005',
+    referralCode: 'ATS-REF-005',
+    name: 'Kent Bryan Lontok',
+    email: 'kent.lontok@atsoca.ph',
+    password: '12345',
+    role: 'Elite Member',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    totalUnits: 5.91,
+    monthlyUnits: 5.91,
+    pendingFees: 0,
+    availableForRelease: 810,
+    releasedFees: 0,
+    joinDate: '2025-02-10'
+  },
+  {
+    id: '006',
+    referralCode: 'ATS-REF-006',
+    name: 'CE Box',
+    email: 'ce.box@atsoca.ph',
+    password: '12345',
+    role: 'Elite Member',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    totalUnits: 1.22,
+    monthlyUnits: 1.22,
+    pendingFees: 0,
+    availableForRelease: 810,
+    releasedFees: 0,
+    joinDate: '2025-03-01'
+  },
+  {
+    id: '007',
+    referralCode: 'ATS-REF-007',
+    name: 'Charlene Stephanie Hilvano',
+    email: 'charlene.hilvano@atsoca.ph',
+    password: '12345',
+    role: 'Elite Member',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    totalUnits: 0.33,
+    monthlyUnits: 0.33,
+    pendingFees: 0,
+    availableForRelease: 0,
+    releasedFees: 0,
+    joinDate: '2025-03-10'
+  },
+  {
+    id: '008',
+    referralCode: 'ATS-REF-008',
+    name: 'Jenelle Mangubat',
+    email: 'jenelle.mangubat@atsoca.ph',
+    password: '12345',
+    role: 'Elite Member',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
+    totalUnits: 0.67,
+    monthlyUnits: 0.67,
+    pendingFees: 0,
+    availableForRelease: 0,
+    releasedFees: 0,
+    joinDate: '2025-03-15'
   }
 ];
 
@@ -333,71 +393,114 @@ class DBState {
     if (!GOOGLE_SHEETS_WEB_APP_URL) return;
     try {
       const res = await fetch(GOOGLE_SHEETS_WEB_APP_URL);
-      if (res.ok) {
-        const contentType = res.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) return;
-        const payload = await res.json();
-        if (!payload) return;
+      if (!res.ok) return;
 
-        // 1. Process Invites
-        const rawInvites = Array.isArray(payload) ? payload : (payload.invites || []);
-        if (rawInvites.length > 0) {
-          const validRows = rawInvites.filter(r => r.inviteName && String(r.inviteName).trim() !== '' && r.inviteName !== 'Invite Name');
-          if (validRows.length > 0) {
-            const syncedInvites = validRows.map((r, index) => {
-              const existing = r.id ? this.data.invites.find(inv => inv.id === r.id) : null;
-              const rawRefStr = String(r.referrerName || r.referrer || r.Referrer || r.referrerId || '').toLowerCase().trim();
-              let foundMem = null;
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) return;
+      const payload = await res.json();
+      if (!payload) return;
 
-              if (rawRefStr) {
-                foundMem = this.data.members.find(m => {
-                  const mName = m.name.toLowerCase();
-                  const mFirstName = mName.split(' ')[0];
-                  return mName.includes(rawRefStr) || rawRefStr.includes(mFirstName) || rawRefStr.includes(m.id.toLowerCase());
-                });
-              }
+      let rawItems = [];
+      if (Array.isArray(payload)) rawItems = payload;
+      else if (payload.data && Array.isArray(payload.data)) rawItems = payload.data;
+      else if (payload.members && Array.isArray(payload.members)) rawItems = payload.members;
+      else if (payload.invites && Array.isArray(payload.invites)) rawItems = payload.invites;
 
-              let refId = foundMem ? foundMem.id : (existing ? existing.referrerId : null);
-              let refName = foundMem ? foundMem.name : (existing ? existing.referrerName : (r.referrerName || r.referrer || 'Ellaine Joyce'));
+      if (!rawItems || rawItems.length === 0) return;
 
-              if (!refId) {
-                const currentMem = this.getCurrentMember();
-                refId = currentMem ? currentMem.id : 'ELITE-101';
-                refName = currentMem ? currentMem.name : 'Ellaine Joyce';
-              }
+      const memberMap = {
+        '004': 'Joshua Villafuerte',
+        '005': 'Kent Bryan Lontok',
+        '006': 'CE Box',
+        '007': 'Charlene Stephanie Hilvano',
+        '008': 'Jenelle Mangubat'
+      };
 
-              let verStatus = r.verificationStatus || r.verification || 'Pending';
-              if (existing && existing.verificationStatus === 'Verified' && verStatus === 'Pending') {
-                verStatus = 'Verified';
-              }
+      const syncedInvites = [];
+      const syncedEnrollments = [];
 
-              let enrStatus = r.enrollmentStatus || r.enrollment || 'Not Enrolled';
-              if (existing && existing.enrollmentStatus === 'Enrolled' && enrStatus === 'Not Enrolled') {
-                enrStatus = 'Enrolled';
-              }
+      rawItems.forEach((r, idx) => {
+        let codeStr = String(r.code || r.eliteCode || r.referrerId || r.colH || '').trim();
+        let eliteCode = null;
+        if (codeStr === '4' || codeStr === '004') eliteCode = '004';
+        else if (codeStr === '5' || codeStr === '005') eliteCode = '005';
+        else if (codeStr === '6' || codeStr === '006') eliteCode = '006';
+        else if (codeStr === '7' || codeStr === '007') eliteCode = '007';
+        else if (codeStr === '8' || codeStr === '008') eliteCode = '008';
 
-              return {
-                id: r.id || `INV-GS-${index + 1}`,
-                inviteName: r.inviteName || 'Unnamed Invite',
-                schoolCompany: r.schoolCompany || r.school || 'N/A',
-                trainingType: r.trainingType || r.training || 'COSH SO2',
-                trainingDate: r.trainingDate ? String(r.trainingDate).split('T')[0] : '2026-08-30',
-                dateSubmitted: r.dateSubmitted ? String(r.dateSubmitted).split('T')[0] : '2026-07-28',
-                referrerId: refId,
-                referrerName: refName,
-                verificationStatus: verStatus,
-                enrollmentStatus: enrStatus
-              };
-            });
-
-            // Preserve existing local invites that are not in synced rows
-            const syncedInviteIds = new Set(syncedInvites.map(i => i.id));
-            const localOnlyInvites = (this.data.invites || []).filter(i => !syncedInviteIds.has(i.id));
-            this.data.invites = [...syncedInvites, ...localOnlyInvites];
-          }
+        if (!eliteCode && (!codeStr || isNaN(codeStr))) {
+          const textTarget = (String(r.completeName || '') + ' ' + String(r.participantName || '') + ' ' + String(r.referrerName || '')).toLowerCase();
+          if (textTarget.includes('joshua') || textTarget.includes('villafuerte')) eliteCode = '004';
+          else if (textTarget.includes('kent') || textTarget.includes('lontok')) eliteCode = '005';
+          else if (textTarget.includes('ce box') || textTarget.includes('ce.box')) eliteCode = '006';
+          else if (textTarget.includes('charlene') || textTarget.includes('hilvano')) eliteCode = '007';
+          else if (textTarget.includes('jenelle') || textTarget.includes('mangubat')) eliteCode = '008';
         }
 
-        // 2. Auto-recalculate member total units from enrollments if available
+        if (!eliteCode) return;
+
+        const partName = String(r.completeName || r.participantName || r.inviteName || r.name || `Participant ${idx + 1}`).trim();
+        const schoolComp = String(r.schoolCompany || r.schoolAttended || r.school || 'N/A').trim();
+        const courseRaw = String(r.whatTrainingCourseWillYouEnrollChooseOneKindlyVerifyTheTrainingCourseIfCoshOrBosh || r.trainingType || r.course || '').toUpperCase();
+        const courseChoice = courseRaw.includes('COSH') ? 'COSH SO2' : (courseRaw.includes('BOSH') ? 'BOSH SO2' : 'COSH SO2');
+
+        const paid = Number(r.paymentMade || r.paid || r['amountPaidHalagangIbinayad✅'] || r.amountPaidHalagangIbinayadSinceTheTrainingHasLimitedSlotsForReservationYouCannotProceedWithTheEnrollmentFormWithoutProofOfPayment) || 0;
+        const fee = Number(r.investmentFee || r.fee || r.trainingFeeKabuoangBabayaran) || (paid > 0 ? Math.max(4500, paid) : 4500);
+        const bal = Math.max(0, fee - paid);
+        const paymentStatus = r.paymentStatus || (paid >= fee && fee > 0 ? 'Fully Paid' : (paid > 0 ? 'Partial' : 'Unpaid'));
+        const enrollmentStatus = r.enrollmentStatus || (paid > 0 ? 'Enrolled' : 'Not Enrolled');
+        const dateSub = r.dateSubmitted || (r.submittedAt ? String(r.submittedAt).split('T')[0] : new Date().toISOString().split('T')[0]);
+        const id = r.id || r.submissionId || r.respondentId || `GS-${idx + 1}`;
+
+        syncedInvites.push({
+          id: `INV-${id}`,
+          inviteName: partName,
+          schoolCompany: schoolComp,
+          trainingType: courseChoice,
+          trainingDate: dateSub,
+          dateSubmitted: dateSub,
+          referrerId: eliteCode,
+          referrerName: memberMap[eliteCode] || `Elite Member ${eliteCode}`,
+          verificationStatus: (paymentStatus === 'Fully Paid' || paid > 0) ? 'Verified' : 'Pending',
+          enrollmentStatus: enrollmentStatus
+        });
+
+        syncedEnrollments.push({
+          id: `ENR-${id}`,
+          participantName: partName,
+          schoolCompany: schoolComp,
+          trainingType: courseChoice,
+          trainingDate: dateSub,
+          isReferred: true,
+          referrerId: eliteCode,
+          referrerName: memberMap[eliteCode] || `Elite Member ${eliteCode}`,
+          investmentFee: fee,
+          paymentMade: paid,
+          balance: bal,
+          paymentStatus: paymentStatus,
+          unitsEarned: Number((paid / 4500).toFixed(2)),
+          verifiedDate: dateSub
+        });
+      });
+
+      if (syncedInvites.length > 0) {
+        const syncedInvIds = new Set(syncedInvites.map(i => i.id));
+        const localInvites = (this.data.invites || []).filter(i => !syncedInvIds.has(i.id));
+        this.data.invites = [...syncedInvites, ...localInvites];
+
+        const syncedEnrIds = new Set(syncedEnrollments.map(e => e.id));
+        const localEnrollments = (this.data.enrollments || []).filter(e => !syncedEnrIds.has(e.id));
+        this.data.enrollments = [...syncedEnrollments, ...localEnrollments];
+
+        if (payload.profiles && typeof payload.profiles === 'object') {
+          Object.keys(payload.profiles).forEach(memCode => {
+            const member = this.data.members.find(m => m.id === memCode);
+            if (member && payload.profiles[memCode]) {
+              member.avatar = payload.profiles[memCode];
+            }
+          });
+        }
+
         this.recalculateMemberUnits();
         this.save();
       }
@@ -414,8 +517,9 @@ class DBState {
         (e.referrerName && e.referrerName.toLowerCase() === member.name.toLowerCase())
       );
       const earnedFromEnrollments = memberEnrollments.reduce((sum, e) => sum + (Number(e.unitsEarned) || 0), 0);
-      if (earnedFromEnrollments > 0 && earnedFromEnrollments > member.totalUnits) {
+      if (earnedFromEnrollments > 0) {
         member.totalUnits = Number(earnedFromEnrollments.toFixed(2));
+        member.monthlyUnits = member.totalUnits;
       }
     });
   }
