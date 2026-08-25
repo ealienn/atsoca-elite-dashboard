@@ -33,29 +33,29 @@ export function renderAnalytics(container) {
     <div class="grid-4">
       <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
         <div class="stat-info" style="text-align: center;">
-          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Monthly Invites (August 2026)</span>
-          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px;">${monthlyInvites}</div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #002355; text-transform: uppercase; letter-spacing: 0.05em;">Monthly Invites (August 2026)</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #002355;">${monthlyInvites}</div>
         </div>
       </div>
 
-      <div class="card stat-card emerald" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
         <div class="stat-info" style="text-align: center;">
-          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Invites Cumulative</span>
-          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #10b981;">${totalInvites}</div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #002355; text-transform: uppercase; letter-spacing: 0.05em;">Total Invites Cumulative</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #002355;">${totalInvites}</div>
         </div>
       </div>
 
-      <div class="card stat-card purple" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
         <div class="stat-info" style="text-align: center;">
-          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Verified Invites</span>
-          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #8b5cf6;">${verifiedInvites}</div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #002355; text-transform: uppercase; letter-spacing: 0.05em;">Verified Invites</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #002355;">${verifiedInvites}</div>
         </div>
       </div>
 
-      <div class="card stat-card amber" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
         <div class="stat-info" style="text-align: center;">
-          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Enrolled Invites</span>
-          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #f59e0b;">${enrolledInvites}</div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #002355; text-transform: uppercase; letter-spacing: 0.05em;">Enrolled Invites</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #002355;">${enrolledInvites}</div>
         </div>
       </div>
     </div>
@@ -96,12 +96,12 @@ export function renderAnalytics(container) {
       new window.Chart(ctxFunnel, {
         type: 'bar',
         data: {
-          labels: ['Total Submissions', 'Verified by Mgr', 'Enrolled Participants'],
+          labels: ['Total Submissions', 'Enrolled Participants'],
           datasets: [{
             label: 'Invites Count',
-            data: [totalInvites, verifiedInvites, enrolledInvites],
-            backgroundColor: ['rgba(2, 132, 199, 0.85)', 'rgba(16, 185, 129, 0.85)', 'rgba(139, 92, 246, 0.85)'],
-            borderColor: ['#0284c7', '#10b981', '#8b5cf6'],
+            data: [totalInvites, enrolledInvites],
+            backgroundColor: ['rgba(2, 132, 199, 0.85)', 'rgba(139, 92, 246, 0.85)'],
+            borderColor: ['#0284c7', '#8b5cf6'],
             borderWidth: 2,
             borderRadius: 8
           }]

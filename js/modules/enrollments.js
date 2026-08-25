@@ -57,41 +57,60 @@ export function renderEnrollments(container) {
 
     <!-- Enrollment & Payment Tracking Table -->
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">Referral Payment Ledger</div>
+      <div class="card-header" style="flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;">
+        <div class="card-title" style="color: #002355; font-weight: 800;">Referral Payment Ledger</div>
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="search-enrollment" class="form-control" placeholder="Search by participant, school..." style="width: 220px; padding: 6px 12px; font-size: 0.85rem;">
+          <select id="filter-enroll-status" class="form-control" style="width: 180px; padding: 6px 12px; font-size: 0.85rem;">
+            <option value="ALL">All Enrollment Status</option>
+            <option value="Enrolled">Enrolled</option>
+            <option value="Pending">Pending</option>
+            <option value="Not Enrolled">Not Enrolled</option>
+          </select>
+        </div>
       </div>
 
       <div class="table-responsive">
-        <table class="custom-table">
+        <table class="custom-table" id="table-referral-enrollments">
           <thead>
             <tr>
-              <th>Respondent ID</th>
-              <th>Participant Name</th>
-              <th>School / Company</th>
-              <th>Course</th>
-              <th>Fee</th>
-              <th>Paid</th>
-              <th>Balance</th>
-              <th>Enrollment Status</th>
-              <th>Payment Status</th>
-              ${isFinanceOrAdmin ? '<th>Actions</th>' : ''}
+              <th style="color: #002355; font-weight: 800;">Respondent ID</th>
+              <th style="color: #002355; font-weight: 800;">Participant Name</th>
+              <th style="color: #002355; font-weight: 800;">Duplicate Checker</th>
+              <th style="color: #002355; font-weight: 800;">Enrollment Status</th>
+              <th style="color: #002355; font-weight: 800;">School / Company</th>
+              <th style="color: #002355; font-weight: 800;">Course</th>
+              <th style="color: #002355; font-weight: 800;">Fee</th>
+              <th style="color: #002355; font-weight: 800;">Paid</th>
+              <th style="color: #002355; font-weight: 800;">Balance</th>
+              <th style="color: #002355; font-weight: 800;">Payment Status</th>
+              ${isFinanceOrAdmin ? '<th style="color: #002355; font-weight: 800;">Actions</th>' : ''}
             </tr>
           </thead>
           <tbody>
             ${enrollments.map(enr => `
               <tr>
-                <td><code>${enr.respondentId || enr.id.replace('ENR-', '')}</code></td>
-                <td><strong>${enr.participantName}</strong></td>
-                <td>${enr.schoolCompany}</td>
-                <td><span style="font-size: 0.8rem; font-weight: 700;">${enr.course || enr.trainingType}</span></td>
-                <td><strong>${formatPHP(enr.investmentFee)}</strong></td>
-                <td><span style="color: var(--accent-emerald); font-weight: 700;">${formatPHP(enr.paymentMade)}</span></td>
-                <td><span style="color: ${enr.balance > 0 ? 'var(--accent-rose)' : 'var(--text-muted)'}; font-weight: 600;">${formatPHP(enr.balance)}</span></td>
-                <td><span class="status-pill status-${(enr.enrollmentStatus || 'Enrolled').replace(/\s+/g, '')}">${enr.enrollmentStatus || 'Enrolled'}</span></td>
-                <td><span class="status-pill status-${enr.paymentStatus.replace(/\s+/g, '')}">${enr.paymentStatus}</span></td>
+                <td><code style="color: #002355; font-weight: 700;">${enr.respondentId || enr.id.replace('ENR-', '')}</code></td>
+                <td><strong style="color: #002355;">${enr.participantName}</strong></td>
+                <td><span style="font-weight: 600; color: #002355;">${enr.duplicateChecker || 'N/A'}</span></td>
+                <td>
+                  <span class="status-pill" style="background: #dbeafe; color: #002355; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1; display: inline-block;">
+                    ${enr.enrollmentStatus || 'Enrolled'}
+                  </span>
+                </td>
+                <td><span style="color: #002355;">${enr.schoolCompany}</span></td>
+                <td><span style="font-size: 0.8rem; font-weight: 700; color: #002355;">${enr.course || enr.trainingType}</span></td>
+                <td><strong style="color: #002355;">${formatPHP(enr.investmentFee)}</strong></td>
+                <td><span style="color: #002355; font-weight: 700;">${formatPHP(enr.paymentMade)}</span></td>
+                <td><span style="color: #002355; font-weight: 700;">${formatPHP(enr.balance)}</span></td>
+                <td>
+                  <span class="status-pill" style="background: #f1f5f9; color: #002355; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1; display: inline-block;">
+                    ${enr.paymentStatus}
+                  </span>
+                </td>
                 ${isFinanceOrAdmin ? `
                   <td>
-                    <button class="btn btn-secondary btn-sm btn-update-pay" data-id="${enr.id}">
+                    <button class="btn btn-secondary btn-sm btn-update-pay" data-id="${enr.id}" style="background: #002355; color: #ffffff; border: none; font-weight: 700;">
                       <i class="fas fa-edit"></i> Edit Payment
                     </button>
                   </td>
@@ -103,6 +122,26 @@ export function renderEnrollments(container) {
       </div>
     </div>
   `;
+
+  // Search & Filter event listeners
+  const searchInput = container.querySelector('#search-enrollment');
+  const enrollFilter = container.querySelector('#filter-enroll-status');
+
+  const filterLedger = () => {
+    const query = searchInput ? searchInput.value.toLowerCase() : '';
+    const statusVal = enrollFilter ? enrollFilter.value : 'ALL';
+    const rows = container.querySelectorAll('#table-referral-enrollments tbody tr');
+
+    rows.forEach(tr => {
+      const text = tr.innerText.toLowerCase();
+      const matchQuery = text.includes(query);
+      const matchStatus = statusVal === 'ALL' || tr.innerText.includes(statusVal);
+      tr.style.display = (matchQuery && matchStatus) ? '' : 'none';
+    });
+  };
+
+  if (searchInput) searchInput.addEventListener('input', filterLedger);
+  if (enrollFilter) enrollFilter.addEventListener('change', filterLedger);
 
   if (isFinanceOrAdmin) {
     container.querySelectorAll('.btn-update-pay').forEach(btn => {

@@ -255,6 +255,9 @@
           <button class="notif-icon-btn" id="btn-mark-all-read-header" title="Mark All as Read">
             <i class="fas fa-check-double"></i>
           </button>
+          <button class="notif-icon-btn" id="btn-clear-all-notifs" title="Clear All Notifications">
+            <i class="fas fa-trash-alt"></i>
+          </button>
           <button class="notif-icon-btn" id="btn-close-notif-drawer" title="Close Panel">
             &times;
           </button>
@@ -738,6 +741,8 @@
                     <tr>
                       <th>Enrollment ID</th>
                       <th>Participant Name</th>
+                      <th>Duplicate Checker</th>
+                      <th>Enrollment Status</th>
                       <th>School / Company</th>
                       <th>Training Date</th>
                       <th>Investment Fee</th>
@@ -751,6 +756,8 @@
                     <tr>
                       <td><strong>ENR-8801</strong></td>
                       <td><strong>Engr. Robert Tan</strong></td>
+                      <td><span style="font-weight: 600; color: #002355;">DUPLICATE</span></td>
+                      <td><span class="status-pill status-Enrolled" style="background: #dbeafe; color: #002355; font-weight: 700; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 12px;">Enrolled</span></td>
                       <td>Meralco Industrial Engineering</td>
                       <td>2026-08-12</td>
                       <td>₱4,500.00</td>
@@ -762,13 +769,15 @@
                     <tr>
                       <td><strong>ENR-8802</strong></td>
                       <td><strong>Dr. Sofia Garcia</strong></td>
+                      <td><span style="font-weight: 600; color: #002355;">UNIQUE</span></td>
+                      <td><span class="status-pill status-Enrolled" style="background: #dbeafe; color: #002355; font-weight: 700; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 12px;">Enrolled</span></td>
                       <td>St. Luke Medical Center</td>
                       <td>2026-08-18</td>
                       <td>₱3,200.00</td>
                       <td style="color: var(--accent-emerald); font-weight: 600;">₱1,600.00</td>
                       <td style="color: var(--accent-rose); font-weight: 600;">₱1,600.00</td>
                       <td><span class="unit-badge"><i class="fas fa-star"></i> 0.71 Units</span></td>
-                      <td><span class="status-pill status-Partial"><i class="fas fa-adjust"></i> Partial</span></td>
+                      <td><span class="status-pill status-Partial"><i class="fas fa-clock"></i> Partial</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -788,34 +797,34 @@
             <div class="mock-grid-4">
               <div class="mock-stat-card">
                 <div class="mock-stat-content">
-                  <div class="mock-stat-title">MONTHLY INVITES (AUGUST 2026)</div>
-                  <div class="mock-stat-number">7</div>
+                  <div class="mock-stat-title" style="color: #002355;">MONTHLY INVITES (AUGUST 2026)</div>
+                  <div class="mock-stat-number" style="color: #002355;">7</div>
                 </div>
-                <div class="mock-icon-sky"><i class="fas fa-calendar-alt"></i></div>
+                <div class="mock-icon-sky" style="background: rgba(0, 35, 85, 0.1); color: #002355;"><i class="fas fa-calendar-alt"></i></div>
               </div>
 
               <div class="mock-stat-card">
                 <div class="mock-stat-content">
-                  <div class="mock-stat-title">TOTAL INVITES CUMULATIVE</div>
-                  <div class="mock-stat-number">7</div>
+                  <div class="mock-stat-title" style="color: #002355;">TOTAL INVITES CUMULATIVE</div>
+                  <div class="mock-stat-number" style="color: #002355;">7</div>
                 </div>
-                <div class="mock-icon-sky" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);"><i class="fas fa-paper-plane"></i></div>
+                <div class="mock-icon-sky" style="background: rgba(0, 35, 85, 0.1); color: #002355;"><i class="fas fa-paper-plane"></i></div>
               </div>
 
               <div class="mock-stat-card">
                 <div class="mock-stat-content">
-                  <div class="mock-stat-title">VERIFIED INVITES</div>
-                  <div class="mock-stat-number">5</div>
+                  <div class="mock-stat-title" style="color: #002355;">VERIFIED INVITES</div>
+                  <div class="mock-stat-number" style="color: #002355;">5</div>
                 </div>
-                <div class="mock-icon-sky" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;"><i class="fas fa-user-check"></i></div>
+                <div class="mock-icon-sky" style="background: rgba(0, 35, 85, 0.1); color: #002355;"><i class="fas fa-user-check"></i></div>
               </div>
 
               <div class="mock-stat-card">
                 <div class="mock-stat-content">
-                  <div class="mock-stat-title">ENROLLED INVITES</div>
-                  <div class="mock-stat-number">5</div>
+                  <div class="mock-stat-title" style="color: #002355;">ENROLLED INVITES</div>
+                  <div class="mock-stat-number" style="color: #002355;">5</div>
                 </div>
-                <div class="mock-icon-sky" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);"><i class="fas fa-graduation-cap"></i></div>
+                <div class="mock-icon-sky" style="background: rgba(0, 35, 85, 0.1); color: #002355;"><i class="fas fa-graduation-cap"></i></div>
               </div>
             </div>
 
@@ -825,15 +834,11 @@
                   <h3 class="mock-panel-title"><i class="fas fa-filter" style="color: var(--accent-sky);"></i> Recruitment Funnel Breakdown</h3>
                 </div>
                 <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 180px; padding-top: 20px;">
-                  <div style="text-align: center; width: 28%;">
+                  <div style="text-align: center; width: 40%;">
                     <div style="background: #3b82f6; height: 140px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #fff;">7</div>
                     <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">Total Submissions</div>
                   </div>
-                  <div style="text-align: center; width: 28%;">
-                    <div style="background: #10b981; height: 100px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #fff;">5</div>
-                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">Verified by Mgr</div>
-                  </div>
-                  <div style="text-align: center; width: 28%;">
+                  <div style="text-align: center; width: 40%;">
                     <div style="background: #8b5cf6; height: 100px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #fff;">5</div>
                     <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">Enrolled Participants</div>
                   </div>
@@ -872,25 +877,25 @@
             <div class="mock-grid-3">
               <div class="mock-stat-card">
                 <div class="mock-stat-content">
-                  <div class="mock-stat-title">MONTHLY UNITS EARNED</div>
-                  <div class="mock-stat-number">18 Units</div>
+                  <div class="mock-stat-title" style="color: #002355;">MONTHLY UNITS EARNED</div>
+                  <div class="mock-stat-number" style="color: #002355;">18 Units</div>
                 </div>
               </div>
 
               <div class="mock-stat-card">
                 <div class="mock-stat-content">
-                  <div class="mock-stat-title">TOTAL ACCUMULATED UNITS</div>
-                  <div class="mock-stat-number" style="color: var(--accent-emerald);">42 Units</div>
+                  <div class="mock-stat-title" style="color: #002355;">TOTAL ACCUMULATED UNITS</div>
+                  <div class="mock-stat-number" style="color: #002355;">42 Units</div>
                 </div>
-                <div class="mock-icon-sky" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);"><i class="fas fa-award"></i></div>
+                <div class="mock-icon-sky" style="background: rgba(0, 35, 85, 0.1); color: #002355;"><i class="fas fa-award"></i></div>
               </div>
 
               <div class="mock-stat-card">
                 <div class="mock-stat-content">
-                  <div class="mock-stat-title">NEXT ELITE LEVEL</div>
-                  <div class="mock-stat-number" style="color: #60a5fa;">Silver</div>
+                  <div class="mock-stat-title" style="color: #002355;">NEXT ELITE LEVEL</div>
+                  <div class="mock-stat-number" style="color: #002355;">Silver</div>
                 </div>
-                <div class="mock-icon-sky" style="background: rgba(96, 165, 250, 0.15); color: #60a5fa;"><i class="fas fa-arrow-up"></i></div>
+                <div class="mock-icon-sky" style="background: rgba(0, 35, 85, 0.1); color: #002355;"><i class="fas fa-arrow-up"></i></div>
               </div>
             </div>
 
@@ -1362,25 +1367,31 @@
                   <thead>
                     <tr>
                       <th>Participant Name</th>
+                      <th>Duplicate Checker</th>
                       <th>School / Company</th>
                       <th>Training Date</th>
                       <th>Referrer</th>
+                      <th>Enrollment Status</th>
                       <th>Payment Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td><strong>Engr. Robert Tan</strong></td>
+                      <td><span style="font-weight: 600; color: #002355;">DUPLICATE</span></td>
                       <td>Meralco Industrial Engineering</td>
                       <td>2026-08-12</td>
                       <td>Joshua Villafuerte</td>
+                      <td><span class="status-pill status-Enrolled" style="background: #dbeafe; color: #002355; font-weight: 700; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 12px;">Enrolled</span></td>
                       <td><span class="status-pill status-FullyPaid">Fully Paid</span></td>
                     </tr>
                     <tr>
                       <td><strong>Dr. Sofia Garcia</strong></td>
+                      <td><span style="font-weight: 600; color: #002355;">UNIQUE</span></td>
                       <td>St. Luke Medical Center</td>
                       <td>2026-08-18</td>
                       <td>Joshua Villafuerte</td>
+                      <td><span class="status-pill status-Enrolled" style="background: #dbeafe; color: #002355; font-weight: 700; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 12px;">Enrolled</span></td>
                       <td><span class="status-pill status-Partial">Partial</span></td>
                     </tr>
                   </tbody>

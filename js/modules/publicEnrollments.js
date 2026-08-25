@@ -86,13 +86,15 @@ export function renderPublicEnrollments(container) {
             <tr>
               <th>RESPONDENT ID</th>
               <th>Participant Name</th>
+              <th>Duplicate Checker</th>
+              <th>Enrollment Status</th>
               <th>School / Company</th>
               <th>Training Program</th>
               <th>Referrer</th>
               <th>Training Fee</th>
               <th>Amount Paid</th>
               <th>Balance</th>
-              <th>Status</th>
+              <th>Payment Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -101,6 +103,12 @@ export function renderPublicEnrollments(container) {
               <tr>
                 <td><code>${enr.id}</code></td>
                 <td><strong>${enr.participantName}</strong></td>
+                <td><span style="font-weight: 600; color: #002355;">${enr.duplicateChecker || 'N/A'}</span></td>
+                <td>
+                  <span class="status-pill" style="background: #dbeafe; color: #002355; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1; display: inline-block;">
+                    ${enr.enrollmentStatus || 'Enrolled'}
+                  </span>
+                </td>
                 <td>${enr.schoolCompany}</td>
                 <td><small>${enr.trainingType}</small></td>
                 <td>${enr.referrerName}</td>

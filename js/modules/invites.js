@@ -48,6 +48,7 @@ export function renderInvites(container) {
             <tr>
               <th>Invite ID</th>
               <th>Invite Name</th>
+              <th>Duplicate Checker</th>
               <th>School / Company</th>
               <th>Training Type</th>
               <th>Training Date</th>
@@ -61,6 +62,7 @@ export function renderInvites(container) {
               <tr>
                 <td><code>${inv.respondentId || inv.id.replace('INV-', '')}</code></td>
                 <td><strong>${inv.inviteName}</strong></td>
+                <td><span style="font-weight: 600; color: var(--text-secondary);">${inv.duplicateChecker || 'N/A'}</span></td>
                 <td>${inv.schoolCompany}</td>
                 <td><small>${inv.trainingType}</small></td>
                 <td>${inv.trainingDate}</td>

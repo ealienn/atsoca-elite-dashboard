@@ -685,6 +685,27 @@ body[data-theme="dark"] .sim-result-label {
   color: var(--accent-blue);
 }
 
+/* Responsive Table Container & Custom Table Rules */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: middle;
+}
+
 /* Stat Cards */
 .stat-card {
   display: flex;
@@ -701,23 +722,23 @@ body[data-theme="dark"] .sim-result-label {
   left: 0;
   width: 4px;
   height: 100%;
-  background: var(--accent-blue);
+  background: #002355;
 }
 
 .stat-card.emerald::before {
-  background: var(--accent-emerald);
+  background: #002355;
 }
 
 .stat-card.amber::before {
-  background: var(--accent-amber);
+  background: #002355;
 }
 
 .stat-card.purple::before {
-  background: var(--accent-purple);
+  background: #002355;
 }
 
 .stat-card.rose::before {
-  background: var(--accent-rose);
+  background: #002355;
 }
 
 .stat-info span {

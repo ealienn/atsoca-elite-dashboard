@@ -23,24 +23,24 @@ export function renderUnits(container) {
 
     <!-- Unit Stat Cards -->
     <div class="grid-3">
-      <div class="card stat-card amber" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
         <div class="stat-info" style="text-align: center;">
-          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Monthly Units Earned</span>
-          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px;">${member.monthlyUnits} Units</div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #002355; text-transform: uppercase; letter-spacing: 0.05em;">Monthly Units Earned</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #002355;">${member.monthlyUnits} Units</div>
         </div>
       </div>
 
-      <div class="card stat-card emerald" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
         <div class="stat-info" style="text-align: center;">
-          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Total Accumulated Units</span>
-          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #10b981;">${member.totalUnits} Units</div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #002355; text-transform: uppercase; letter-spacing: 0.05em;">Total Accumulated Units</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #002355;">${member.totalUnits} Units</div>
         </div>
       </div>
 
-      <div class="card stat-card purple" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
+      <div class="card stat-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px 18px;">
         <div class="stat-info" style="text-align: center;">
-          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Next Elite Level</span>
-          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #8b5cf6;">${levelInfo.nextLevel}</div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #002355; text-transform: uppercase; letter-spacing: 0.05em;">Next Elite Level</span>
+          <div class="stat-value" style="font-size: 2.2rem; font-weight: 900; margin-top: 6px; color: #002355;">${levelInfo.nextLevel}</div>
         </div>
       </div>
     </div>

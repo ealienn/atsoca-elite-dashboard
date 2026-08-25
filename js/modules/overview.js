@@ -170,11 +170,6 @@ function renderManagementOverview(container, role) {
       <div>
         <h2 style="color: #ffffff; margin: 0; font-size: 1.35rem; font-weight: 800;">Administrator Executive Console</h2>
       </div>
-      <div>
-        <button class="btn btn-primary" id="btn-mgmt-quick-verify" style="background: #0284c7; color: #ffffff; border: none; font-weight: 700; border-radius: 8px; padding: 10px 20px; font-size: 0.88rem;">
-          Verification Log (${pendingInvites} Pending)
-        </button>
-      </div>
     </div>
 
     <!-- 1. Key Metric Stat Cards (Centered Minimalist Layout) -->
@@ -471,6 +466,7 @@ function renderManagementOverview(container, role) {
               <tr style="background: #f8fafc;">
                 <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">RESPONDENT ID</th>
                 <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">PARTICIPANT NAME</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">DUPLICATE CHECKER</th>
                 <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">SCHOOL / COMPANY</th>
                 <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">TRAINING PROGRAM</th>
                 <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">REFERRER</th>
@@ -484,7 +480,7 @@ function renderManagementOverview(container, role) {
             <tbody>
               ${memberInvites.length === 0 ? `
                 <tr>
-                  <td colspan="10" style="text-align: center; color: #002355; font-weight: 600; padding: 24px;">
+                  <td colspan="11" style="text-align: center; color: #002355; font-weight: 600; padding: 24px;">
                     No invite or enrollment records found for Elite Member Code [${targetMember.id}].
                   </td>
                 </tr>
@@ -492,6 +488,7 @@ function renderManagementOverview(container, role) {
                 const enr = memberEnrollments.find(e => String(e.id) === String(inv.id) || String(e.respondentId) === String(inv.respondentId || inv.id));
                 const respId = inv.respondentId || String(inv.id).replace('INV-', '');
                 const partName = inv.participantName || inv.inviteName || 'Participant';
+                const dupChecker = inv.duplicateChecker || (enr ? enr.duplicateChecker : 'N/A') || 'N/A';
                 const schoolComp = inv.schoolCompany || '-';
                 const program = inv.trainingType || inv.courseName || inv.course || 'COSH SO2';
                 const referrerName = targetMember.name;
@@ -526,6 +523,7 @@ function renderManagementOverview(container, role) {
                   <tr>
                     <td style="color: #002355; font-size: 0.82rem;"><code style="color: #002355; font-weight: 700;">${respId}</code></td>
                     <td style="color: #002355; font-size: 0.82rem;"><strong>${partName}</strong></td>
+                    <td style="color: #002355; font-size: 0.82rem;"><span style="font-weight: 600; color: #002355;">${dupChecker}</span></td>
                     <td style="color: #002355; font-size: 0.82rem;">${schoolComp}</td>
                     <td style="color: #002355; font-size: 0.82rem;"><span style="font-weight: 600; color: #002355;">${program}</span></td>
                     <td style="color: #002355; font-size: 0.82rem;"><strong>${referrerName}</strong></td>

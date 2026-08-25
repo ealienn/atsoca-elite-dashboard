@@ -164,8 +164,8 @@ function doGet(e) {
       var savedAvatar = props.getProperty('AVATAR_' + eliteCode);
 
       records.push({
-        id: respondentId || ('GS-ROW-' + (i + 1)),
-        rowId: respondentId || ('GS-ROW-' + (i + 1)),
+        id: 'GS-R' + (i + 1) + '-' + (respondentId || 'ID'),
+        rowId: 'GS-R' + (i + 1) + '-' + (respondentId || 'ID'),
         respondentId: respondentId,
         colB: colB,
         eliteCode: eliteCode,

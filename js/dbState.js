@@ -3,10 +3,10 @@
  */
 import { calculateUnitsFromAmount, calculateReferralFee, getEliteLevel } from './matrixEngine.js';
 
-const STORAGE_KEY = 'atsoca_elite_db_v100';
+const STORAGE_KEY = 'atsoca_elite_db_v102';
 
 // OPTIONAL: Paste your deployed Google Apps Script Web App URL here to sync with Google Sheets
-export const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzHpxPOjDQ6gE1fdorKIA7yw-p4Sg3CGnDu9KDKQ98vn6GPEc4pBxZsk2deYXizpIXnKg/exec';
+export const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxljjgYaX0C-KDsljOBB6kZ9dR6ZYLjb4awplGJtnAy9xZb1LusTH6kLFdVJs7mj0I/exec';
 
 const INITIAL_MEMBERS = [
   {
@@ -37,9 +37,9 @@ const INITIAL_MEMBERS = [
     baselineUnits: 5.91,
     monthlyUnits: 5.91,
     pendingFees: 0,
-    availableForRelease: 810,
+    availableForRelease: 28400,
     releasedFees: 0,
-    joinDate: '2025-02-10'
+    joinDate: '2025-02-05'
   },
   {
     id: '006',
@@ -53,9 +53,9 @@ const INITIAL_MEMBERS = [
     baselineUnits: 1.22,
     monthlyUnits: 1.22,
     pendingFees: 0,
-    availableForRelease: 810,
+    availableForRelease: 0,
     releasedFees: 0,
-    joinDate: '2025-03-01'
+    joinDate: '2025-02-10'
   },
   {
     id: '007',
@@ -64,14 +64,14 @@ const INITIAL_MEMBERS = [
     email: 'charlene.hilvano@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     totalUnits: 0.33,
     baselineUnits: 0.33,
     monthlyUnits: 0.33,
     pendingFees: 0,
     availableForRelease: 0,
     releasedFees: 0,
-    joinDate: '2025-03-10'
+    joinDate: '2025-02-12'
   },
   {
     id: '008',
@@ -80,14 +80,14 @@ const INITIAL_MEMBERS = [
     email: 'jenelle.mangubat@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
+    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
     totalUnits: 0.67,
     baselineUnits: 0.67,
     monthlyUnits: 0.67,
     pendingFees: 0,
     availableForRelease: 0,
     releasedFees: 0,
-    joinDate: '2025-03-15'
+    joinDate: '2025-02-15'
   }
 ];
 
@@ -100,33 +100,43 @@ const INITIAL_RELEASES = [];
 const INITIAL_NOTIFICATIONS = [
   {
     id: 'NOTIF-01',
-    timestamp: '2026-07-26 14:30',
-    type: 'Units Earned',
-    title: 'Units Credited!',
-    message: 'You earned 1.11 units for Patricia Lim (Globe Telecom Inc.).',
+    timestamp: '2026-08-25 08:30',
+    type: 'Invite Verified',
+    title: 'Invite Verification Confirmed',
+    message: 'Participant "pax silica" (BOSH SO2) has been verified and enrolled for Elite Code [004].',
     read: false,
     roleTarget: 'Elite Member',
     memberId: '004'
   },
   {
     id: 'NOTIF-02',
-    timestamp: '2026-07-25 09:15',
-    type: 'Invite Verified',
-    title: 'Invite Verification Confirmed',
-    message: 'Engr. Robert Tan (Meralco) has been verified by Administration.',
-    read: true,
+    timestamp: '2026-08-24 16:15',
+    type: 'Units Earned',
+    title: 'Units Credited',
+    message: 'Units earned for participant "trial entry" (COSH SO2) added to baseline ledger.',
+    read: false,
     roleTarget: 'Elite Member',
     memberId: '004'
   },
   {
     id: 'NOTIF-03',
-    timestamp: '2026-07-24 16:45',
-    type: 'Referral Fee Available',
-    title: 'Referral Fee Computation Ready',
-    message: '₱810.00 referral fee is now available for release for Engr. Robert Tan.',
+    timestamp: '2026-08-24 11:00',
+    type: 'Invite Verified',
+    title: 'New Invite Submitted',
+    message: 'Participant "aug24" (BOSH SO2) registered under Elite Member Charlene Hilvano [007].',
     read: true,
     roleTarget: 'Elite Member',
-    memberId: '004'
+    memberId: '007'
+  },
+  {
+    id: 'NOTIF-04',
+    timestamp: '2026-08-23 15:45',
+    type: 'Invite Verified',
+    title: 'Invite Verified',
+    message: 'Participant "xy@gmail.com" (COSH SO2) confirmed for Elite Member Jenelle Mangubat [008].',
+    read: true,
+    roleTarget: 'Elite Member',
+    memberId: '008'
   }
 ];
 
@@ -160,7 +170,7 @@ class DBState {
         if (this.data && this.data.members && Array.isArray(this.data.members)) {
           // Strictly retain ONLY official 004 to 008 members
           this.data.members = this.data.members.filter(m => m && OFFICIAL_MEMBER_IDS.includes(m.id));
-          
+
           // Ensure all 5 official members are present
           INITIAL_MEMBERS.forEach(initM => {
             if (!this.data.members.some(m => m.id === initM.id)) {
@@ -319,11 +329,16 @@ class DBState {
           dateSub = r.dateSubmitted || new Date().toISOString().split('T')[0];
         }
 
+        // Column E: Duplicate Checker (row[4])
+        const dupChecker = String((isArr ? r[4] : (r.colE || r.duplicateChecker)) || 'N/A').trim() || 'N/A';
+        const rowUniqueId = (r && !isArr && r.id) ? r.id : `GS-R${idx + 1}-${respId}`;
+
         syncedInvites.push({
-          id: respId,
+          id: rowUniqueId,
           respondentId: respId,
           eliteCode: eliteCode,
           inviteName: partName,
+          duplicateChecker: dupChecker,
           participantName: partName,
           schoolCompany: schoolComp,
           trainingType: courseChoice,
@@ -337,10 +352,11 @@ class DBState {
         });
 
         syncedEnrollments.push({
-          id: respId,
+          id: rowUniqueId,
           respondentId: respId,
           eliteCode: eliteCode,
           participantName: partName,
+          duplicateChecker: dupChecker,
           schoolCompany: schoolComp,
           trainingType: courseChoice,
           course: courseChoice,
@@ -420,10 +436,10 @@ class DBState {
   setRole(role, memberId = '004') {
     const OFFICIAL_MEMBER_IDS = ['004', '005', '006', '007', '008'];
     const OFFICIAL_ROLES = ['Administrator', 'Elite Manager', 'Finance', 'Elite Member'];
-    
+
     this.activeRole = OFFICIAL_ROLES.includes(role) ? role : 'Administrator';
     this.currentMemberId = OFFICIAL_MEMBER_IDS.includes(memberId) ? memberId : '004';
-    
+
     localStorage.setItem('atsoca_active_role', this.activeRole);
     localStorage.setItem('atsoca_current_member_id', this.currentMemberId);
     this.notify();
@@ -685,243 +701,243 @@ class DBState {
     this.notify();
   }
 
-updateEnrollmentPayment(enrollmentId, paymentAmount, newTotalInvestment = null) {
-  const enr = this.data.enrollments.find(e => e.id === enrollmentId);
-  if (!enr) return;
+  updateEnrollmentPayment(enrollmentId, paymentAmount, newTotalInvestment = null) {
+    const enr = this.data.enrollments.find(e => e.id === enrollmentId);
+    if (!enr) return;
 
-  if (newTotalInvestment !== null && !isNaN(newTotalInvestment)) {
-    enr.investmentFee = Math.max(0, Number(newTotalInvestment));
-  }
-
-  const paid = Math.min(enr.investmentFee, Math.max(0, Number(paymentAmount)));
-  enr.paymentMade = paid;
-  enr.balance = Math.max(0, enr.investmentFee - paid);
-
-  if (enr.balance === 0 && enr.paymentMade > 0) {
-    enr.paymentStatus = 'Fully Paid';
-  } else if (enr.paymentMade > 0) {
-    enr.paymentStatus = 'Partial';
-  } else {
-    enr.paymentStatus = 'Unpaid';
-  }
-
-  // Recompute units earned for referred participant
-  if (enr.isReferred && enr.referrerId) {
-    const units = calculateUnitsFromAmount(enr.paymentMade);
-    enr.unitsEarned = units;
-
-    // Update Member Total Units
-    const member = this.data.members.find(m => m.id === enr.referrerId);
-    if (member) {
-      // Re-sum all verified payment units for this member
-      const memberEnrollments = this.data.enrollments.filter(e => e.referrerId === member.id);
-      const totalU = memberEnrollments.reduce((sum, e) => sum + calculateUnitsFromAmount(e.paymentMade), 0);
-      member.totalUnits = Number(totalU.toFixed(2));
-    }
-  }
-
-  this.addLog(this.activeRole, 'Payment Updated', 'Enrollment & Payments', `Updated payment for ${enr.participantName} to ₱${paid}`);
-  this.save();
-}
-
-addPublicEnrollment(publicData) {
-  const newId = `ENR-PUB-${Math.floor(100 + Math.random() * 900)}`;
-  const fee = Number(publicData.investmentFee) || 0;
-  const paid = Number(publicData.paymentMade) || 0;
-  const bal = Math.max(0, fee - paid);
-
-  let status = 'Unpaid';
-  if (bal === 0 && paid > 0) status = 'Fully Paid';
-  else if (paid > 0) status = 'Partial';
-
-  const newPublicEnr = {
-    id: newId,
-    participantName: publicData.participantName,
-    schoolCompany: publicData.schoolCompany || 'N/A',
-    trainingType: publicData.trainingType,
-    trainingDate: publicData.trainingDate,
-    isReferred: false,
-    referrerId: null,
-    referrerName: 'Direct Walk-in / Online',
-    investmentFee: fee,
-    paymentMade: paid,
-    balance: bal,
-    paymentStatus: status,
-    unitsEarned: 0,
-    verifiedDate: new Date().toISOString().split('T')[0]
-  };
-
-  this.data.enrollments.unshift(newPublicEnr);
-  this.addLog(this.activeRole, 'Public Enrollment Added', 'Public Enrollment Monitoring', `Added participant ${publicData.participantName}`);
-  this.save();
-  return newPublicEnr;
-}
-
-submitReleaseRequest(amount, disbursementMethod, notes) {
-  const member = this.getCurrentMember();
-  const reqNum = `ATS-RF-${Math.floor(1000 + Math.random() * 9000)}`;
-
-  const newReq = {
-    id: `REL-2026-${this.data.releases.length + 101}`,
-    reqNumber: reqNum,
-    eliteMemberId: member.id,
-    eliteMemberName: member.name,
-    amount: Number(amount),
-    dateRequested: new Date().toISOString().split('T')[0],
-    processingStatus: 'Submitted',
-    dateReleased: null,
-    disbursementMethod: disbursementMethod,
-    notes: notes || 'Online Referral Fee Release Request'
-  };
-
-  this.data.releases.unshift(newReq);
-
-  // Deduct from available, add to pending
-  member.availableForRelease = Math.max(0, member.availableForRelease - Number(amount));
-  member.pendingFees += Number(amount);
-
-  if (GOOGLE_SHEETS_WEB_APP_URL) {
-    fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'request_release', payload: newReq }),
-      mode: 'no-cors'
-    }).catch(err => console.warn('POST release request to Google Sheets:', err));
-  }
-
-  this.addNotification({
-    type: 'Referral Fee Release Request',
-    title: 'New Release Request',
-    message: `${member.name} requested ₱${amount.toLocaleString()} payout via ${disbursementMethod}.`,
-    roleTarget: 'Finance'
-  });
-
-  this.addLog(member.name, 'Submit Release Request', 'Referral Fee Release', `Requested ₱${amount} via ${disbursementMethod}`);
-  this.save();
-  return newReq;
-}
-
-async syncWithGoogleSheets() {
-  if (!GOOGLE_SHEETS_WEB_APP_URL) return;
-  try {
-    const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL);
-    if (!response.ok) return;
-    const data = await response.json();
-    if (!data) return;
-
-    // Safe parsing for Elite_Members
-    if (Array.isArray(data.Elite_Members) && data.Elite_Members.length > 0) {
-      data.Elite_Members.forEach(sheetMember => {
-        if (!sheetMember || !sheetMember.id) return;
-        let local = this.data.members.find(m => m.id === sheetMember.id || (m.email && sheetMember.email && m.email.toLowerCase() === sheetMember.email.toLowerCase()));
-        if (local) {
-          local.totalUnits = Number(sheetMember.totalUnits || local.totalUnits || 0);
-          local.monthlyUnits = Number(sheetMember.monthlyUnits || local.monthlyUnits || 0);
-          local.availableForRelease = Number(sheetMember.availableForRelease || local.availableForRelease || 0);
-          local.releasedFees = Number(sheetMember.releasedFees || local.releasedFees || 0);
-          local.pendingFees = Number(sheetMember.pendingFees || local.pendingFees || 0);
-        }
-      });
+    if (newTotalInvestment !== null && !isNaN(newTotalInvestment)) {
+      enr.investmentFee = Math.max(0, Number(newTotalInvestment));
     }
 
-    // Safe parsing for Master_Ledger
-    if (Array.isArray(data.Master_Ledger) && data.Master_Ledger.length > 0) {
-      data.Master_Ledger.forEach(row => {
-        if (!row) return;
-        const enrId = row.id || row.Enrollment_ID || `ENR-${Math.floor(1000 + Math.random()*9000)}`;
-        let existing = this.data.enrollments.find(e => e.id === enrId || (e.participantName && row.participantName && e.participantName.toLowerCase() === row.participantName.toLowerCase()));
-        if (existing) {
-          existing.investmentFee = Number(row.investmentFee || row.Investment_Fee || existing.investmentFee || 0);
-          existing.paymentMade = Number(row.paymentMade || row.Payment_Made || existing.paymentMade || 0);
-          existing.balance = Number(row.balance || row.Outstanding_Balance || existing.balance || 0);
-          existing.paymentStatus = row.paymentStatus || row.Payment_Status || existing.paymentStatus || 'Unpaid';
-        }
-      });
+    const paid = Math.min(enr.investmentFee, Math.max(0, Number(paymentAmount)));
+    enr.paymentMade = paid;
+    enr.balance = Math.max(0, enr.investmentFee - paid);
+
+    if (enr.balance === 0 && enr.paymentMade > 0) {
+      enr.paymentStatus = 'Fully Paid';
+    } else if (enr.paymentMade > 0) {
+      enr.paymentStatus = 'Partial';
+    } else {
+      enr.paymentStatus = 'Unpaid';
     }
 
-    // Parse Cloud Profile Avatars
-    if (data.profiles && typeof data.profiles === 'object') {
-      Object.keys(data.profiles).forEach(key => {
-        const avatarUrl = data.profiles[key];
-        if (!avatarUrl) return;
+    // Recompute units earned for referred participant
+    if (enr.isReferred && enr.referrerId) {
+      const units = calculateUnitsFromAmount(enr.paymentMade);
+      enr.unitsEarned = units;
 
-        // Apply to matching member
-        const member = this.data.members.find(m => m.id === key || (m.email && m.email.toLowerCase() === key.toLowerCase()));
-        if (member) {
-          member.avatar = avatarUrl;
-        }
-
-        // Apply to matching management account
-        if (this.data.managementAccounts && this.data.managementAccounts[key]) {
-          this.data.managementAccounts[key].avatar = avatarUrl;
-        }
-      });
+      // Update Member Total Units
+      const member = this.data.members.find(m => m.id === enr.referrerId);
+      if (member) {
+        // Re-sum all verified payment units for this member
+        const memberEnrollments = this.data.enrollments.filter(e => e.referrerId === member.id);
+        const totalU = memberEnrollments.reduce((sum, e) => sum + calculateUnitsFromAmount(e.paymentMade), 0);
+        member.totalUnits = Number(totalU.toFixed(2));
+      }
     }
 
+    this.addLog(this.activeRole, 'Payment Updated', 'Enrollment & Payments', `Updated payment for ${enr.participantName} to ₱${paid}`);
     this.save();
-    this.notify();
-  } catch (err) {
-    console.warn('Google Sheets sync error (offline/no-cors mode fallback active):', err);
   }
-}
 
-updateReleaseStatus(releaseId, newStatus, financeNotes = '') {
-  const rel = this.data.releases.find(r => r.id === releaseId);
-  if (!rel) return;
+  addPublicEnrollment(publicData) {
+    const newId = `ENR-PUB-${Math.floor(100 + Math.random() * 900)}`;
+    const fee = Number(publicData.investmentFee) || 0;
+    const paid = Number(publicData.paymentMade) || 0;
+    const bal = Math.max(0, fee - paid);
 
-  const oldStatus = rel.processingStatus;
-  rel.processingStatus = newStatus;
+    let status = 'Unpaid';
+    if (bal === 0 && paid > 0) status = 'Fully Paid';
+    else if (paid > 0) status = 'Partial';
 
-  const member = this.data.members.find(m => m.id === rel.eliteMemberId);
+    const newPublicEnr = {
+      id: newId,
+      participantName: publicData.participantName,
+      schoolCompany: publicData.schoolCompany || 'N/A',
+      trainingType: publicData.trainingType,
+      trainingDate: publicData.trainingDate,
+      isReferred: false,
+      referrerId: null,
+      referrerName: 'Direct Walk-in / Online',
+      investmentFee: fee,
+      paymentMade: paid,
+      balance: bal,
+      paymentStatus: status,
+      unitsEarned: 0,
+      verifiedDate: new Date().toISOString().split('T')[0]
+    };
 
-  if (newStatus === 'Released' && oldStatus !== 'Released') {
-    rel.dateReleased = new Date().toISOString().split('T')[0];
-    if (member) {
-      member.pendingFees = Math.max(0, member.pendingFees - rel.amount);
-      member.releasedFees += rel.amount;
-      member.totalEarnings = member.releasedFees + member.availableForRelease;
+    this.data.enrollments.unshift(newPublicEnr);
+    this.addLog(this.activeRole, 'Public Enrollment Added', 'Public Enrollment Monitoring', `Added participant ${publicData.participantName}`);
+    this.save();
+    return newPublicEnr;
+  }
+
+  submitReleaseRequest(amount, disbursementMethod, notes) {
+    const member = this.getCurrentMember();
+    const reqNum = `ATS-RF-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const newReq = {
+      id: `REL-2026-${this.data.releases.length + 101}`,
+      reqNumber: reqNum,
+      eliteMemberId: member.id,
+      eliteMemberName: member.name,
+      amount: Number(amount),
+      dateRequested: new Date().toISOString().split('T')[0],
+      processingStatus: 'Submitted',
+      dateReleased: null,
+      disbursementMethod: disbursementMethod,
+      notes: notes || 'Online Referral Fee Release Request'
+    };
+
+    this.data.releases.unshift(newReq);
+
+    // Deduct from available, add to pending
+    member.availableForRelease = Math.max(0, member.availableForRelease - Number(amount));
+    member.pendingFees += Number(amount);
+
+    if (GOOGLE_SHEETS_WEB_APP_URL) {
+      fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'request_release', payload: newReq }),
+        mode: 'no-cors'
+      }).catch(err => console.warn('POST release request to Google Sheets:', err));
     }
+
     this.addNotification({
-      type: 'Referral Fee Released',
-      title: 'Referral Fee Released!',
-      message: `Your release request #${rel.reqNumber} for ₱${rel.amount.toLocaleString()} has been processed and disbursed.`,
-      roleTarget: 'Elite Member',
-      memberId: rel.eliteMemberId
+      type: 'Referral Fee Release Request',
+      title: 'New Release Request',
+      message: `${member.name} requested ₱${amount.toLocaleString()} payout via ${disbursementMethod}.`,
+      roleTarget: 'Finance'
     });
-  } else if (newStatus === 'Rejected' && oldStatus !== 'Rejected') {
-    if (member) {
-      member.pendingFees = Math.max(0, member.pendingFees - rel.amount);
-      member.availableForRelease += rel.amount;
+
+    this.addLog(member.name, 'Submit Release Request', 'Referral Fee Release', `Requested ₱${amount} via ${disbursementMethod}`);
+    this.save();
+    return newReq;
+  }
+
+  async syncWithGoogleSheets() {
+    if (!GOOGLE_SHEETS_WEB_APP_URL) return;
+    try {
+      const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL);
+      if (!response.ok) return;
+      const data = await response.json();
+      if (!data) return;
+
+      // Safe parsing for Elite_Members
+      if (Array.isArray(data.Elite_Members) && data.Elite_Members.length > 0) {
+        data.Elite_Members.forEach(sheetMember => {
+          if (!sheetMember || !sheetMember.id) return;
+          let local = this.data.members.find(m => m.id === sheetMember.id || (m.email && sheetMember.email && m.email.toLowerCase() === sheetMember.email.toLowerCase()));
+          if (local) {
+            local.totalUnits = Number(sheetMember.totalUnits || local.totalUnits || 0);
+            local.monthlyUnits = Number(sheetMember.monthlyUnits || local.monthlyUnits || 0);
+            local.availableForRelease = Number(sheetMember.availableForRelease || local.availableForRelease || 0);
+            local.releasedFees = Number(sheetMember.releasedFees || local.releasedFees || 0);
+            local.pendingFees = Number(sheetMember.pendingFees || local.pendingFees || 0);
+          }
+        });
+      }
+
+      // Safe parsing for Master_Ledger
+      if (Array.isArray(data.Master_Ledger) && data.Master_Ledger.length > 0) {
+        data.Master_Ledger.forEach(row => {
+          if (!row) return;
+          const enrId = row.id || row.Enrollment_ID || `ENR-${Math.floor(1000 + Math.random() * 9000)}`;
+          let existing = this.data.enrollments.find(e => e.id === enrId || (e.participantName && row.participantName && e.participantName.toLowerCase() === row.participantName.toLowerCase()));
+          if (existing) {
+            existing.investmentFee = Number(row.investmentFee || row.Investment_Fee || existing.investmentFee || 0);
+            existing.paymentMade = Number(row.paymentMade || row.Payment_Made || existing.paymentMade || 0);
+            existing.balance = Number(row.balance || row.Outstanding_Balance || existing.balance || 0);
+            existing.paymentStatus = row.paymentStatus || row.Payment_Status || existing.paymentStatus || 'Unpaid';
+          }
+        });
+      }
+
+      // Parse Cloud Profile Avatars
+      if (data.profiles && typeof data.profiles === 'object') {
+        Object.keys(data.profiles).forEach(key => {
+          const avatarUrl = data.profiles[key];
+          if (!avatarUrl) return;
+
+          // Apply to matching member
+          const member = this.data.members.find(m => m.id === key || (m.email && m.email.toLowerCase() === key.toLowerCase()));
+          if (member) {
+            member.avatar = avatarUrl;
+          }
+
+          // Apply to matching management account
+          if (this.data.managementAccounts && this.data.managementAccounts[key]) {
+            this.data.managementAccounts[key].avatar = avatarUrl;
+          }
+        });
+      }
+
+      this.save();
+      this.notify();
+    } catch (err) {
+      console.warn('Google Sheets sync error (offline/no-cors mode fallback active):', err);
     }
   }
 
-  if (financeNotes) {
-    rel.notes = `${rel.notes} | Finance Note: ${financeNotes}`;
+  updateReleaseStatus(releaseId, newStatus, financeNotes = '') {
+    const rel = this.data.releases.find(r => r.id === releaseId);
+    if (!rel) return;
+
+    const oldStatus = rel.processingStatus;
+    rel.processingStatus = newStatus;
+
+    const member = this.data.members.find(m => m.id === rel.eliteMemberId);
+
+    if (newStatus === 'Released' && oldStatus !== 'Released') {
+      rel.dateReleased = new Date().toISOString().split('T')[0];
+      if (member) {
+        member.pendingFees = Math.max(0, member.pendingFees - rel.amount);
+        member.releasedFees += rel.amount;
+        member.totalEarnings = member.releasedFees + member.availableForRelease;
+      }
+      this.addNotification({
+        type: 'Referral Fee Released',
+        title: 'Referral Fee Released!',
+        message: `Your release request #${rel.reqNumber} for ₱${rel.amount.toLocaleString()} has been processed and disbursed.`,
+        roleTarget: 'Elite Member',
+        memberId: rel.eliteMemberId
+      });
+    } else if (newStatus === 'Rejected' && oldStatus !== 'Rejected') {
+      if (member) {
+        member.pendingFees = Math.max(0, member.pendingFees - rel.amount);
+        member.availableForRelease += rel.amount;
+      }
+    }
+
+    if (financeNotes) {
+      rel.notes = `${rel.notes} | Finance Note: ${financeNotes}`;
+    }
+
+    this.addLog(this.activeRole, 'Update Release Status', 'Referral Fee Release', `Changed #${rel.reqNumber} status to ${newStatus}`);
+    this.save();
   }
 
-  this.addLog(this.activeRole, 'Update Release Status', 'Referral Fee Release', `Changed #${rel.reqNumber} status to ${newStatus}`);
-  this.save();
-}
+  addNotification(notif) {
+    this.data.notifications.unshift({
+      id: `NOTIF-${Date.now()}`,
+      timestamp: new Date().toLocaleString('en-US', { hour12: false, month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      read: false,
+      ...notif
+    });
+  }
 
-addNotification(notif) {
-  this.data.notifications.unshift({
-    id: `NOTIF-${Date.now()}`,
-    timestamp: new Date().toLocaleString('en-US', { hour12: false, month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
-    read: false,
-    ...notif
-  });
-}
-
-addLog(user, action, module, details) {
-  this.data.logs.unshift({
-    id: `LOG-${Date.now()}`,
-    timestamp: new Date().toLocaleString(),
-    user: user || this.activeRole,
-    action,
-    module,
-    details
-  });
-}
+  addLog(user, action, module, details) {
+    this.data.logs.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toLocaleString(),
+      user: user || this.activeRole,
+      action,
+      module,
+      details
+    });
+  }
 }
 
 export const db = new DBState();

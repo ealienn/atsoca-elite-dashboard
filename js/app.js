@@ -226,7 +226,7 @@ class AppController {
 
       if (!role) {
         if (loginErrorAlert) {
-          loginErrorAlert.innerText = 'Access Denied: Account not authorized. Access is strictly restricted to the 4 official roles: Administrator, Elite Manager, Finance, and Elite Members (004 to 008).';
+          loginErrorAlert.innerText = 'Access Denied.';
           loginErrorAlert.style.display = 'block';
           loginErrorAlert.classList.remove('hidden');
         }
@@ -631,6 +631,18 @@ class AppController {
       btnMarkAllHeader.addEventListener('click', () => {
         if (db && db.data && Array.isArray(db.data.notifications)) {
           db.data.notifications.forEach(n => n.read = true);
+          db.save();
+        }
+        renderNotifications(document.querySelector('#drawer-notif-content'), 'all');
+        this.updateNotificationBadge();
+      });
+    }
+
+    const btnClearAllHeader = document.querySelector('#btn-clear-all-notifs');
+    if (btnClearAllHeader) {
+      btnClearAllHeader.addEventListener('click', () => {
+        if (db && db.data && Array.isArray(db.data.notifications)) {
+          db.data.notifications = [];
           db.save();
         }
         renderNotifications(document.querySelector('#drawer-notif-content'), 'all');
