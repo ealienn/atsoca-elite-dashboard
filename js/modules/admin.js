@@ -117,9 +117,24 @@ export function renderAdmin(container) {
   const form = container.querySelector('#form-add-member');
 
   if (btnOpen && modal) {
-    btnOpen.addEventListener('click', () => modal.classList.add('active'));
-    [btnClose, btnCancel].forEach(b => b && b.addEventListener('click', () => modal.classList.remove('active')));
+    btnOpen.addEventListener('click', () => {
+      window.activeModalState = window.activeModalState || {};
+      window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+      window.activeModalState.activeModalIds.add('modal-add-member');
+      modal.classList.add('active');
+    });
+  }
 
+  if (btnClose && modal) {
+    btnClose.addEventListener('click', () => {
+      if (window.activeModalState && window.activeModalState.activeModalIds) {
+        window.activeModalState.activeModalIds.delete('modal-add-member');
+      }
+      modal.classList.remove('active');
+    });
+  }
+
+  if (form && modal) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = container.querySelector('#mem-name').value;
@@ -134,7 +149,7 @@ export function renderAdmin(container) {
         role
       });
 
-      modal.classList.remove('active');
+      form.reset();
       alert(`New Member Profile created successfully!\nID: ${newMember.id}\nName: ${newMember.name}`);
       renderAdmin(container);
     });

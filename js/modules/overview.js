@@ -343,7 +343,15 @@ function renderManagementOverview(container, role) {
   const btnCloseModal = container.querySelector('#close-modal-inspect');
 
   if (btnCloseModal && modal) {
-    btnCloseModal.addEventListener('click', () => modal.classList.remove('active'));
+    btnCloseModal.addEventListener('click', () => {
+      if (window.activeModalState) {
+        window.activeModalState.inspectMemberId = null;
+        if (window.activeModalState.activeModalIds) {
+          window.activeModalState.activeModalIds.delete('modal-inspect-account');
+        }
+      }
+      modal.classList.remove('active');
+    });
   }
 
   container.querySelectorAll('.btn-inspect-account').forEach(btn => {
@@ -353,10 +361,19 @@ function renderManagementOverview(container, role) {
     });
   });
 
+  window.reopenInspectModal = function(memId) {
+    openInspectModal(memId);
+  };
+
   // Function to open and populate inspect account modal
   function openInspectModal(memId) {
     const targetMember = db.data.members.find(m => m.id === memId);
     if (!targetMember || !modal || !modalBody) return;
+
+    window.activeModalState = window.activeModalState || {};
+    window.activeModalState.inspectMemberId = memId;
+    window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+    window.activeModalState.activeModalIds.add('modal-inspect-account');
 
     const tier = getEliteLevel(targetMember.totalUnits);
     const memberInvites = (db.data.invites || []).filter(i => 
@@ -379,14 +396,6 @@ function renderManagementOverview(container, role) {
                   ${tier.name} Tier
                 </span>
               </h3>
-              ${!isEliteMember ? `
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                  ID: <code>${targetMember.id}</code> | Email: <strong>${targetMember.email}</strong>
-                </div>
-                <div style="font-size: 0.82rem; color: var(--accent-amber); margin-top: 4px; font-weight: 600;">
-                  Partner Referral Code: ${targetMember.referralCode || 'ATS-REF-101'}
-                </div>
-              ` : ''}
             </div>
           </div>
         </div>
@@ -521,10 +530,19 @@ function renderManagementOverview(container, role) {
     modal.classList.add('active');
   }
 
+  window.reopenUnitsAdjustmentModal = function(memId) {
+    openAdjustUnitsModal(memId);
+  };
+
   // Function to open Unit History Audit Trail Ledger Modal
   function openAdjustUnitsModal(memId) {
     const member = db.data.members.find(m => m.id === memId);
     if (!member) return;
+
+    window.activeModalState = window.activeModalState || {};
+    window.activeModalState.unitsMemberId = memId;
+    window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+    window.activeModalState.activeModalIds.add('modal-adjust-units');
 
     let unitsModal = document.querySelector('#modal-adjust-units');
     if (!unitsModal) {
@@ -546,7 +564,17 @@ function renderManagementOverview(container, role) {
 
     const unitsBody = unitsModal.querySelector('#modal-units-body');
     const closeBtn = unitsModal.querySelector('#close-modal-units');
-    if (closeBtn) closeBtn.onclick = () => unitsModal.classList.remove('active');
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        if (window.activeModalState) {
+          window.activeModalState.unitsMemberId = null;
+          if (window.activeModalState.activeModalIds) {
+            window.activeModalState.activeModalIds.delete('modal-adjust-units');
+          }
+        }
+        unitsModal.classList.remove('active');
+      };
+    }
 
     const storageKey = `atsoca_unit_ledger_${member.id}`;
     let ledger = [];

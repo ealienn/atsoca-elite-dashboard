@@ -153,21 +153,36 @@ export function renderReleases(container) {
   const btnCancel = container.querySelector('#cancel-request-release');
   const form = container.querySelector('#form-request-release');
 
-  if (btnOpen) {
-    btnOpen.addEventListener('click', () => modal.classList.add('active'));
+  if (btnOpen && modal) {
+    btnOpen.addEventListener('click', () => {
+      window.activeModalState = window.activeModalState || {};
+      window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+      window.activeModalState.activeModalIds.add('modal-request-release');
+      modal.classList.add('active');
+    });
   }
   if (modal) {
-    [btnClose, btnCancel].forEach(b => b && b.addEventListener('click', () => modal.classList.remove('active')));
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const amount = container.querySelector('#rel-amount').value;
-      const method = container.querySelector('#rel-method').value;
-      const notes = container.querySelector('#rel-notes').value;
+    if (btnClose) {
+      btnClose.addEventListener('click', () => {
+        if (window.activeModalState && window.activeModalState.activeModalIds) {
+          window.activeModalState.activeModalIds.delete('modal-request-release');
+        }
+        modal.classList.remove('active');
+      });
+    }
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const amount = container.querySelector('#rel-amount').value;
+        const method = container.querySelector('#rel-method').value;
+        const notes = container.querySelector('#rel-notes').value;
 
-      db.submitReleaseRequest(amount, method, notes);
-      modal.classList.remove('active');
-      renderReleases(container);
-    });
+        db.submitReleaseRequest(amount, method, notes);
+        form.reset();
+        alert('Payout request submitted successfully.');
+        renderReleases(container);
+      });
+    }
   }
 
   // Finance Approval Triggers

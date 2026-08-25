@@ -347,6 +347,9 @@ class AppController {
         this.updateProfileWidget();
         this.renderActiveTab();
       });
+      window.activeModalState = window.activeModalState || {};
+      window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+      window.activeModalState.activeModalIds.add('modal-edit-user-profile');
       profileModal.classList.add('active');
     }
   }
@@ -524,7 +527,12 @@ class AppController {
         const member = db.getCurrentMember();
         if (emailInput && member) emailInput.value = member.email || 'joshua.villafuerte@atsoca.ph';
         if (dateInput) dateInput.value = new Date(Date.now() + 14*86400000).toISOString().split('T')[0];
-        if (modal) modal.classList.add('active');
+        if (modal) {
+          window.activeModalState = window.activeModalState || {};
+          window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+          window.activeModalState.activeModalIds.add('modal-add-invite');
+          modal.classList.add('active');
+        }
         return;
       }
 
@@ -537,7 +545,12 @@ class AppController {
         const member = db.getCurrentMember();
         if (emailInput && member) emailInput.value = member.email || 'joshua.villafuerte@atsoca.ph';
         if (amountInput && member) amountInput.value = member.availableForRelease || 24050;
-        if (modal) modal.classList.add('active');
+        if (modal) {
+          window.activeModalState = window.activeModalState || {};
+          window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+          window.activeModalState.activeModalIds.add('modal-release-request');
+          modal.classList.add('active');
+        }
         return;
       }
 
@@ -546,15 +559,29 @@ class AppController {
       if (btnHeaderAdd) {
         e.preventDefault();
         const globalModal = document.querySelector('#global-modal-add-member');
-        if (globalModal) globalModal.classList.add('active');
+        if (globalModal) {
+          window.activeModalState = window.activeModalState || {};
+          window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+          window.activeModalState.activeModalIds.add('global-modal-add-member');
+          globalModal.classList.add('active');
+        }
         return;
       }
 
-      // Close buttons for overlays
-      const modalCloseBtn = e.target.closest('.modal-close, #close-modal-user-profile, #global-cancel-add-member, #security-cancel-btn');
+      // Close buttons for overlays - ONLY triggered by explicit modal close buttons
+      const modalCloseBtn = e.target.closest('.modal-close, #close-modal-user-profile, #global-close-modal-member, #global-cancel-add-member, #security-cancel-btn, #security-close-modal, #btn-close-notif-drawer');
       if (modalCloseBtn) {
-        const overlay = modalCloseBtn.closest('.modal-overlay');
-        if (overlay) overlay.classList.remove('active');
+        const overlay = modalCloseBtn.closest('.modal-overlay, .notif-drawer');
+        if (overlay) {
+          overlay.classList.remove('active');
+          if (window.activeModalState) {
+            if (window.activeModalState.activeModalIds && overlay.id) {
+              window.activeModalState.activeModalIds.delete(overlay.id);
+            }
+            if (overlay.id === 'modal-inspect-account') window.activeModalState.inspectMemberId = null;
+            if (overlay.id === 'modal-adjust-units') window.activeModalState.unitsMemberId = null;
+          }
+        }
         return;
       }
     });
@@ -633,8 +660,6 @@ class AppController {
 
         const newMember = db.addMember({ name, email, totalUnits: units, role });
         db.setRole('Elite Member', newMember.id);
-        const globalModal = document.querySelector('#global-modal-add-member');
-        if (globalModal) globalModal.classList.remove('active');
         alert(`New Member Profile created successfully!\n\nID: ${newMember.id}\nName: ${newMember.name}`);
       });
     }
@@ -663,8 +688,6 @@ class AppController {
           referrerEmail: referrerEmail
         });
 
-        const modal = document.querySelector('#modal-add-invite');
-        if (modal) modal.classList.remove('active');
         formSubmitInvite.reset();
         alert(`Success! Invite for ${name} submitted to Elite Database & Google Sheets.`);
         this.renderActiveTab();
@@ -694,8 +717,6 @@ class AppController {
 
         db.submitReleaseRequest(amount, method, notes, referrerEmail);
 
-        const modal = document.querySelector('#modal-release-request');
-        if (modal) modal.classList.remove('active');
         formSubmitRelease.reset();
         alert(`Success! Referral fee release request for ₱${amount.toLocaleString()} submitted to Finance.`);
         this.renderActiveTab();
@@ -706,6 +727,9 @@ class AppController {
     const profileModal = document.querySelector('#modal-edit-user-profile');
     if (profileModalClose && profileModal) {
       profileModalClose.addEventListener('click', () => {
+        if (window.activeModalState && window.activeModalState.activeModalIds) {
+          window.activeModalState.activeModalIds.delete('modal-edit-user-profile');
+        }
         profileModal.classList.remove('active');
       });
     }
@@ -735,8 +759,8 @@ class AppController {
       openIds.forEach(id => {
         if (id !== 'modal-inspect-account' && id !== 'modal-adjust-units') {
           const el = document.querySelector(`#${id}`);
-          if (el && typeof window.openModal === 'function') {
-            window.openModal(el);
+          if (el) {
+            el.classList.add('active');
           }
         }
       });

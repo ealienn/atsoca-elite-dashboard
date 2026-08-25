@@ -193,22 +193,40 @@ export function renderPublicEnrollments(container) {
   const cancelAdd = container.querySelector('#cancel-add-public');
   const formAdd = container.querySelector('#form-add-public');
 
-  btnAdd.addEventListener('click', () => modalAdd.classList.add('active'));
-  [closeAdd, cancelAdd].forEach(b => b.addEventListener('click', () => modalAdd.classList.remove('active')));
-
-  formAdd.addEventListener('submit', (e) => {
-    e.preventDefault();
-    db.addPublicEnrollment({
-      participantName: container.querySelector('#pub-name').value,
-      schoolCompany: container.querySelector('#pub-school').value,
-      trainingType: container.querySelector('#pub-course').value,
-      trainingDate: container.querySelector('#pub-date').value,
-      investmentFee: container.querySelector('#pub-fee').value,
-      paymentMade: container.querySelector('#pub-payment').value
+  if (btnAdd && modalAdd) {
+    btnAdd.addEventListener('click', () => {
+      window.activeModalState = window.activeModalState || {};
+      window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+      window.activeModalState.activeModalIds.add('modal-add-public');
+      modalAdd.classList.add('active');
     });
-    modalAdd.classList.remove('active');
-    renderPublicEnrollments(container);
-  });
+  }
+
+  if (closeAdd && modalAdd) {
+    closeAdd.addEventListener('click', () => {
+      if (window.activeModalState && window.activeModalState.activeModalIds) {
+        window.activeModalState.activeModalIds.delete('modal-add-public');
+      }
+      modalAdd.classList.remove('active');
+    });
+  }
+
+  if (formAdd && modalAdd) {
+    formAdd.addEventListener('submit', (e) => {
+      e.preventDefault();
+      db.addPublicEnrollment({
+        participantName: container.querySelector('#pub-name').value,
+        schoolCompany: container.querySelector('#pub-school').value,
+        trainingType: container.querySelector('#pub-course').value,
+        trainingDate: container.querySelector('#pub-date').value,
+        investmentFee: container.querySelector('#pub-fee').value,
+        paymentMade: container.querySelector('#pub-payment').value
+      });
+      formAdd.reset();
+      alert('Public Enrollment added successfully!');
+      renderPublicEnrollments(container);
+    });
+  }
 
   // Edit payment triggers
   container.querySelectorAll('.btn-edit-payment').forEach(btn => {

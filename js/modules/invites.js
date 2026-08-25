@@ -137,18 +137,36 @@ export function renderInvites(container) {
   const btnCancel = container.querySelector('#cancel-add-invite');
   const form = container.querySelector('#form-add-invite');
 
-  btnOpen.addEventListener('click', () => modal.classList.add('active'));
-  [btnClose, btnCancel].forEach(b => b.addEventListener('click', () => modal.classList.remove('active')));
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    db.addInvite({
-      inviteName: container.querySelector('#inv-name').value,
-      schoolCompany: container.querySelector('#inv-school').value,
-      trainingType: container.querySelector('#inv-type').value,
-      trainingDate: container.querySelector('#inv-date').value
+  if (btnOpen && modal) {
+    btnOpen.addEventListener('click', () => {
+      window.activeModalState = window.activeModalState || {};
+      window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
+      window.activeModalState.activeModalIds.add('modal-add-invite');
+      modal.classList.add('active');
     });
-    modal.classList.remove('active');
-    renderInvites(container);
-  });
+  }
+
+  if (btnClose && modal) {
+    btnClose.addEventListener('click', () => {
+      if (window.activeModalState && window.activeModalState.activeModalIds) {
+        window.activeModalState.activeModalIds.delete('modal-add-invite');
+      }
+      modal.classList.remove('active');
+    });
+  }
+
+  if (form && modal) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      db.addInvite({
+        inviteName: container.querySelector('#inv-name').value,
+        schoolCompany: container.querySelector('#inv-school').value,
+        trainingType: container.querySelector('#inv-type').value,
+        trainingDate: container.querySelector('#inv-date').value
+      });
+      form.reset();
+      alert('Invite submitted successfully!');
+      renderInvites(container);
+    });
+  }
 }
