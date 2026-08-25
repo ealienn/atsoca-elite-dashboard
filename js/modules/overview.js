@@ -283,7 +283,7 @@ function renderManagementOverview(container, role) {
     <div class="modal-overlay" id="modal-inspect-account">
       <div class="modal-content modal-lg">
         <div class="modal-header">
-          <h3>Elite Account & Invite Verification View</h3>
+          <h3 style="color: #002355; font-size: 1.2rem; font-weight: 800; margin: 0;">Elite Account & Invite Verification View</h3>
           <button class="modal-close" id="close-modal-inspect">&times;</button>
         </div>
         <div id="modal-inspect-body">
@@ -365,6 +365,14 @@ function renderManagementOverview(container, role) {
     openInspectModal(memId);
   };
 
+  // Helper to normalize routing/referrer code to 3-digit format (e.g., "004", "005", "006")
+  function normalizeCode(code) {
+    if (!code) return '';
+    const str = String(code).trim();
+    const digits = str.replace(/\D/g, '');
+    return digits ? digits.padStart(3, '0') : str.toLowerCase();
+  }
+
   // Function to open and populate inspect account modal
   function openInspectModal(memId) {
     const targetMember = db.data.members.find(m => m.id === memId);
@@ -375,22 +383,41 @@ function renderManagementOverview(container, role) {
     window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
     window.activeModalState.activeModalIds.add('modal-inspect-account');
 
-    const tier = getEliteLevel(targetMember.totalUnits);
-    const memberInvites = (db.data.invites || []).filter(i => 
-      i.referrerId === targetMember.id || 
-      (i.referrerName && i.referrerName.toLowerCase() === targetMember.name.toLowerCase())
-    );
+    // 1. STRICT DATA ISOLATION & FILTERING LOGIC
+    // Clear modal body DOM first to avoid any stale data leakage across account switches
+    modalBody.innerHTML = '';
 
-    const isEliteMember = db && db.activeRole === 'Elite Member';
+    const targetCode = normalizeCode(targetMember.id);
+    const targetNameLower = (targetMember.name || '').toLowerCase().trim();
+
+    // Filter global invites strictly for this active Elite member
+    const memberInvites = (db.data.invites || []).filter(i => {
+      const iCode = normalizeCode(i.referrerId || i.eliteCode || i.referralCode);
+      const nameMatch = i.referrerName && i.referrerName.toLowerCase().trim() === targetNameLower;
+      return iCode === targetCode || nameMatch;
+    });
+
+    // Filter global enrollments strictly for this active Elite member
+    const memberEnrollments = (db.data.enrollments || []).filter(e => {
+      const eCode = normalizeCode(e.referrerId || e.eliteCode);
+      const nameMatch = e.referrerName && e.referrerName.toLowerCase().trim() === targetNameLower;
+      return eCode === targetCode || nameMatch;
+    });
+
+    // Summary Card Recomputations for this isolated subset
+    const totalSubmittedInvites = memberInvites.length;
+    const tier = getEliteLevel(targetMember.totalUnits);
+    const totalAccumulatedUnits = Number(targetMember.totalUnits || 0).toFixed(2);
+    const availablePayout = formatPHP(targetMember.availableForRelease || 0);
 
     modalBody.innerHTML = `
       <!-- Member Overview Header Box -->
       <div style="background: var(--box-inner-bg); border: 1px solid var(--box-inner-border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
           <div style="display: flex; align-items: center; gap: 16px;">
-            <img src="${targetMember.avatar}" alt="${targetMember.name}" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-blue);">
+            <img src="${targetMember.avatar}" alt="${targetMember.name}" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #002355;">
             <div>
-              <h3 style="margin: 0; font-size: 1.25rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+              <h3 style="margin: 0; font-size: 1.25rem; color: #002355; font-weight: 800; display: flex; align-items: center; gap: 8px;">
                 ${targetMember.name}
                 <span class="mock-gold-badge" style="background: ${tier.badgeColor}; color: #ffffff; font-size: 0.72rem; padding: 2px 8px; border-radius: 12px;">
                   ${tier.name} Tier
@@ -400,82 +427,118 @@ function renderManagementOverview(container, role) {
           </div>
         </div>
 
-        <!-- 4 Metric Cards for this Member -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 18px;">
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-sm);">
-            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">SUBMITTED INVITES</div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-top: 2px;">
-              ${memberInvites.length} Total
+        <!-- 3 Recomputed Summary Cards (Strictly Isolated Subset) -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: var(--radius-sm);">
+            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">SUBMITTED INVITES</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #002355; margin-top: 4px;">
+              ${totalSubmittedInvites} Records
             </div>
           </div>
 
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-sm); position: relative;">
-            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: var(--radius-sm); position: relative;">
+            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; display: flex; justify-content: space-between; align-items: center;">
               TOTAL ACCUMULATED UNITS
-              <button class="btn btn-secondary btn-xs btn-adjust-units" data-id="${targetMember.id}" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px;" title="Adjust Units">
+              <button class="btn btn-secondary btn-xs btn-adjust-units" data-id="${targetMember.id}" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; background: #002355; color: #ffffff; border: none;" title="Adjust Units">
                 <i class="fas fa-edit"></i> Edit
               </button>
             </div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent-purple); margin-top: 2px;">
-              ${Number(targetMember.totalUnits || 0).toFixed(2)} Units
+            <div style="font-size: 1.25rem; font-weight: 800; color: #002355; margin-top: 4px;">
+              ${totalAccumulatedUnits} Units
+            </div>
+          </div>
+
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: var(--radius-sm);">
+            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">AVAILABLE PAYOUT</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #002355; margin-top: 4px;">
+              ${availablePayout}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Invites & Enrollments Table -->
-      <div style="margin-top: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h4 style="margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+      <!-- 2. EXACT 10-COLUMN TABLE SCHEMA -->
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <h4 style="margin: 0; color: #002355; font-size: 1.05rem; font-weight: 800;">
             Submitted Enrollments & Verification Registry
           </h4>
-          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">${memberInvites.length} Records Scoped to Code [${targetMember.id}]</span>
         </div>
 
-        <div class="table-responsive" style="max-height: 340px; overflow-y: auto;">
-          <table class="custom-table" style="width: 100%; font-size: 0.8rem;">
+        <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+          <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
             <thead>
-              <tr>
-                <th>ID</th>
-                <th>Participant</th>
-                <th>Email / Phone</th>
-                <th>School / Company</th>
-                <th>Program / Course</th>
-                <th>Payment Fee</th>
-                <th>Payment Made</th>
-                <th>Verification</th>
-                <th>Units</th>
-                <th>Actions</th>
+              <tr style="background: #f8fafc;">
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">RESPONDENT ID</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">PARTICIPANT NAME</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">SCHOOL / COMPANY</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">TRAINING PROGRAM</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">REFERRER</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">TRAINING FEE</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">AMOUNT PAID</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">BALANCE</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">STATUS</th>
+                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">ACTIONS</th>
               </tr>
             </thead>
             <tbody>
               ${memberInvites.length === 0 ? `
-                <tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 24px;">No invites or enrollments submitted yet by this Elite Member.</td></tr>
-              ` : memberInvites.map(i => {
-                const enr = (db.data.enrollments || []).find(e => String(e.id) === String(i.id));
-                const paidAmt = enr ? enr.paymentMade : (i.enrollmentStatus === 'Enrolled' ? 4500 : 0);
-                const feeAmt = enr ? enr.trainingFee : 4500;
-                const unitsEarned = enr ? enr.unitsEarned : (paidAmt / 4500);
+                <tr>
+                  <td colspan="10" style="text-align: center; color: #002355; font-weight: 600; padding: 24px;">
+                    No invite or enrollment records found for Elite Member Code [${targetMember.id}].
+                  </td>
+                </tr>
+              ` : memberInvites.map(inv => {
+                const enr = memberEnrollments.find(e => String(e.id) === String(inv.id) || String(e.respondentId) === String(inv.respondentId || inv.id));
+                const respId = inv.respondentId || String(inv.id).replace('INV-', '');
+                const partName = inv.participantName || inv.inviteName || 'Participant';
+                const schoolComp = inv.schoolCompany || '-';
+                const program = inv.trainingType || inv.courseName || inv.course || 'COSH SO2';
+                const referrerName = targetMember.name;
+
+                const fee = enr ? Number(enr.investmentFee || 4500) : Number(inv.investmentFee || 4500);
+                const paid = enr ? Number(enr.paymentMade || 0) : Number(inv.paymentMade || 0);
+                const bal = enr ? Number(enr.balance !== undefined ? enr.balance : Math.max(0, fee - paid)) : Math.max(0, fee - paid);
+
+                let statusStr = 'Unpaid';
+                if (enr && enr.paymentStatus) {
+                  statusStr = enr.paymentStatus;
+                } else if (paid >= fee && fee > 0) {
+                  statusStr = 'Fully Paid';
+                } else if (paid > 0) {
+                  statusStr = 'Partial';
+                }
+
+                let badgeColor = '#002355';
+                let badgeBg = '#e2e8f0';
+                if (statusStr === 'Fully Paid') {
+                  badgeColor = '#002355';
+                  badgeBg = '#dbeafe';
+                } else if (statusStr === 'Partial') {
+                  badgeColor = '#002355';
+                  badgeBg = '#e0f2fe';
+                } else {
+                  badgeColor = '#002355';
+                  badgeBg = '#f1f5f9';
+                }
 
                 return `
                   <tr>
-                    <td><code>${i.id}</code></td>
-                    <td><strong>${i.participantName}</strong></td>
-                    <td><div style="font-size: 0.75rem; color: var(--text-secondary);">${i.email}</div></td>
-                    <td>${i.schoolCompany || '-'}</td>
-                    <td>${i.courseName || '-'}</td>
-                    <td><strong>${formatPHP(feeAmt)}</strong></td>
-                    <td><strong style="color: var(--accent-emerald);">${formatPHP(paidAmt)}</strong></td>
-                    <td>
-                      <select class="form-control select-verify-status" data-id="${i.id}" style="padding: 2px 6px; font-size: 0.78rem; font-weight: 700; height: 28px;">
-                        <option value="Pending" ${i.verificationStatus === 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="Verified" ${i.verificationStatus === 'Verified' ? 'selected' : ''}>Verified</option>
-                        <option value="Rejected" ${i.verificationStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                      </select>
+                    <td style="color: #002355; font-size: 0.82rem;"><code style="color: #002355; font-weight: 700;">${respId}</code></td>
+                    <td style="color: #002355; font-size: 0.82rem;"><strong>${partName}</strong></td>
+                    <td style="color: #002355; font-size: 0.82rem;">${schoolComp}</td>
+                    <td style="color: #002355; font-size: 0.82rem;"><span style="font-weight: 600; color: #002355;">${program}</span></td>
+                    <td style="color: #002355; font-size: 0.82rem;"><strong>${referrerName}</strong></td>
+                    <td style="color: #002355; font-size: 0.82rem;"><strong>${formatPHP(fee)}</strong></td>
+                    <td style="color: #002355; font-size: 0.82rem;"><strong>${formatPHP(paid)}</strong></td>
+                    <td style="color: #002355; font-size: 0.82rem;"><strong>${formatPHP(bal)}</strong></td>
+                    <td style="font-size: 0.82rem;">
+                      <span class="status-pill" style="background: ${badgeBg}; color: ${badgeColor}; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1;">
+                        ${statusStr}
+                      </span>
                     </td>
-                    <td><span class="unit-badge" style="font-size: 0.75rem;">+${unitsEarned} Units</span></td>
-                    <td>
-                      <button class="btn btn-secondary btn-xs btn-edit-payment" data-id="${i.id}" style="padding: 3px 8px; font-size: 0.72rem;">
+                    <td style="font-size: 0.82rem;">
+                      <button class="btn btn-secondary btn-xs btn-edit-payment" data-id="${inv.id}" data-enr-id="${enr ? enr.id : inv.id}" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 6px; background: #002355; color: #ffffff; border: none;">
                         <i class="fas fa-edit"></i> Edit Payment
                       </button>
                     </td>
@@ -488,30 +551,48 @@ function renderManagementOverview(container, role) {
       </div>
     `;
 
-    // Bind dropdown handlers inside modal
-    modalBody.querySelectorAll('.select-verify-status').forEach(sel => {
-      sel.addEventListener('change', (e) => {
-        const invId = sel.getAttribute('data-id');
-        const newStatus = e.target.value;
-        db.updateInviteVerification(invId, newStatus);
-        openInspectModal(memId);
-        renderManagementOverview(container, role);
-      });
-    });
-
-    // Bind Edit Payment buttons inside modal
+    // 3. SYNCHRONIZED EDIT ACTIONS
     modalBody.querySelectorAll('.btn-edit-payment').forEach(btn => {
       btn.addEventListener('click', () => {
         const invId = btn.getAttribute('data-id');
-        const enr = (db.data.enrollments || []).find(e => String(e.id) === String(invId));
-        const currentPaid = enr ? enr.paymentMade : 0;
-        const currentFee = enr ? enr.trainingFee : 4500;
-        const targetName = enr ? enr.participantName : 'Participant';
+        const enrId = btn.getAttribute('data-enr-id') || invId;
+        const inv = (db.data.invites || []).find(i => String(i.id) === String(invId));
+        const enr = (db.data.enrollments || []).find(e => String(e.id) === String(enrId) || String(e.id) === String(invId));
 
-        const val = prompt(`Enter updated Payment Amount Made for ${targetName} (Total Investment Fee: ${formatPHP(currentFee)}):`, currentPaid);
+        const partName = inv ? (inv.participantName || inv.inviteName) : (enr ? enr.participantName : 'Participant');
+        const currentFee = enr ? Number(enr.investmentFee || 4500) : (inv ? Number(inv.investmentFee || 4500) : 4500);
+        const currentPaid = enr ? Number(enr.paymentMade || 0) : (inv ? Number(inv.paymentMade || 0) : 0);
+
+        const val = prompt(`Edit Payment for ${partName}:\nTotal Training Fee: ${formatPHP(currentFee)}\nCurrent Amount Paid: ${formatPHP(currentPaid)}\n\nEnter new Amount Paid (₱):`, currentPaid);
+
         if (val !== null && !isNaN(parseFloat(val))) {
+          const newPaid = Math.max(0, parseFloat(val));
           if (enr) {
-            db.updateEnrollmentPayment(enr.id, parseFloat(val));
+            db.updateEnrollmentPayment(enr.id, newPaid, currentFee);
+          } else if (inv) {
+            const bal = Math.max(0, currentFee - newPaid);
+            const status = (bal === 0 && newPaid > 0) ? 'Fully Paid' : (newPaid > 0 ? 'Partial' : 'Unpaid');
+            db.data.enrollments.push({
+              id: inv.id,
+              respondentId: inv.respondentId || inv.id,
+              eliteCode: targetMember.id,
+              participantName: partName,
+              schoolCompany: inv.schoolCompany || 'N/A',
+              trainingType: inv.trainingType || 'COSH SO2',
+              investmentFee: currentFee,
+              paymentMade: newPaid,
+              balance: bal,
+              paymentStatus: status,
+              isReferred: true,
+              referrerId: targetMember.id,
+              referrerName: targetMember.name,
+              unitsEarned: Number((newPaid / 4500).toFixed(2))
+            });
+            inv.paymentMade = newPaid;
+            inv.balance = bal;
+            inv.paymentStatus = status;
+            db.recalculateMemberUnits();
+            db.save();
           }
           openInspectModal(memId);
           renderManagementOverview(container, role);
@@ -552,7 +633,7 @@ function renderManagementOverview(container, role) {
       modalDiv.innerHTML = `
         <div class="modal-content modal-lg">
           <div class="modal-header">
-            <h3>Total Accumulated Units Audit Trail</h3>
+            <h3 style="color: #002355; font-size: 1.2rem; font-weight: 800; margin: 0;">Total Units</h3>
             <button class="modal-close" id="close-modal-units">&times;</button>
           </div>
           <div id="modal-units-body"></div>
@@ -576,83 +657,97 @@ function renderManagementOverview(container, role) {
       };
     }
 
+    const baselineUnits = Number(member.baselineUnits !== undefined ? member.baselineUnits : (member.totalUnits || 0)).toFixed(2);
+    const currentTotalUnits = Number(member.totalUnits !== undefined ? member.totalUnits : baselineUnits).toFixed(2);
+
     const storageKey = `atsoca_unit_ledger_${member.id}`;
-    let ledger = [];
+    let manualHistory = [];
     try {
       const raw = localStorage.getItem(storageKey);
-      if (raw) ledger = JSON.parse(raw);
+      if (raw) manualHistory = JSON.parse(raw);
     } catch (e) {
-      ledger = [];
+      manualHistory = [];
     }
 
+    // Always include immutable baseline record as the foundational first entry
+    const baselineEntry = {
+      timestamp: 'Previous Balance',
+      type: 'Baseline Record',
+      amount: `+${baselineUnits} Units`,
+      runningTotal: `${baselineUnits} Units`,
+      isBaseline: true
+    };
+
+    const fullLedger = [baselineEntry, ...manualHistory];
+
+    const initialNewTotal = (Number(currentTotalUnits) + 1.00).toFixed(2);
+
     unitsBody.innerHTML = `
-      <div style="background: var(--box-inner-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+      <!-- Member Name & Current Total Header -->
+      <div style="background: var(--box-inner-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">${member.name} (Code: [${member.id}])</h4>
-            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Email: ${member.email}</div>
+            <h4 style="margin: 0; font-size: 1.15rem; color: #002355; font-weight: 800;">${member.name}</h4>
           </div>
           <div style="text-align: right;">
-            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Current Balance</div>
-            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-purple);">${Number(member.totalUnits || 0).toFixed(2)} Units</div>
+            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase;">CURRENT TOTAL UNITS</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #002355;">${currentTotalUnits} Units</div>
           </div>
         </div>
       </div>
 
-      <!-- Add / Deduct Adjustment Form -->
-      <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
-        <h5 style="margin: 0 0 12px 0; color: var(--text-primary);">New Unit Adjustment</h5>
-        <div style="display: grid; grid-template-columns: 140px 140px 1fr auto; gap: 12px; align-items: flex-end;">
+      <!-- 1. Locked Baseline Display -->
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #002355; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <span style="font-weight: 700; color: #002355; font-size: 0.85rem;">Baseline / Previous Units:</span>
+          <strong style="color: #002355; font-size: 1.05rem; margin-left: 8px; font-weight: 800;">${baselineUnits} Units</strong>
+        </div>
+        <span style="background: #e2e8f0; color: #002355; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fas fa-lock" style="color: #002355;"></i> Locked
+        </span>
+      </div>
+
+      <!-- 2. Adjustment Controls -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 18px; border-radius: var(--radius-md); margin-bottom: 18px;">
+        <h5 style="margin: 0 0 14px 0; color: #002355; font-size: 1rem; font-weight: 800;">New Unit Adjustment</h5>
+        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: flex-end;">
           <div>
-            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Action</label>
-            <select id="adj-type" class="form-control" style="padding: 6px 10px; font-size: 0.85rem; font-weight: 700;">
-              <option value="add">Add (+ Units)</option>
-              <option value="deduct">Deduct (- Units)</option>
+            <label style="display: block; font-size: 0.75rem; color: #002355; font-weight: 700; margin-bottom: 6px;">Action Type</label>
+            <select id="adj-type" class="form-control" style="padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: #002355; border-color: #cbd5e1;">
+              <option value="add">Add (+)</option>
+              <option value="deduct">Deduct (-)</option>
             </select>
           </div>
           <div>
-            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Amount (Units)</label>
-            <input type="number" id="adj-amount" class="form-control" step="0.01" min="0.01" value="1.00" style="padding: 6px 10px; font-size: 0.85rem; font-weight: 700;">
+            <label style="display: block; font-size: 0.75rem; color: #002355; font-weight: 700; margin-bottom: 6px;">Units Input</label>
+            <input type="number" id="adj-amount" class="form-control" step="0.01" min="0.01" value="1.00" style="padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: #002355; border-color: #cbd5e1;">
           </div>
           <div>
-            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Reason / Note</label>
-            <input type="text" id="adj-note" class="form-control" placeholder="e.g., Manual bonus credit for August" style="padding: 6px 10px; font-size: 0.85rem;">
-          </div>
-          <div>
-            <button class="btn btn-primary" id="btn-save-unit-adj" style="padding: 8px 16px; font-weight: 700; font-size: 0.85rem;">
+            <button class="btn btn-primary" id="btn-save-unit-adj" style="padding: 9px 20px; font-weight: 700; font-size: 0.85rem; background: #002355; color: #ffffff; border: none; border-radius: 6px;">
               Apply Adjustment
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Chronological Audit Trail History Table -->
-      <h5 style="margin: 0 0 10px 0; color: var(--text-primary);">Chronological Unit Ledger (Audit Trail)</h5>
+      <!-- 3. History Log Ledger Table -->
       <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
         <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
           <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Previous Units</th>
-              <th>Adjustment Made</th>
-              <th>New Balance</th>
-              <th>Reason / Note</th>
+            <tr style="background: #f8fafc;">
+              <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">TIMESTAMP</th>
+              <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">AMOUNT</th>
             </tr>
           </thead>
           <tbody>
-            ${ledger.length === 0 ? `
-              <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No manual unit adjustments recorded yet for this member.</td></tr>
-            ` : ledger.map(entry => `
-              <tr>
-                <td><small>${entry.timestamp}</small></td>
-                <td>${entry.prevUnits} Units</td>
-                <td>
-                  <span class="status-pill ${entry.adjustment.startsWith('+') ? 'status-Verified' : 'status-Rejected'}" style="font-size: 0.75rem; font-weight: 700;">
-                    ${entry.adjustment}
-                  </span>
+            ${fullLedger.map(entry => `
+              <tr style="color: #002355; ${entry.isBaseline ? 'background: #f8fafc;' : ''}">
+                <td style="color: #002355; font-size: 0.82rem; ${entry.isBaseline ? 'font-weight: 700;' : ''}">${entry.timestamp}</td>
+                <td style="color: #002355; font-size: 0.82rem;">
+                  <strong style="color: #002355;">
+                    ${entry.amount}
+                  </strong>
                 </td>
-                <td><strong>${entry.newBalance} Units</strong></td>
-                <td><small>${entry.note || 'N/A'}</small></td>
               </tr>
             `).join('')}
           </tbody>
@@ -662,34 +757,35 @@ function renderManagementOverview(container, role) {
 
     unitsModal.classList.add('active');
 
-    const btnSave = unitsModal.querySelector('#btn-save-unit-adj');
+    // Save adjustment handler
+    const typeSelect = unitsBody.querySelector('#adj-type');
+    const amountInput = unitsBody.querySelector('#adj-amount');
+    const btnSave = unitsBody.querySelector('#btn-save-unit-adj');
+
     if (btnSave) {
       btnSave.onclick = () => {
-        const type = unitsModal.querySelector('#adj-type').value;
-        const amt = parseFloat(unitsModal.querySelector('#adj-amount').value);
-        const note = unitsModal.querySelector('#adj-note').value.trim() || 'Manual Unit Adjustment';
+        const type = typeSelect ? typeSelect.value : 'add';
+        const amt = parseFloat(amountInput ? amountInput.value : 0);
 
         if (isNaN(amt) || amt <= 0) {
           alert('Please enter a valid unit adjustment amount.');
           return;
         }
 
-        const prevUnits = Number(member.totalUnits || 0);
-        const newBalance = type === 'add' ? Number((prevUnits + amt).toFixed(2)) : Number(Math.max(0, prevUnits - amt).toFixed(2));
+        const baseNum = Number(currentTotalUnits);
+        const newBalance = type === 'add' ? Number((baseNum + amt).toFixed(2)) : Number(Math.max(0, baseNum - amt).toFixed(2));
         const adjStr = (type === 'add' ? '+' : '-') + amt.toFixed(2) + ' Units';
-
-        db.updateMemberUnitsAndFees(member.id, newBalance, member.availableForRelease);
 
         const entry = {
           timestamp: new Date().toLocaleString(),
-          prevUnits: prevUnits.toFixed(2),
-          adjustment: adjStr,
-          newBalance: newBalance.toFixed(2),
-          note: note
+          amount: adjStr,
+          isBaseline: false
         };
 
-        ledger.unshift(entry);
-        localStorage.setItem(storageKey, JSON.stringify(ledger));
+        manualHistory.push(entry);
+        localStorage.setItem(storageKey, JSON.stringify(manualHistory));
+
+        db.updateMemberUnitsAndFees(member.id, newBalance, member.availableForRelease);
 
         openAdjustUnitsModal(memId);
         if (document.querySelector('#modal-inspect-account')?.classList.contains('active')) {

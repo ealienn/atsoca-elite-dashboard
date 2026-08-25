@@ -18,6 +18,7 @@ const INITIAL_MEMBERS = [
     role: 'Elite Member',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     totalUnits: 0.73,
+    baselineUnits: 0.73,
     monthlyUnits: 0.73,
     pendingFees: 0,
     availableForRelease: 24050,
@@ -33,6 +34,7 @@ const INITIAL_MEMBERS = [
     role: 'Elite Member',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     totalUnits: 5.91,
+    baselineUnits: 5.91,
     monthlyUnits: 5.91,
     pendingFees: 0,
     availableForRelease: 810,
@@ -48,6 +50,7 @@ const INITIAL_MEMBERS = [
     role: 'Elite Member',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
     totalUnits: 1.22,
+    baselineUnits: 1.22,
     monthlyUnits: 1.22,
     pendingFees: 0,
     availableForRelease: 810,
@@ -63,6 +66,7 @@ const INITIAL_MEMBERS = [
     role: 'Elite Member',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
     totalUnits: 0.33,
+    baselineUnits: 0.33,
     monthlyUnits: 0.33,
     pendingFees: 0,
     availableForRelease: 0,
@@ -78,6 +82,7 @@ const INITIAL_MEMBERS = [
     role: 'Elite Member',
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
     totalUnits: 0.67,
+    baselineUnits: 0.67,
     monthlyUnits: 0.67,
     pendingFees: 0,
     availableForRelease: 0,
@@ -166,6 +171,10 @@ class DBState {
           this.data.members.forEach(m => {
             if (!m.password || m.password === '••••••••') {
               m.password = '12345';
+            }
+            if (m.baselineUnits === undefined || m.baselineUnits === null) {
+              const initM = INITIAL_MEMBERS.find(im => im.id === m.id);
+              m.baselineUnits = initM ? initM.baselineUnits : Number(m.totalUnits || 0);
             }
           });
 
