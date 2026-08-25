@@ -343,6 +343,68 @@
       </div>
     </div>
 
+    <!-- Global Modal: Modern Premium Edit Payment & Fee Drawer -->
+    <div class="modal-overlay" id="modal-edit-payment-dialog">
+      <div class="modal-content" style="max-width: 520px; border: 2px solid #002355; border-radius: 16px; padding: 24px; box-shadow: 0 20px 40px rgba(0, 35, 85, 0.25);">
+        <div class="modal-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="color: #002355; margin: 0; font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-file-invoice-dollar" style="color: #002355;"></i> Update Payment Details
+          </h3>
+          <button class="modal-close" id="close-modal-edit-pay" style="font-size: 1.5rem; color: #002355; background: none; border: none; cursor: pointer;">&times;</button>
+        </div>
+
+        <div id="modal-edit-pay-body">
+          <!-- Summary Header Card -->
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #002355; border-radius: 10px; padding: 14px; margin-bottom: 18px;">
+            <div style="font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">ENROLLED PARTICIPANT</div>
+            <div id="pay-modal-participant" style="font-size: 1.1rem; font-weight: 800; color: #002355;">Participant Name</div>
+            <div id="pay-modal-program" style="font-size: 0.82rem; color: #475569; margin-top: 2px;">School / Company • Program</div>
+          </div>
+
+          <!-- Financial Calculation Cards Grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; text-align: center;">
+              <div style="font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase;">INVESTMENT FEE</div>
+              <div id="pay-modal-fee" style="font-size: 1.15rem; font-weight: 900; color: #002355; margin-top: 4px;">₱0.00</div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; text-align: center;">
+              <div style="font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase;">COMPUTED BALANCE</div>
+              <div id="pay-modal-calc-bal" style="font-size: 1.15rem; font-weight: 900; color: #e11d48; margin-top: 4px;">₱0.00</div>
+            </div>
+          </div>
+
+          <!-- Input Form -->
+          <div class="form-group" style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 0.78rem; font-weight: 800; color: #002355; margin-bottom: 6px; text-transform: uppercase;">
+              UPDATED PAYMENT AMOUNT MADE (₱) *
+            </label>
+            <div style="position: relative;">
+              <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 800; color: #002355; font-size: 1rem;">₱</span>
+              <input type="number" id="pay-modal-input-amount" class="form-control" step="0.01" min="0" style="padding-left: 32px; font-size: 1.1rem; font-weight: 800; color: #002355; border: 2px solid #cbd5e1; border-radius: 8px; height: 44px;">
+            </div>
+          </div>
+
+          <!-- Quick Action Preset Buttons -->
+          <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+            <button type="button" id="pay-modal-btn-full" class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 0.78rem;">
+              <i class="fas fa-check-double"></i> Mark Fully Paid
+            </button>
+            <button type="button" id="pay-modal-btn-zero" class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 0.78rem;">
+              <i class="fas fa-undo"></i> Reset to ₱0.00
+            </button>
+          </div>
+
+          <!-- Footer Actions -->
+          <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+            <button type="button" class="btn btn-secondary" id="pay-modal-cancel-btn" style="padding: 10px 18px; font-weight: 700; font-size: 0.85rem;">Cancel</button>
+            <button type="button" class="btn btn-primary" id="pay-modal-save-btn" style="padding: 10px 22px; font-weight: 800; font-size: 0.85rem; background: #002355; border: none; color: #ffffff; border-radius: 8px;">
+              Save Payment Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal: Interactive User Profile Edit Drawer (Triggered from Sidebar User Box) -->
     <div class="modal-overlay" id="modal-edit-user-profile">
       <div class="modal-content" style="max-width: 680px; width: 90%; max-height: 90vh; overflow-y: auto;">
@@ -620,7 +682,6 @@
                       <th>Training Type</th>
                       <th>Training Date</th>
                       <th>Date Submitted</th>
-                      <th>Verification Status</th>
                       <th>Enrollment Status</th>
                     </tr>
                   </thead>
@@ -632,7 +693,6 @@
                       <td>Executive Leadership & Governance</td>
                       <td>2026-08-24</td>
                       <td>2026-07-23</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -642,7 +702,6 @@
                       <td>Data Privacy Officer (DPO) Training</td>
                       <td>2026-08-28</td>
                       <td>2026-07-27</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -652,7 +711,6 @@
                       <td>Project Management Professional Seminar</td>
                       <td>2026-08-26</td>
                       <td>2026-07-26</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -662,7 +720,6 @@
                       <td>Data Privacy Officer (DPO) Training</td>
                       <td>2026-08-27</td>
                       <td>2026-07-26</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>
@@ -672,7 +729,6 @@
                       <td>Healthcare Safety & Compliance Masterclass</td>
                       <td>2026-08-27</td>
                       <td>2026-07-27</td>
-                      <td><span class="status-pill status-Pending"><i class="fas fa-clock"></i> Pending</span></td>
                       <td><span class="status-pill status-NotEnrolled"><i class="fas fa-times-circle"></i> Not Enrolled</span></td>
                     </tr>
                     <tr>
@@ -682,7 +738,6 @@
                       <td>Healthcare Safety & Compliance Masterclass</td>
                       <td>2026-08-26</td>
                       <td>2026-07-26</td>
-                      <td><span class="status-pill status-Verified"><i class="fas fa-check-circle"></i> Verified</span></td>
                       <td><span class="status-pill status-Enrolled"><i class="fas fa-user-check"></i> Enrolled</span></td>
                     </tr>
                     <tr>

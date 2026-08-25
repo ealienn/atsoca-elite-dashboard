@@ -5,6 +5,7 @@
  */
 import { db } from '../dbState.js';
 import { getEliteLevel } from '../matrixEngine.js';
+import { openEditPaymentModal } from './enrollments.js';
 
 const formatPHP = (amt) => '₱' + Number(amt || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -66,27 +67,21 @@ function renderEliteMemberOverview(container) {
       </div>
     </div>
 
-    <!-- 1. Top Stat Cards (Grid 4 - Centered Minimal Layout) -->
-    <div class="mock-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 24px;">
+    <!-- 1. Top Stat Cards (Grid 3 - Centered Minimal Layout) -->
+    <div class="mock-grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px;">
       <!-- Member Card 1: Invites Submitted -->
       <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOTAL INVITES SUBMITTED</div>
         <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalInvites}</div>
       </div>
 
-      <!-- Member Card 2: Verified -->
-      <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">VERIFIED</div>
-        <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${verifiedInvites}</div>
-      </div>
-
-      <!-- Member Card 3: Enrolled -->
+      <!-- Member Card 2: Enrolled -->
       <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">ENROLLED</div>
         <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${enrolledInvites}</div>
       </div>
 
-      <!-- Member Card 4: Total Units -->
+      <!-- Member Card 3: Total Units -->
       <div class="mock-stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOTAL UNITS</div>
         <div style="font-size: 2.3rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${displayUnits}</div>
@@ -456,7 +451,7 @@ function renderManagementOverview(container, role) {
       <div style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
           <h4 style="margin: 0; color: #002355; font-size: 1.05rem; font-weight: 800;">
-            Submitted Enrollments & Verification Registry
+            Submitted Enrollments Registry
           </h4>
         </div>
 
@@ -554,47 +549,12 @@ function renderManagementOverview(container, role) {
       btn.addEventListener('click', () => {
         const invId = btn.getAttribute('data-id');
         const enrId = btn.getAttribute('data-enr-id') || invId;
-        const inv = (db.data.invites || []).find(i => String(i.id) === String(invId));
-        const enr = (db.data.enrollments || []).find(e => String(e.id) === String(enrId) || String(e.id) === String(invId));
+        const targetId = enrId || invId;
 
-        const partName = inv ? (inv.participantName || inv.inviteName) : (enr ? enr.participantName : 'Participant');
-        const currentFee = enr ? Number(enr.investmentFee || 4500) : (inv ? Number(inv.investmentFee || 4500) : 4500);
-        const currentPaid = enr ? Number(enr.paymentMade || 0) : (inv ? Number(inv.paymentMade || 0) : 0);
-
-        const val = prompt(`Edit Payment for ${partName}:\nTotal Training Fee: ${formatPHP(currentFee)}\nCurrent Amount Paid: ${formatPHP(currentPaid)}\n\nEnter new Amount Paid (₱):`, currentPaid);
-
-        if (val !== null && !isNaN(parseFloat(val))) {
-          const newPaid = Math.max(0, parseFloat(val));
-          if (enr) {
-            db.updateEnrollmentPayment(enr.id, newPaid, currentFee);
-          } else if (inv) {
-            const bal = Math.max(0, currentFee - newPaid);
-            const status = (bal === 0 && newPaid > 0) ? 'Fully Paid' : (newPaid > 0 ? 'Partial' : 'Unpaid');
-            db.data.enrollments.push({
-              id: inv.id,
-              respondentId: inv.respondentId || inv.id,
-              eliteCode: targetMember.id,
-              participantName: partName,
-              schoolCompany: inv.schoolCompany || 'N/A',
-              trainingType: inv.trainingType || 'COSH SO2',
-              investmentFee: currentFee,
-              paymentMade: newPaid,
-              balance: bal,
-              paymentStatus: status,
-              isReferred: true,
-              referrerId: targetMember.id,
-              referrerName: targetMember.name,
-              unitsEarned: Number((newPaid / 4500).toFixed(2))
-            });
-            inv.paymentMade = newPaid;
-            inv.balance = bal;
-            inv.paymentStatus = status;
-            db.recalculateMemberUnits();
-            db.save();
-          }
+        openEditPaymentModal(targetId, () => {
           openInspectModal(memId);
           renderManagementOverview(container, role);
-        }
+        });
       });
     });
 
@@ -694,15 +654,32 @@ function renderManagementOverview(container, role) {
         </div>
       </div>
 
-      <!-- 1. Locked Baseline Display -->
-      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #002355; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <div>
-          <span style="font-weight: 700; color: #002355; font-size: 0.85rem;">Baseline / Previous Units:</span>
-          <strong style="color: #002355; font-size: 1.05rem; margin-left: 8px; font-weight: 800;">${baselineUnits} Units</strong>
+      <!-- 1. Baseline Display with Interactive iOS Toggle Switch -->
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #002355; padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <span style="font-weight: 700; color: #002355; font-size: 0.85rem;">Baseline / Previous Units:</span>
+            <strong id="display-baseline-val" style="color: #002355; font-size: 1.05rem; margin-left: 8px; font-weight: 800;">${baselineUnits} Units</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="badge-lock-status" style="background: #e2e8f0; color: #002355; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fas fa-lock" id="icon-baseline-lock" style="color: #002355;"></i> <span id="label-baseline-lock">Locked</span>
+            </span>
+            <label class="switch-toggle" title="Toggle Lock/Unlock Baseline Units">
+              <input type="checkbox" id="toggle-baseline-switch">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
         </div>
-        <span style="background: #e2e8f0; color: #002355; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 6px;">
-          <i class="fas fa-lock" style="color: #002355;"></i> Locked
-        </span>
+
+        <!-- Inline Unlock Form (Hidden when Locked) -->
+        <div id="baseline-edit-controls" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <label style="font-size: 0.78rem; color: #002355; font-weight: 700; margin: 0;">New Baseline Value:</label>
+          <input type="number" id="input-new-baseline" class="form-control" step="0.01" min="0" value="${baselineUnits}" style="width: 120px; padding: 5px 10px; font-size: 0.85rem; font-weight: 700; color: #002355; border-color: #cbd5e1;">
+          <button id="btn-save-baseline" class="btn btn-primary btn-sm" style="padding: 6px 14px; font-size: 0.78rem; font-weight: 700; background: #002355; color: #ffffff; border: none; border-radius: 6px;">
+            Save Baseline
+          </button>
+        </div>
       </div>
 
       <!-- 2. Adjustment Controls -->
@@ -754,6 +731,61 @@ function renderManagementOverview(container, role) {
     `;
 
     unitsModal.classList.add('active');
+
+    // Interactive Toggle Switch Listener
+    const toggleSwitch = unitsBody.querySelector('#toggle-baseline-switch');
+    const badgeStatus = unitsBody.querySelector('#badge-lock-status');
+    const lockIcon = unitsBody.querySelector('#icon-baseline-lock');
+    const lockLabel = unitsBody.querySelector('#label-baseline-lock');
+    const editControls = unitsBody.querySelector('#baseline-edit-controls');
+    const inputBaseline = unitsBody.querySelector('#input-new-baseline');
+    const btnSaveBaseline = unitsBody.querySelector('#btn-save-baseline');
+
+    if (toggleSwitch) {
+      toggleSwitch.addEventListener('change', () => {
+        const isChecked = toggleSwitch.checked;
+        if (isChecked) {
+          badgeStatus.style.background = '#fef3c7';
+          badgeStatus.style.borderColor = '#fde68a';
+          badgeStatus.style.color = '#b45309';
+          lockIcon.className = 'fas fa-unlock';
+          lockIcon.style.color = '#b45309';
+          lockLabel.textContent = 'Unlocked';
+          if (editControls) editControls.style.display = 'flex';
+        } else {
+          badgeStatus.style.background = '#e2e8f0';
+          badgeStatus.style.borderColor = '#cbd5e1';
+          badgeStatus.style.color = '#002355';
+          lockIcon.className = 'fas fa-lock';
+          lockIcon.style.color = '#002355';
+          lockLabel.textContent = 'Locked';
+          if (editControls) editControls.style.display = 'none';
+        }
+      });
+    }
+
+    if (btnSaveBaseline) {
+      btnSaveBaseline.onclick = () => {
+        const val = parseFloat(inputBaseline ? inputBaseline.value : 0);
+        if (isNaN(val) || val < 0) {
+          alert('Please enter a valid non-negative baseline units value.');
+          return;
+        }
+
+        const oldBaseline = member.baselineUnits || 0;
+        const diff = val - oldBaseline;
+        const newTotalUnits = Number((Number(currentTotalUnits) + diff).toFixed(2));
+
+        member.baselineUnits = val;
+        db.updateMemberUnitsAndFees(member.id, newTotalUnits, member.availableForRelease);
+
+        openAdjustUnitsModal(memId);
+        if (document.querySelector('#modal-inspect-account')?.classList.contains('active')) {
+          openInspectModal(memId);
+        }
+        renderManagementOverview(container, role);
+      };
+    }
 
     // Save adjustment handler
     const typeSelect = unitsBody.querySelector('#adj-type');

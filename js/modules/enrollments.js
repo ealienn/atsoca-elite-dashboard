@@ -147,15 +147,123 @@ export function renderEnrollments(container) {
     container.querySelectorAll('.btn-update-pay').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-id');
-        const enr = db.data.enrollments.find(e => e.id === id);
-        if (!enr) return;
-
-        const newAmount = prompt(`Enter updated Payment Amount Made for ${enr.participantName} (Total Investment Fee: ₱${enr.investmentFee}):`, enr.paymentMade);
-        if (newAmount !== null && !isNaN(newAmount)) {
-          db.updateEnrollmentPayment(id, newAmount);
-          renderEnrollments(container);
-        }
+        openEditPaymentModal(id, () => renderEnrollments(container));
       });
     });
   }
+}
+
+export function openEditPaymentModal(enrollmentId, onSaveSuccess) {
+  let enr = (db.data.enrollments || []).find(e => 
+    String(e.id) === String(enrollmentId) || 
+    String(e.respondentId) === String(enrollmentId) ||
+    (e.id && String(e.id).includes(String(enrollmentId))) ||
+    (enrollmentId && String(enrollmentId).includes(String(e.id)))
+  );
+
+  if (!enr) {
+    const inv = (db.data.invites || []).find(i => 
+      String(i.id) === String(enrollmentId) || 
+      String(i.respondentId) === String(enrollmentId)
+    );
+    if (inv) {
+      enr = {
+        id: inv.id,
+        respondentId: inv.respondentId || inv.id,
+        participantName: inv.participantName || inv.inviteName,
+        schoolCompany: inv.schoolCompany || 'N/A',
+        course: inv.trainingType || 'COSH SO2',
+        investmentFee: inv.investmentFee || 4500,
+        paymentMade: inv.paymentMade || 0,
+        balance: inv.balance || 4500,
+        paymentStatus: inv.paymentStatus || 'Unpaid'
+      };
+    }
+  }
+
+  if (!enr) {
+    console.warn('Enrollment record not found for ID:', enrollmentId);
+    return;
+  }
+
+  const modal = document.querySelector('#modal-edit-payment-dialog');
+  if (!modal) return;
+
+  const pName = modal.querySelector('#pay-modal-participant');
+  const pProg = modal.querySelector('#pay-modal-program');
+  const pFee = modal.querySelector('#pay-modal-fee');
+  const pCalcBal = modal.querySelector('#pay-modal-calc-bal');
+  const inputAmt = modal.querySelector('#pay-modal-input-amount');
+
+  const btnFull = modal.querySelector('#pay-modal-btn-full');
+  const btnZero = modal.querySelector('#pay-modal-btn-zero');
+  const btnClose = modal.querySelector('#close-modal-edit-pay');
+  const btnCancel = modal.querySelector('#pay-modal-cancel-btn');
+  const btnSave = modal.querySelector('#pay-modal-save-btn');
+
+  const feeVal = Number(enr.investmentFee || 0);
+  const currentPaid = Number(enr.paymentMade || 0);
+
+  if (pName) pName.textContent = enr.participantName;
+  if (pProg) pProg.textContent = `${enr.schoolCompany || ''} • ${enr.course || enr.trainingType || ''}`;
+  if (pFee) pFee.textContent = formatPHP(feeVal);
+  if (inputAmt) inputAmt.value = currentPaid;
+
+  const updateCalculatedBalance = () => {
+    const val = parseFloat(inputAmt ? inputAmt.value : 0) || 0;
+    const remBal = Math.max(0, feeVal - val);
+    if (pCalcBal) {
+      pCalcBal.textContent = formatPHP(remBal);
+      pCalcBal.style.color = remBal > 0 ? '#e11d48' : '#059669';
+    }
+  };
+
+  updateCalculatedBalance();
+
+  if (inputAmt) {
+    inputAmt.oninput = updateCalculatedBalance;
+  }
+
+  if (btnFull) {
+    btnFull.onclick = () => {
+      if (inputAmt) {
+        inputAmt.value = feeVal;
+        updateCalculatedBalance();
+      }
+    };
+  }
+
+  if (btnZero) {
+    btnZero.onclick = () => {
+      if (inputAmt) {
+        inputAmt.value = 0;
+        updateCalculatedBalance();
+      }
+    };
+  }
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+  };
+
+  if (btnClose) btnClose.onclick = closeModal;
+  if (btnCancel) btnCancel.onclick = closeModal;
+
+  if (btnSave) {
+    btnSave.onclick = () => {
+      const newAmt = parseFloat(inputAmt ? inputAmt.value : 0);
+      if (isNaN(newAmt) || newAmt < 0) {
+        alert('Please enter a valid payment amount.');
+        return;
+      }
+
+      db.updateEnrollmentPayment(enrollmentId, newAmt);
+      closeModal();
+      if (typeof onSaveSuccess === 'function') {
+        onSaveSuccess();
+      }
+    };
+  }
+
+  modal.classList.add('active');
 }

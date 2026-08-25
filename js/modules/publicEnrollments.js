@@ -4,6 +4,7 @@
  */
 import { db } from '../dbState.js';
 import { formatPHP } from '../matrixEngine.js';
+import { openEditPaymentModal } from './enrollments.js';
 
 export function renderPublicEnrollments(container) {
   const isAuthorized = db.activeRole === 'Finance' || db.activeRole === 'Administrator';
@@ -240,14 +241,7 @@ export function renderPublicEnrollments(container) {
   container.querySelectorAll('.btn-edit-payment').forEach(btn => {
     btn.addEventListener('click', () => {
       const enrId = btn.getAttribute('data-id');
-      const enr = db.data.enrollments.find(e => e.id === enrId);
-      if (!enr) return;
-
-      const newPaid = prompt(`Update Total Payment Made for ${enr.participantName} (Fee: ₱${enr.investmentFee}):`, enr.paymentMade);
-      if (newPaid !== null && !isNaN(newPaid)) {
-        db.updateEnrollmentPayment(enrId, newPaid);
-        renderPublicEnrollments(container);
-      }
+      openEditPaymentModal(enrId, () => renderPublicEnrollments(container));
     });
   });
 }

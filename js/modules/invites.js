@@ -33,11 +33,11 @@ export function renderInvites(container) {
         <div class="card-title">Submitted Invites Log</div>
         <div style="display: flex; gap: 12px; align-items: center;">
           <input type="text" id="search-invite" class="form-control" placeholder="Search by name, school..." style="width: 220px; padding: 6px 12px;">
-          <select id="filter-verify-status" class="form-control" style="width: 170px; padding: 6px 12px;">
-            <option value="ALL">All Verifications</option>
-            <option value="Verified">Verified</option>
+          <select id="filter-enroll-status" class="form-control" style="width: 180px; padding: 6px 12px;">
+            <option value="ALL">All Enrollment Status</option>
+            <option value="Enrolled">Enrolled</option>
             <option value="Pending">Pending</option>
-            <option value="Rejected">Rejected</option>
+            <option value="Not Enrolled">Not Enrolled</option>
           </select>
         </div>
       </div>
@@ -114,11 +114,11 @@ export function renderInvites(container) {
 
   // Filter triggers
   const searchInput = container.querySelector('#search-invite');
-  const verifyFilter = container.querySelector('#filter-verify-status');
+  const enrollFilter = container.querySelector('#filter-enroll-status');
 
   const filterInvites = () => {
-    const query = searchInput.value.toLowerCase();
-    const statusVal = verifyFilter.value;
+    const query = searchInput ? searchInput.value.toLowerCase() : '';
+    const statusVal = enrollFilter ? enrollFilter.value : 'ALL';
     const rows = container.querySelectorAll('#table-invites tbody tr');
 
     rows.forEach(tr => {
@@ -129,8 +129,8 @@ export function renderInvites(container) {
     });
   };
 
-  searchInput.addEventListener('input', filterInvites);
-  verifyFilter.addEventListener('change', filterInvites);
+  if (searchInput) searchInput.addEventListener('input', filterInvites);
+  if (enrollFilter) enrollFilter.addEventListener('change', filterInvites);
 
   // Modal triggers
   const btnOpen = container.querySelector('#open-add-invite');
