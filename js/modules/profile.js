@@ -23,11 +23,11 @@ export function renderProfileModal(container, onSaveSuccess = null) {
     <!-- Prominent Profile Picture with Camera Icon Overlay (Reference Design) -->
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">
       <div id="profile-avatar-trigger" style="position: relative; width: 110px; height: 110px; cursor: pointer;" title="Click to upload profile photo">
-        <img src="${account.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+        <img src="${account.avatar || 'assets/logo.png'}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
         
         <!-- Camera Icon Overlay Badge -->
-        <div style="position: absolute; bottom: 2px; right: 2px; width: 34px; height: 34px; background: #ffffff; color: #000000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.3); border: 2px solid #ffffff;">
-          <i class="fas fa-camera" style="font-size: 0.95rem; color: #000000;"></i>
+        <div style="position: absolute; bottom: 2px; right: 2px; width: 34px; height: 34px; background: var(--bg-card, #ffffff); color: var(--text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.3); border: 2px solid var(--border-color);">
+          <i class="fas fa-camera" style="font-size: 0.95rem; color: var(--text-primary);"></i>
         </div>
       </div>
 

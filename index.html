@@ -82,10 +82,10 @@
 
       <!-- Sidebar User Footer -->
       <div class="sidebar-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 14px; border-top: 1px solid var(--border-color);">
-        <div class="sidebar-user-box user-profile-btn" id="sidebar-user-box-click" style="cursor: pointer; flex: 1; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 30px;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" id="current-user-avatar" class="sidebar-user-avatar" alt="Profile Picture" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;">
+        <div class="sidebar-user-box user-profile-btn" id="sidebar-user-box-click" style="cursor: pointer; flex: 1; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: var(--header-btn-bg, var(--bg-card)); border: 1px solid var(--border-color); border-radius: 30px;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
+          <img src="assets/logo_icon.png" id="current-user-avatar" class="sidebar-user-avatar" alt="Profile Picture" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 3px; box-sizing: border-box; object-fit: contain;">
           <div>
-            <div class="user-box-name" id="current-user-name" style="font-weight: 800; font-size: 0.85rem; color: #002355;">Active User</div>
+            <div class="user-box-name" id="current-user-name" style="font-weight: 800; font-size: 0.85rem; color: var(--text-primary);">Active User</div>
           </div>
         </div>
         <button type="button" class="btn btn-logout-icon logout-btn" id="btn-logout" title="Sign Out of Portal" aria-label="Sign Out" onclick="if(window.handleLogout){window.handleLogout(event);} else {localStorage.setItem('atsoca_logged_in','false'); window.location.reload();}" style="background: #dc2626; color: #ffffff; width: 40px; height: 40px; min-width: 40px; border-radius: 12px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); transition: all 0.2s ease; position: relative; z-index: 999; pointer-events: auto;">
@@ -93,12 +93,18 @@
         </button>
       </div>
     </aside>
+    
+    <!-- Sidebar Backdrop Overlay for Mobile -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
     <!-- Main Wrapper -->
     <main class="main-wrapper">
       <!-- Top Sticky Navigation Header -->
       <header class="top-header">
         <div class="header-left">
+          <button type="button" class="mobile-hamburger-btn" id="btn-mobile-menu" aria-label="Toggle Navigation Menu" title="Toggle Navigation Menu">
+            <i class="fas fa-bars"></i>
+          </button>
           <h1 class="header-elite-title">ELITE DASHBOARD</h1>
         </div>
 
@@ -106,9 +112,9 @@
 
 
           <!-- Separate Distinct User Profile Button Container (id="btn-profile") -->
-          <button type="button" class="header-user-box user-profile-btn" id="btn-profile" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 30px; margin-left: 8px; outline: none;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" id="header-user-avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; pointer-events: none;" alt="Profile Picture">
-            <span id="header-user-name" style="font-weight: 700; font-size: 0.82rem; color: #002355; pointer-events: none;">Active User</span>
+          <button type="button" class="header-user-box user-profile-btn" id="btn-profile" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: var(--header-btn-bg, var(--bg-card)); border: 1px solid var(--border-color); border-radius: 30px; margin-left: 8px; outline: none;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
+            <img src="assets/logo_icon.png" id="header-user-avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 3px; box-sizing: border-box; object-fit: contain; pointer-events: none;" alt="Profile Picture">
+            <span id="header-user-name" style="font-weight: 700; font-size: 0.82rem; color: var(--text-primary); pointer-events: none;">Active User</span>
           </button>
 
           <!-- Theme Switcher Button -->
@@ -347,8 +353,8 @@
     <div class="modal-overlay" id="modal-edit-payment-dialog">
       <div class="modal-content" style="max-width: 520px; border: 2px solid #002355; border-radius: 16px; padding: 24px; box-shadow: 0 20px 40px rgba(0, 35, 85, 0.25);">
         <div class="modal-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;">
-          <h3 style="color: #002355; margin: 0; font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-file-invoice-dollar" style="color: #002355;"></i> Update Payment Details
+          <h3 style="color: #002355; margin: 0; font-size: 1.15rem; font-weight: 800;">
+            Update Payment Details
           </h3>
           <button class="modal-close" id="close-modal-edit-pay" style="font-size: 1.5rem; color: #002355; background: none; border: none; cursor: pointer;">&times;</button>
         </div>
@@ -384,13 +390,10 @@
             </div>
           </div>
 
-          <!-- Quick Action Preset Buttons -->
-          <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-            <button type="button" id="pay-modal-btn-full" class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 0.78rem;">
-              <i class="fas fa-check-double"></i> Mark Fully Paid
-            </button>
-            <button type="button" id="pay-modal-btn-zero" class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 0.78rem;">
-              <i class="fas fa-undo"></i> Reset to ₱0.00
+          <!-- Quick Action Preset Button -->
+          <div style="margin-bottom: 20px;">
+            <button type="button" id="pay-modal-btn-full" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 0.82rem; padding: 8px 12px; border-radius: 8px;">
+              Fully Paid
             </button>
           </div>
 

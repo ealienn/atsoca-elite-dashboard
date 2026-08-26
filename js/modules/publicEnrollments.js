@@ -104,9 +104,9 @@ export function renderPublicEnrollments(container) {
               <tr>
                 <td><code>${enr.id}</code></td>
                 <td><strong>${enr.participantName}</strong></td>
-                <td><span style="font-weight: 600; color: #002355;">${enr.duplicateChecker || 'N/A'}</span></td>
+                <td><span style="font-weight: 600; color: var(--text-primary);">${enr.duplicateChecker || 'N/A'}</span></td>
                 <td>
-                  <span class="status-pill" style="background: #dbeafe; color: #002355; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1; display: inline-block;">
+                  <span class="status-pill status-${(enr.enrollmentStatus || 'Enrolled').replace(/\s+/g, '')}">
                     ${enr.enrollmentStatus || 'Enrolled'}
                   </span>
                 </td>

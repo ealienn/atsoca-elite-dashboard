@@ -53,6 +53,10 @@ class AppController {
     this.currentUserRole = document.querySelector('#current-user-role');
     this.headerUserAvatar = document.querySelector('#header-user-avatar');
     this.headerUserName = document.querySelector('#header-user-name');
+    this.btnMobileMenu = document.querySelector('#btn-mobile-menu');
+    this.sidebarBackdrop = document.querySelector('#sidebar-backdrop');
+    this.sidebar = document.querySelector('.sidebar');
+    this.appContainer = document.querySelector('#app-container');
   }
 
   initTheme() {
@@ -65,8 +69,8 @@ class AppController {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('atsoca_theme', theme);
 
-    const brandLogos = document.querySelectorAll('.brand-logo-img, .sidebar-logo-img, .top-logo-mark-img');
-    brandLogos.forEach(img => {
+    const allLogosAndAvatars = document.querySelectorAll('.brand-logo-img, .sidebar-logo-img, .top-logo-mark-img, .sidebar-user-avatar, #current-user-avatar, #header-user-avatar, #modal-profile-preview-avatar, img[src*="logo"]');
+    allLogosAndAvatars.forEach(img => {
       if (theme === 'light') {
         img.src = 'assets/logo.png';
       } else {
@@ -457,7 +461,61 @@ class AppController {
     }
   }
 
+  toggleMobileMenu() {
+    const isMobileOpen = this.sidebar ? this.sidebar.classList.contains('mobile-open') : false;
+    if (isMobileOpen) {
+      this.closeMobileMenu();
+    } else {
+      this.openMobileMenu();
+    }
+  }
+
+  openMobileMenu() {
+    if (this.sidebar) this.sidebar.classList.add('mobile-open');
+    if (this.sidebarBackdrop) this.sidebarBackdrop.classList.add('active');
+    if (this.appContainer) this.appContainer.classList.add('sidebar-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeMobileMenu() {
+    if (this.sidebar) this.sidebar.classList.remove('mobile-open');
+    if (this.sidebarBackdrop) this.sidebarBackdrop.classList.remove('active');
+    if (this.appContainer) this.appContainer.classList.remove('sidebar-open');
+    document.body.style.overflow = '';
+  }
+
   bindEvents() {
+    // Mobile Drawer Event Handlers
+    if (this.btnMobileMenu) {
+      this.btnMobileMenu.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleMobileMenu();
+      });
+    }
+
+    const btnCloseMobileDrawer = document.querySelector('#btn-close-mobile-drawer');
+    if (btnCloseMobileDrawer) {
+      btnCloseMobileDrawer.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.closeMobileMenu();
+      });
+    }
+
+    if (this.sidebarBackdrop) {
+      this.sidebarBackdrop.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.closeMobileMenu();
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 992) {
+        this.closeMobileMenu();
+      }
+    });
+
     // 1. Dedicated Isolated Event Listeners for Profile Triggers (Navbar & Sidebar)
     const profileElements = document.querySelectorAll('#btn-profile, #sidebar-user-box-click, #user-profile-btn, .user-profile-btn');
     profileElements.forEach(btn => {
@@ -861,7 +919,7 @@ class AppController {
       this.populateMemberSelect();
       this.updateAdminNavVisibility();
       if (!db || db.activeRole === 'Elite Member') {
-        const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Joshua Villafuerte', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80', totalUnits: 0.73 };
+        const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Joshua Villafuerte', avatar: 'assets/logo.png', totalUnits: 0.73 };
         const level = getEliteLevel(member ? member.totalUnits : 0.73);
         if (this.currentUserName) this.currentUserName.innerText = member ? member.name : 'Joshua Villafuerte';
         if (this.currentUserRole) this.currentUserRole.innerText = `${level.name} Partner`;
@@ -870,7 +928,7 @@ class AppController {
         if (this.headerUserAvatar && member && member.avatar) this.headerUserAvatar.src = member.avatar;
         if (this.memberSelect) this.memberSelect.style.display = 'inline-block';
       } else {
-        const mgmtAccount = (db && typeof db.getManagementProfile === 'function' ? db.getManagementProfile(db.activeRole) : null) || { name: 'Management', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80' };
+        const mgmtAccount = (db && typeof db.getManagementProfile === 'function' ? db.getManagementProfile(db.activeRole) : null) || { name: 'Management', avatar: 'assets/logo.png' };
         if (this.currentUserName) this.currentUserName.innerText = mgmtAccount.name || 'Management';
         if (this.currentUserRole) this.currentUserRole.innerText = `${db.activeRole} Account`;
         if (this.currentUserAvatar && mgmtAccount.avatar) this.currentUserAvatar.src = mgmtAccount.avatar;
@@ -891,6 +949,7 @@ class AppController {
   }
 
   switchTab(tabKey) {
+    this.closeMobileMenu();
     this.currentTab = tabKey;
     this.navItems.forEach(item => {
       if (item.getAttribute('data-tab') === tabKey) {

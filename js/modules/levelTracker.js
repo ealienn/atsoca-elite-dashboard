@@ -29,15 +29,15 @@ export function renderLevelTracker(container) {
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
         <div style="background: rgba(255,255,255,0.03); padding: 20px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
           <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Accumulated Units</div>
-          <div style="font-size: 1.8rem; font-weight: 900; color: var(--accent-amber); margin-top: 4px;">${member.totalUnits} Units</div>
+          <div style="font-size: 1.8rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${member.totalUnits} Units</div>
         </div>
         <div style="background: rgba(255,255,255,0.03); padding: 20px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
           <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Tier Unit Range</div>
-          <div style="font-size: 1.8rem; font-weight: 900; color: var(--accent-blue); margin-top: 4px;">${currentLevelInfo.minUnits} - ${currentLevelInfo.maxUnits === Infinity ? '1501+' : currentLevelInfo.maxUnits}</div>
+          <div style="font-size: 1.8rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${currentLevelInfo.minUnits} - ${currentLevelInfo.maxUnits === Infinity ? '1501+' : currentLevelInfo.maxUnits}</div>
         </div>
         <div style="background: rgba(255,255,255,0.03); padding: 20px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
           <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Next Milestone Tier</div>
-          <div style="font-size: 1.8rem; font-weight: 900; color: var(--accent-emerald); margin-top: 4px;">${currentLevelInfo.nextLevel}</div>
+          <div style="font-size: 1.8rem; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${currentLevelInfo.nextLevel}</div>
         </div>
       </div>
     </div>

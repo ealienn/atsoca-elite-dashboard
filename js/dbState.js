@@ -3,7 +3,7 @@
  */
 import { calculateUnitsFromAmount, calculateReferralFee, getEliteLevel } from './matrixEngine.js';
 
-const STORAGE_KEY = 'atsoca_elite_db_v105';
+const STORAGE_KEY = 'atsoca_elite_db_v107';
 
 // OPTIONAL: Paste your deployed Google Apps Script Web App URL here to sync with Google Sheets
 export const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxljjgYaX0C-KDsljOBB6kZ9dR6ZYLjb4awplGJtnAy9xZb1LusTH6kLFdVJs7mj0I/exec';
@@ -16,7 +16,7 @@ const INITIAL_MEMBERS = [
     email: 'joshua.villafuerte@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: './assets/avatar_10.png',
+    avatar: 'assets/logo_icon.png',
     totalUnits: 0.73,
     baselineUnits: 0.73,
     monthlyUnits: 0.73,
@@ -32,7 +32,7 @@ const INITIAL_MEMBERS = [
     email: 'kent.lontok@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: './assets/avatar_10.png',
+    avatar: 'assets/logo_icon.png',
     totalUnits: 5.91,
     baselineUnits: 5.91,
     monthlyUnits: 5.91,
@@ -48,7 +48,7 @@ const INITIAL_MEMBERS = [
     email: 'ce.box@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: './assets/avatar_10.png',
+    avatar: 'assets/logo_icon.png',
     totalUnits: 1.22,
     baselineUnits: 1.22,
     monthlyUnits: 1.22,
@@ -64,7 +64,7 @@ const INITIAL_MEMBERS = [
     email: 'charlene.hilvano@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: './assets/avatar_10.png',
+    avatar: 'assets/logo_icon.png',
     totalUnits: 0.33,
     baselineUnits: 0.33,
     monthlyUnits: 0.33,
@@ -80,7 +80,7 @@ const INITIAL_MEMBERS = [
     email: 'jenelle.mangubat@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: './assets/avatar_10.png',
+    avatar: 'assets/logo_icon.png',
     totalUnits: 0.67,
     baselineUnits: 0.67,
     monthlyUnits: 0.67,
@@ -176,8 +176,8 @@ class DBState {
             const existing = this.data.members.find(m => m.id === initM.id);
             if (!existing) {
               this.data.members.push(initM);
-            } else if (initM.avatar && (!existing.avatar || !existing.avatar.startsWith('data:'))) {
-              existing.avatar = initM.avatar;
+            } else if (!existing.avatar || existing.avatar.includes('unsplash') || existing.avatar.includes('avatar_10')) {
+              existing.avatar = 'assets/logo.png';
             }
           });
 
@@ -399,18 +399,64 @@ class DBState {
     }
   }
 
+  getMemberManualAdjustmentsSum(memberId) {
+    let sum = 0;
+    try {
+      const raw = localStorage.getItem(`atsoca_unit_ledger_${memberId}`);
+      if (raw) {
+        const history = JSON.parse(raw);
+        if (Array.isArray(history)) {
+          history.forEach(h => {
+            if (h && h.amount) {
+              const match = String(h.amount).match(/([+-]?\d+(?:\.\d+)?)/);
+              if (match) {
+                sum += parseFloat(match[1]) || 0;
+              }
+            }
+          });
+        }
+      }
+    } catch(e) {}
+    return sum;
+  }
+
   recalculateMemberUnits() {
     if (!this.data || !this.data.members) return;
     this.data.members.forEach(member => {
+      // Find all enrollments matching this member by ID or Name
       const memberEnrollments = (this.data.enrollments || []).filter(e =>
-        e.referrerId === member.id ||
-        (e.referrerName && e.referrerName.toLowerCase() === member.name.toLowerCase())
+        e && (
+          String(e.referrerId) === String(member.id) ||
+          (e.referrerName && member.name && e.referrerName.toLowerCase().trim() === member.name.toLowerCase().trim())
+        )
       );
-      const earnedFromEnrollments = memberEnrollments.reduce((sum, e) => sum + (Number(e.unitsEarned) || 0), 0);
-      if (earnedFromEnrollments > 0) {
-        member.totalUnits = Number(earnedFromEnrollments.toFixed(2));
-        member.monthlyUnits = member.totalUnits;
-      }
+
+      // Rule 1: Enforce strict conditional units based on Enrollment Status
+      // Status === "Enrolled": count unit value
+      // Status === "Cancelled", "Rescheduled", "Pending", "Withdrawn", etc.: Unit Value = 0.00
+      memberEnrollments.forEach(e => {
+        const isEnrolled = e.enrollmentStatus && String(e.enrollmentStatus).trim().toLowerCase() === 'enrolled';
+        if (isEnrolled) {
+          e.unitsEarned = Number((Number(e.paymentMade || 0) / 4500).toFixed(2));
+        } else {
+          e.unitsEarned = 0;
+        }
+      });
+
+      const liveEnrolledUnits = memberEnrollments.reduce((sum, e) => {
+        const isEnrolled = e.enrollmentStatus && String(e.enrollmentStatus).trim().toLowerCase() === 'enrolled';
+        return sum + (isEnrolled ? (Number(e.unitsEarned) || 0) : 0);
+      }, 0);
+
+      // Rule 2: Formula for Total Units:
+      // Total Units = Immutable Baseline Units + SUM(Manual Unit Adjustments) + SUM(Units from Live Records where Enrollment Status === "Enrolled")
+      const baseline = Number(member.baselineUnits || 0);
+      const manualAdjustments = this.getMemberManualAdjustmentsSum(member.id);
+
+      const totalUnits = Number((baseline + manualAdjustments + liveEnrolledUnits).toFixed(2));
+
+      member.totalUnits = totalUnits;
+      member.monthlyUnits = totalUnits;
     });
   }
 
@@ -494,7 +540,7 @@ class DBState {
           email: 'manager@atsoca.ph',
           phone: '0917-888-1029',
           password: '12345',
-          avatar: './assets/avatar_10.png',
+          avatar: 'assets/logo.png',
           department: 'Operations & Strategy'
         },
         'Finance': {
@@ -503,7 +549,7 @@ class DBState {
           email: 'finance@atsoca.ph',
           phone: '0917-888-2045',
           password: '12345',
-          avatar: './assets/avatar_10.png',
+          avatar: 'assets/logo.png',
           department: 'Finance & Disbursement'
         },
         'Administrator': {
@@ -512,16 +558,16 @@ class DBState {
           email: 'admin@atsoca.ph',
           phone: '0917-888-9900',
           password: '12345',
-          avatar: './assets/avatar_10.png',
+          avatar: 'assets/logo.png',
           department: 'Executive Management'
         }
       };
       this.save();
     }
     const defaults = {
-      'Elite Manager': './assets/avatar_10.png',
-      'Finance': './assets/avatar_10.png',
-      'Administrator': './assets/avatar_10.png'
+      'Elite Manager': 'assets/logo.png',
+      'Finance': 'assets/logo.png',
+      'Administrator': 'assets/logo.png'
     };
 
     const acc = this.data.managementAccounts[role] || this.data.managementAccounts['Administrator'];
@@ -736,19 +782,7 @@ class DBState {
     }
 
     // Recompute units earned for referred participant
-    if (enr.isReferred && enr.referrerId) {
-      const units = calculateUnitsFromAmount(enr.paymentMade);
-      enr.unitsEarned = units;
-
-      // Update Member Total Units
-      const member = this.data.members.find(m => m.id === enr.referrerId);
-      if (member) {
-        // Re-sum all verified payment units for this member
-        const memberEnrollments = this.data.enrollments.filter(e => e.referrerId === member.id);
-        const totalU = memberEnrollments.reduce((sum, e) => sum + calculateUnitsFromAmount(e.paymentMade), 0);
-        member.totalUnits = Number(totalU.toFixed(2));
-      }
-    }
+    this.recalculateMemberUnits();
 
     this.addLog(this.activeRole, 'Payment Updated', 'Enrollment & Payments', `Updated payment for ${enr.participantName} to ₱${paid}`);
     this.save();

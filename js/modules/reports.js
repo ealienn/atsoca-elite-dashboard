@@ -60,7 +60,7 @@ export function renderReports(container) {
             <div class="card elite-folder-card" data-member-code="${m.id}" style="position: relative; overflow: hidden; padding: 20px; cursor: pointer; border-left: 4px solid var(--accent-blue);">
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                  <img src="${m.avatar || ''}" alt="${m.name}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--accent-blue);">
+                  <img src="assets/logo_icon.png" class="user-avatar-img reports-card-avatar" alt="${m.name}" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 3px; box-sizing: border-box; object-fit: contain; filter: brightness(0) invert(1);">
                   <div>
                     <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">${m.name}</div>
                     <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">
@@ -88,8 +88,8 @@ export function renderReports(container) {
                 </div>
               </div>
 
-              <button class="btn btn-block btn-open-member-dossier" data-member-code="${m.id}" style="width: 100%; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; background: #002355; color: #ffffff; border: none; padding: 10px; border-radius: 8px;">
-                View Reports & Exports ➔
+              <button class="btn btn-block btn-open-member-dossier" data-member-code="${m.id}" style="width: 100%; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px; background: #0284c7; color: #ffffff; border: none; padding: 11px 16px; border-radius: 8px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); cursor: pointer;">
+                <i class="fas fa-folder-open"></i> View Reports & Exports ➔
               </button>
             </div>
           `;
@@ -127,7 +127,7 @@ export function renderReports(container) {
         <div class="card" style="margin-bottom: 24px; background: var(--box-inner-bg); border: 1px solid var(--border-color);">
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <img src="${targetMember.avatar || ''}" alt="${targetMember.name}" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-blue);">
+              <img src="assets/logo_icon.png" class="user-avatar-img reports-dossier-avatar" alt="${targetMember.name}" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid #ffffff; padding: 4px; box-sizing: border-box; object-fit: contain; filter: brightness(0) invert(1);">
               <div>
                 <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-primary); font-weight: 800; display: flex; align-items: center; gap: 8px;">
                   ${targetMember.name}
@@ -135,9 +135,6 @@ export function renderReports(container) {
                     ${tier.name} Tier
                   </span>
                 </h3>
-                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 3px;">
-                  Member Code: <strong style="color: var(--text-primary);">[${targetMember.id}]</strong> | Total Accumulated Units: <strong style="color: var(--text-primary);">${Number(targetMember.totalUnits || 0).toFixed(2)} Units</strong>
-                </div>
               </div>
             </div>
 
@@ -424,11 +421,15 @@ function getScopedReportData(targetMemberId, start, end) {
     releases = releases.filter(r => inRange(r.requestDate || r.dateReleased || r.timestamp || r.date));
   }
 
-  const units = enrollments.filter(e => e.isReferred).map(e => ({
-    ...e,
-    formula: `${formatPHP(e.paymentMade)} / ₱4,500`,
-    unitsEarned: Number(e.unitsEarned || (e.paymentMade / 4500).toFixed(2))
-  }));
+  const units = enrollments.filter(e => e.isReferred).map(e => {
+    const isEnrolled = e.enrollmentStatus && String(e.enrollmentStatus).trim().toLowerCase() === 'enrolled';
+    const computedUnits = isEnrolled ? Number((Number(e.paymentMade || 0) / 4500).toFixed(2)) : 0;
+    return {
+      ...e,
+      formula: isEnrolled ? `${formatPHP(e.paymentMade)} / ₱4,500` : '0.00 Units (Non-Enrolled)',
+      unitsEarned: computedUnits
+    };
+  });
 
   const fees = enrollments.filter(e => e.isReferred).map(e => {
     let levelName = 'Gold';

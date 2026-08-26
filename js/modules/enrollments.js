@@ -83,40 +83,48 @@ export function renderEnrollments(container) {
               <th style="color: #002355; font-weight: 800;">Fee</th>
               <th style="color: #002355; font-weight: 800;">Paid</th>
               <th style="color: #002355; font-weight: 800;">Balance</th>
+              <th style="color: #002355; font-weight: 800;">Units Earned</th>
               <th style="color: #002355; font-weight: 800;">Payment Status</th>
               ${isFinanceOrAdmin ? '<th style="color: #002355; font-weight: 800;">Actions</th>' : ''}
             </tr>
           </thead>
           <tbody>
-            ${enrollments.map(enr => `
-              <tr>
-                <td><code style="color: #002355; font-weight: 700;">${enr.respondentId || enr.id.replace('ENR-', '')}</code></td>
-                <td><strong style="color: #002355;">${enr.participantName}</strong></td>
-                <td><span style="font-weight: 600; color: #002355;">${enr.duplicateChecker || 'N/A'}</span></td>
-                <td>
-                  <span class="status-pill" style="background: #dbeafe; color: #002355; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1; display: inline-block;">
-                    ${enr.enrollmentStatus || 'Enrolled'}
-                  </span>
-                </td>
-                <td><span style="color: #002355;">${enr.schoolCompany}</span></td>
-                <td><span style="font-size: 0.8rem; font-weight: 700; color: #002355;">${enr.course || enr.trainingType}</span></td>
-                <td><strong style="color: #002355;">${formatPHP(enr.investmentFee)}</strong></td>
-                <td><span style="color: #002355; font-weight: 700;">${formatPHP(enr.paymentMade)}</span></td>
-                <td><span style="color: #002355; font-weight: 700;">${formatPHP(enr.balance)}</span></td>
-                <td>
-                  <span class="status-pill" style="background: #f1f5f9; color: #002355; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1; display: inline-block;">
-                    ${enr.paymentStatus}
-                  </span>
-                </td>
-                ${isFinanceOrAdmin ? `
+            ${enrollments.map(enr => {
+              const enrollStatus = enr.enrollmentStatus || 'Enrolled';
+              const isEnrolled = String(enrollStatus).trim().toLowerCase() === 'enrolled';
+              const unitsDisplay = isEnrolled ? `${Number(enr.unitsEarned !== undefined ? enr.unitsEarned : (enr.paymentMade / 4500)).toFixed(2)} Units` : '0.00 Units';
+
+              return `
+                <tr>
+                  <td><code>${enr.respondentId || enr.id.replace('ENR-', '')}</code></td>
+                  <td><strong>${enr.participantName}</strong></td>
+                  <td><span style="font-weight: 600;">${enr.duplicateChecker || 'N/A'}</span></td>
                   <td>
-                    <button class="btn btn-secondary btn-sm btn-update-pay" data-id="${enr.id}" style="background: #002355; color: #ffffff; border: none; font-weight: 700;">
-                      <i class="fas fa-edit"></i> Edit Payment
-                    </button>
+                    <span class="status-pill status-${(enrollStatus || '').replace(/\s+/g, '')}">
+                      ${enrollStatus}
+                    </span>
                   </td>
-                ` : ''}
-              </tr>
-            `).join('')}
+                  <td>${enr.schoolCompany}</td>
+                  <td><span style="font-size: 0.8rem; font-weight: 700;">${enr.course || enr.trainingType}</span></td>
+                  <td><strong>${formatPHP(enr.investmentFee)}</strong></td>
+                  <td><span style="font-weight: 700;">${formatPHP(enr.paymentMade)}</span></td>
+                  <td><span style="font-weight: 700;">${formatPHP(enr.balance)}</span></td>
+                  <td><span style="font-weight: 700;">${unitsDisplay}</span></td>
+                  <td>
+                    <span class="status-pill status-${(enr.paymentStatus || '').replace(/\s+/g, '')}">
+                      ${enr.paymentStatus}
+                    </span>
+                  </td>
+                  ${isFinanceOrAdmin ? `
+                    <td>
+                      <button class="btn btn-secondary btn-sm btn-update-pay" data-id="${enr.id}" style="background: #002355; color: #ffffff; border: none; font-weight: 700;">
+                        <i class="fas fa-edit"></i> Edit Payment
+                      </button>
+                    </td>
+                  ` : ''}
+                </tr>
+              `;
+            }).join('')}
           </tbody>
         </table>
       </div>

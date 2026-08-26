@@ -250,7 +250,6 @@ function renderManagementOverview(container, role) {
                   </td>
                   <td>
                     <strong style="font-size: 0.88rem;">${mInvites.length} ${mInvites.length === 1 ? 'Invite' : 'Invites'}</strong>
-                    ${mPending > 0 ? `<span style="background: #e0f2fe; color: #0284c7; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; margin-left: 6px; font-weight: 700;">${mPending} Pending</span>` : ''}
                   </td>
                   <td><strong>${Number(m.totalUnits || 0).toFixed(2)} Units</strong></td>
                   <td><strong style="color: #0284c7;">₱${(m.availableForRelease || 0).toLocaleString()}</strong></td>
@@ -375,6 +374,7 @@ function renderManagementOverview(container, role) {
 
     // 1. STRICT DATA ISOLATION & FILTERING LOGIC
     // Clear modal body DOM first to avoid any stale data leakage across account switches
+    db.recalculateMemberUnits();
     modalBody.innerHTML = '';
 
     const targetCode = normalizeCode(targetMember.id);
@@ -419,35 +419,33 @@ function renderManagementOverview(container, role) {
 
         <!-- 3 Recomputed Summary Cards (Strictly Isolated Subset) -->
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px;">
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: var(--radius-sm);">
-            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">SUBMITTED INVITES</div>
-            <div style="font-size: 1.25rem; font-weight: 800; color: #002355; margin-top: 4px;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px 14px; border-radius: var(--radius-sm); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 84px;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">SUBMITTED INVITES</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin-top: 6px;">
               ${totalSubmittedInvites} Records
             </div>
           </div>
 
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: var(--radius-sm); position: relative;">
-            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; display: flex; justify-content: space-between; align-items: center;">
-              TOTAL ACCUMULATED UNITS
-              <button class="btn btn-secondary btn-xs btn-adjust-units" data-id="${targetMember.id}" style="padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; background: #002355; color: #ffffff; border: none;" title="Adjust Units">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px 14px; border-radius: var(--radius-sm); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 84px;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">TOTAL ACCUMULATED UNITS</div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px;">
+              <span style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary);">${totalAccumulatedUnits} Units</span>
+              <button class="btn btn-secondary btn-xs btn-adjust-units" data-id="${targetMember.id}" style="padding: 3px 8px; font-size: 0.72rem; border-radius: 6px; background: #002355; color: #ffffff; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Adjust Units">
                 <i class="fas fa-edit"></i> Edit
               </button>
             </div>
-            <div style="font-size: 1.25rem; font-weight: 800; color: #002355; margin-top: 4px;">
-              ${totalAccumulatedUnits} Units
-            </div>
           </div>
 
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: var(--radius-sm);">
-            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">AVAILABLE PAYOUT</div>
-            <div style="font-size: 1.25rem; font-weight: 800; color: #002355; margin-top: 4px;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px 14px; border-radius: var(--radius-sm); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 84px;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">AVAILABLE PAYOUT</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin-top: 6px;">
               ${availablePayout}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 2. EXACT 10-COLUMN TABLE SCHEMA -->
+      <!-- 2. AUDIT TABLE SCHEMA -->
       <div style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
           <h4 style="margin: 0; color: #002355; font-size: 1.05rem; font-weight: 800;">
@@ -458,24 +456,25 @@ function renderManagementOverview(container, role) {
         <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
           <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
             <thead>
-              <tr style="background: #f8fafc;">
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">RESPONDENT ID</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">PARTICIPANT NAME</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">DUPLICATE CHECKER</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">SCHOOL / COMPANY</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">TRAINING PROGRAM</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">REFERRER</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">TRAINING FEE</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">AMOUNT PAID</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">BALANCE</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">STATUS</th>
-                <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">ACTIONS</th>
+              <tr>
+                <th style="font-weight: 800; font-size: 0.78rem;">RESPONDENT ID</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">PARTICIPANT NAME</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">DUPLICATE CHECKER</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">ENROLLMENT STATUS</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">SCHOOL / COMPANY</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">TRAINING PROGRAM</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">TRAINING FEE</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">AMOUNT PAID</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">BALANCE</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">UNITS EARNED</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">PAYMENT STATUS</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">ACTIONS</th>
               </tr>
             </thead>
             <tbody>
               ${memberInvites.length === 0 ? `
                 <tr>
-                  <td colspan="11" style="text-align: center; color: #002355; font-weight: 600; padding: 24px;">
+                  <td colspan="12" style="text-align: center; color: #002355; font-weight: 600; padding: 24px;">
                     No invite or enrollment records found for Elite Member Code [${targetMember.id}].
                   </td>
                 </tr>
@@ -486,11 +485,14 @@ function renderManagementOverview(container, role) {
                 const dupChecker = inv.duplicateChecker || (enr ? enr.duplicateChecker : 'N/A') || 'N/A';
                 const schoolComp = inv.schoolCompany || '-';
                 const program = inv.trainingType || inv.courseName || inv.course || 'COSH SO2';
-                const referrerName = targetMember.name;
 
                 const fee = enr ? Number(enr.investmentFee || 4500) : Number(inv.investmentFee || 4500);
                 const paid = enr ? Number(enr.paymentMade || 0) : Number(inv.paymentMade || 0);
                 const bal = enr ? Number(enr.balance !== undefined ? enr.balance : Math.max(0, fee - paid)) : Math.max(0, fee - paid);
+
+                const enrollStatus = (enr && enr.enrollmentStatus) || inv.enrollmentStatus || 'Enrolled';
+                const isEnrolled = String(enrollStatus).trim().toLowerCase() === 'enrolled';
+                const unitsVal = isEnrolled ? Number(enr ? (enr.unitsEarned !== undefined ? enr.unitsEarned : (paid / 4500)) : (paid / 4500)).toFixed(2) : '0.00';
 
                 let statusStr = 'Unpaid';
                 if (enr && enr.paymentStatus) {
@@ -516,17 +518,22 @@ function renderManagementOverview(container, role) {
 
                 return `
                   <tr>
-                    <td style="color: #002355; font-size: 0.82rem;"><code style="color: #002355; font-weight: 700;">${respId}</code></td>
-                    <td style="color: #002355; font-size: 0.82rem;"><strong>${partName}</strong></td>
-                    <td style="color: #002355; font-size: 0.82rem;"><span style="font-weight: 600; color: #002355;">${dupChecker}</span></td>
-                    <td style="color: #002355; font-size: 0.82rem;">${schoolComp}</td>
-                    <td style="color: #002355; font-size: 0.82rem;"><span style="font-weight: 600; color: #002355;">${program}</span></td>
-                    <td style="color: #002355; font-size: 0.82rem;"><strong>${referrerName}</strong></td>
-                    <td style="color: #002355; font-size: 0.82rem;"><strong>${formatPHP(fee)}</strong></td>
-                    <td style="color: #002355; font-size: 0.82rem;"><strong>${formatPHP(paid)}</strong></td>
-                    <td style="color: #002355; font-size: 0.82rem;"><strong>${formatPHP(bal)}</strong></td>
+                    <td style="font-size: 0.82rem;"><code>${respId}</code></td>
+                    <td style="font-size: 0.82rem;"><strong>${partName}</strong></td>
+                    <td style="font-size: 0.82rem;"><span style="font-weight: 600;">${dupChecker}</span></td>
                     <td style="font-size: 0.82rem;">
-                      <span class="status-pill" style="background: ${badgeBg}; color: ${badgeColor}; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid #cbd5e1;">
+                      <span class="status-pill status-${(enrollStatus || '').replace(/\s+/g, '')}">
+                        ${enrollStatus}
+                      </span>
+                    </td>
+                    <td style="font-size: 0.82rem;">${schoolComp}</td>
+                    <td style="font-size: 0.82rem;"><span style="font-weight: 600;">${program}</span></td>
+                    <td style="font-size: 0.82rem;"><strong>${formatPHP(fee)}</strong></td>
+                    <td style="font-size: 0.82rem;"><strong>${formatPHP(paid)}</strong></td>
+                    <td style="font-size: 0.82rem;"><strong>${formatPHP(bal)}</strong></td>
+                    <td style="font-size: 0.82rem;"><strong>${unitsVal} Units</strong></td>
+                    <td style="font-size: 0.82rem;">
+                      <span class="status-pill status-${(statusStr || '').replace(/\s+/g, '')}">
                         ${statusStr}
                       </span>
                     </td>
@@ -645,25 +652,25 @@ function renderManagementOverview(container, role) {
       <div style="background: var(--box-inner-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h4 style="margin: 0; font-size: 1.15rem; color: #002355; font-weight: 800;">${member.name}</h4>
+            <h4 style="margin: 0; font-size: 1.15rem; color: var(--heading-color); font-weight: 800;">${member.name}</h4>
           </div>
           <div style="text-align: right;">
-            <div style="font-size: 0.75rem; color: #002355; font-weight: 700; text-transform: uppercase;">CURRENT TOTAL UNITS</div>
-            <div style="font-size: 1.5rem; font-weight: 800; color: #002355;">${currentTotalUnits} Units</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">CURRENT TOTAL UNITS</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary);">${currentTotalUnits} Units</div>
           </div>
         </div>
       </div>
 
       <!-- 1. Baseline Display with Interactive iOS Toggle Switch -->
-      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #002355; padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div style="background: var(--box-inner-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--accent-blue); padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <span style="font-weight: 700; color: #002355; font-size: 0.85rem;">Baseline / Previous Units:</span>
-            <strong id="display-baseline-val" style="color: #002355; font-size: 1.05rem; margin-left: 8px; font-weight: 800;">${baselineUnits} Units</strong>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem;">Baseline / Previous Units:</span>
+            <strong id="display-baseline-val" style="color: var(--text-primary); font-size: 1.05rem; margin-left: 8px; font-weight: 800;">${baselineUnits} Units</strong>
           </div>
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span id="badge-lock-status" style="background: #e2e8f0; color: #002355; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 6px;">
-              <i class="fas fa-lock" id="icon-baseline-lock" style="color: #002355;"></i> <span id="label-baseline-lock">Locked</span>
+            <span id="badge-lock-status" style="background: var(--header-btn-bg); color: var(--text-primary); font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; border: 1px solid var(--border-color); display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fas fa-lock" id="icon-baseline-lock" style="color: var(--text-primary);"></i> <span id="label-baseline-lock">Locked</span>
             </span>
             <label class="switch-toggle" title="Toggle Lock/Unlock Baseline Units">
               <input type="checkbox" id="toggle-baseline-switch">
@@ -673,32 +680,32 @@ function renderManagementOverview(container, role) {
         </div>
 
         <!-- Inline Unlock Form (Hidden when Locked) -->
-        <div id="baseline-edit-controls" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <label style="font-size: 0.78rem; color: #002355; font-weight: 700; margin: 0;">New Baseline Value:</label>
-          <input type="number" id="input-new-baseline" class="form-control" step="0.01" min="0" value="${baselineUnits}" style="width: 120px; padding: 5px 10px; font-size: 0.85rem; font-weight: 700; color: #002355; border-color: #cbd5e1;">
-          <button id="btn-save-baseline" class="btn btn-primary btn-sm" style="padding: 6px 14px; font-size: 0.78rem; font-weight: 700; background: #002355; color: #ffffff; border: none; border-radius: 6px;">
+        <div id="baseline-edit-controls" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color); align-items: center; gap: 10px; flex-wrap: wrap;">
+          <label style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin: 0;">New Baseline Value:</label>
+          <input type="number" id="input-new-baseline" class="form-control" step="0.01" min="0" value="${baselineUnits}" style="width: 120px; padding: 5px 10px; font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">
+          <button id="btn-save-baseline" class="btn btn-primary btn-sm" style="padding: 6px 14px; font-size: 0.78rem; font-weight: 700; border-radius: 6px;">
             Save Baseline
           </button>
         </div>
       </div>
 
       <!-- 2. Adjustment Controls -->
-      <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 18px; border-radius: var(--radius-md); margin-bottom: 18px;">
-        <h5 style="margin: 0 0 14px 0; color: #002355; font-size: 1rem; font-weight: 800;">New Unit Adjustment</h5>
+      <div style="background: var(--box-inner-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: var(--radius-md); margin-bottom: 18px;">
+        <h5 style="margin: 0 0 14px 0; color: var(--heading-color); font-size: 1rem; font-weight: 800;">New Unit Adjustment</h5>
         <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: flex-end;">
           <div>
-            <label style="display: block; font-size: 0.75rem; color: #002355; font-weight: 700; margin-bottom: 6px;">Action Type</label>
-            <select id="adj-type" class="form-control" style="padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: #002355; border-color: #cbd5e1;">
+            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 6px;">Action Type</label>
+            <select id="adj-type" class="form-control" style="padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">
               <option value="add">Add (+)</option>
               <option value="deduct">Deduct (-)</option>
             </select>
           </div>
           <div>
-            <label style="display: block; font-size: 0.75rem; color: #002355; font-weight: 700; margin-bottom: 6px;">Units Input</label>
-            <input type="number" id="adj-amount" class="form-control" step="0.01" min="0.01" value="1.00" style="padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: #002355; border-color: #cbd5e1;">
+            <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 6px;">Units Input</label>
+            <input type="number" id="adj-amount" class="form-control" step="0.01" min="0.01" value="1.00" style="padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">
           </div>
           <div>
-            <button class="btn btn-primary" id="btn-save-unit-adj" style="padding: 9px 20px; font-weight: 700; font-size: 0.85rem; background: #002355; color: #ffffff; border: none; border-radius: 6px;">
+            <button class="btn btn-primary" id="btn-save-unit-adj" style="padding: 9px 20px; font-weight: 700; font-size: 0.85rem; border-radius: 6px;">
               Apply Adjustment
             </button>
           </div>
@@ -709,22 +716,25 @@ function renderManagementOverview(container, role) {
       <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
         <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
           <thead>
-            <tr style="background: #f8fafc;">
-              <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">TIMESTAMP</th>
-              <th style="color: #002355; font-weight: 800; font-size: 0.78rem;">AMOUNT</th>
+            <tr>
+              <th style="color: var(--text-muted); font-weight: 800; font-size: 0.78rem;">TIMESTAMP</th>
+              <th style="color: var(--text-muted); font-weight: 800; font-size: 0.78rem;">AMOUNT</th>
             </tr>
           </thead>
           <tbody>
-            ${fullLedger.map(entry => `
-              <tr style="color: #002355; ${entry.isBaseline ? 'background: #f8fafc;' : ''}">
-                <td style="color: #002355; font-size: 0.82rem; ${entry.isBaseline ? 'font-weight: 700;' : ''}">${entry.timestamp}</td>
-                <td style="color: #002355; font-size: 0.82rem;">
-                  <strong style="color: #002355;">
-                    ${entry.amount}
-                  </strong>
-                </td>
-              </tr>
-            `).join('')}
+            ${fullLedger.map(entry => {
+              const displayAmt = entry.amount || entry.units || entry.delta || entry.value || entry.amountDisplay || (entry.type ? entry.type : '+1.00 Units');
+              return `
+                <tr style="color: var(--text-primary);">
+                  <td style="color: var(--text-primary); font-size: 0.82rem; ${entry.isBaseline ? 'font-weight: 700;' : ''}">${entry.timestamp}</td>
+                  <td style="color: var(--text-primary); font-size: 0.82rem;">
+                    <strong style="color: var(--text-primary);">
+                      ${displayAmt}
+                    </strong>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
           </tbody>
         </table>
       </div>
@@ -747,18 +757,24 @@ function renderManagementOverview(container, role) {
         if (isChecked) {
           badgeStatus.style.background = '#fef3c7';
           badgeStatus.style.borderColor = '#fde68a';
-          badgeStatus.style.color = '#b45309';
-          lockIcon.className = 'fas fa-unlock';
-          lockIcon.style.color = '#b45309';
-          lockLabel.textContent = 'Unlocked';
+          badgeStatus.style.setProperty('color', '#b45309', 'important');
+          if (lockLabel) lockLabel.style.setProperty('color', '#b45309', 'important');
+          if (lockIcon) {
+            lockIcon.className = 'fas fa-unlock';
+            lockIcon.style.setProperty('color', '#b45309', 'important');
+          }
+          if (lockLabel) lockLabel.textContent = 'Unlocked';
           if (editControls) editControls.style.display = 'flex';
         } else {
-          badgeStatus.style.background = '#e2e8f0';
-          badgeStatus.style.borderColor = '#cbd5e1';
-          badgeStatus.style.color = '#002355';
-          lockIcon.className = 'fas fa-lock';
-          lockIcon.style.color = '#002355';
-          lockLabel.textContent = 'Locked';
+          badgeStatus.style.background = 'var(--header-btn-bg)';
+          badgeStatus.style.borderColor = 'var(--border-color)';
+          badgeStatus.style.setProperty('color', 'var(--text-primary)', 'important');
+          if (lockLabel) lockLabel.style.setProperty('color', 'var(--text-primary)', 'important');
+          if (lockIcon) {
+            lockIcon.className = 'fas fa-lock';
+            lockIcon.style.setProperty('color', 'var(--text-primary)', 'important');
+          }
+          if (lockLabel) lockLabel.textContent = 'Locked';
           if (editControls) editControls.style.display = 'none';
         }
       });

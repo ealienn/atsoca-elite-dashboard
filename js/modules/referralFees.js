@@ -88,29 +88,29 @@ export function renderReferralFees(container) {
             </div>
           </div>
 
-          <div class="sim-result-card" id="sim-result-box" style="background: rgba(0, 35, 85, 0.04); border: 1px solid rgba(0, 35, 85, 0.12); border-radius: 12px; padding: 18px 20px;">
+          <div class="sim-result-card" id="sim-result-box" style="background: var(--box-inner-bg); border: 1px solid var(--box-inner-border); border-radius: 12px; padding: 18px 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #002355;">Applicable Fee Bracket:</span>
-              <span style="font-weight: 800; color: #002355; font-size: 0.95rem;" id="sim-bracket-label">≥ ₱3,000</span>
+              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted);">Applicable Fee Bracket:</span>
+              <span style="font-weight: 800; color: var(--text-primary); font-size: 0.95rem;" id="sim-bracket-label">≥ ₱3,000</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #002355;">Matrix Percentage Rate:</span>
-              <span style="font-weight: 900; color: #002355; font-size: 1.2rem;" id="sim-rate-label">18%</span>
+              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted);">Matrix Percentage Rate:</span>
+              <span style="font-weight: 900; color: var(--accent-blue); font-size: 1.2rem;" id="sim-rate-label">18%</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #002355;">Referral Fee per Pax:</span>
-              <span style="font-weight: 800; color: #000000; font-size: 1.05rem;" id="sim-perpax-label">₱810.00 / pax</span>
+              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted);">Referral Fee per Pax:</span>
+              <span style="font-weight: 800; color: var(--text-primary); font-size: 1.05rem;" id="sim-perpax-label">₱810.00 / pax</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;" id="sim-volume-row">
-              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #002355;">Total Net Investment Volume:</span>
-              <span style="font-weight: 800; color: #002355; font-size: 1.05rem;" id="sim-volume-label">₱4,500.00 (1 Pax)</span>
+              <span class="sim-result-label" style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted);">Total Net Investment Volume:</span>
+              <span style="font-weight: 800; color: var(--text-primary); font-size: 1.05rem;" id="sim-volume-label">₱4,500.00 (1 Pax)</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 2px dashed rgba(0, 35, 85, 0.2); padding-top: 14px; margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 2px dashed var(--border-color); padding-top: 14px; margin-top: 4px;">
               <div>
-                <span style="color: #002355; font-weight: 800; font-size: 0.95rem; display: block;">Total Calculated Referral Fee:</span>
-                <span style="font-size: 0.8rem; color: #002355; font-weight: 700;" id="sim-units-label">+1.00 Matrix Units Earned</span>
+                <span style="color: var(--heading-color); font-weight: 800; font-size: 0.95rem; display: block;">Total Calculated Referral Fee:</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;" id="sim-units-label">+1.00 Matrix Units Earned</span>
               </div>
-              <span style="font-weight: 900; color: #000000; font-size: 1.8rem; letter-spacing: -0.02em;" id="sim-total-label">₱810.00</span>
+              <span style="font-weight: 900; color: var(--text-primary); font-size: 1.8rem; letter-spacing: -0.02em;" id="sim-total-label">₱810.00</span>
             </div>
           </div>
         </form>
