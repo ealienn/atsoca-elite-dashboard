@@ -46,7 +46,7 @@ export function renderInvites(container) {
         <table class="custom-table" id="table-invites">
           <thead>
             <tr>
-              <th>Invite ID</th>
+              <th>Submission ID</th>
               <th>Invite Name</th>
               <th>Duplicate Checker</th>
               <th>School / Company</th>

@@ -249,7 +249,7 @@ class DBState {
       rawItems.forEach((r, idx) => {
         const isArr = Array.isArray(r);
 
-        // Respondent ID: Column B (row[1])
+        // Submission ID: Column B (row[1])
         const respId = String((isArr ? r[1] : (r.colB || r.respondentId || r.id || r.submissionId)) || '').trim() || `GS-${idx + 1}`;
 
         // Elite Code / Routing: Column H (row[7]) -> strictly normalized as 3-digit string ("004", "005", "006", "007", "008")
@@ -762,7 +762,10 @@ class DBState {
   }
 
   updateEnrollmentPayment(enrollmentId, paymentAmount, newTotalInvestment = null) {
-    const enr = this.data.enrollments.find(e => e.id === enrollmentId);
+    const enr = (this.data.enrollments || []).find(e => 
+      String(e.id) === String(enrollmentId) || 
+      String(e.respondentId) === String(enrollmentId)
+    );
     if (!enr) return;
 
     if (newTotalInvestment !== null && !isNaN(newTotalInvestment)) {
@@ -781,11 +784,48 @@ class DBState {
       enr.paymentStatus = 'Unpaid';
     }
 
+    // Sync matching invite record if present
+    const inv = (this.data.invites || []).find(i => 
+      String(i.id) === String(enrollmentId) || 
+      String(i.respondentId) === String(enr.respondentId || enrollmentId)
+    );
+    if (inv) {
+      inv.paymentMade = paid;
+      inv.balance = enr.balance;
+      inv.paymentStatus = enr.paymentStatus;
+      inv.verificationStatus = (enr.paymentStatus === 'Fully Paid' || paid > 0) ? 'Verified' : 'Pending';
+    }
+
     // Recompute units earned for referred participant
     this.recalculateMemberUnits();
 
     this.addLog(this.activeRole, 'Payment Updated', 'Enrollment & Payments', `Updated payment for ${enr.participantName} to ₱${paid}`);
     this.save();
+    this.notify();
+
+    // Two-Way Sync: Post payment update back to Google Sheets
+    if (GOOGLE_SHEETS_WEB_APP_URL) {
+      fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'update_payment',
+          payload: {
+            id: enr.id,
+            respondentId: enr.respondentId || enr.colB || enr.id,
+            rowId: enr.rowId || enr.id,
+            paymentMade: paid,
+            investmentFee: enr.investmentFee,
+            balance: enr.balance,
+            paymentStatus: enr.paymentStatus,
+            trainingType: enr.trainingType || enr.course || 'BOSH'
+          }
+        }),
+        mode: 'no-cors'
+      }).then(() => {
+        setTimeout(() => this.syncGoogleSheets(), 1200);
+      }).catch(err => console.warn('Sync payment update to Google Sheets error:', err));
+    }
   }
 
   addPublicEnrollment(publicData) {

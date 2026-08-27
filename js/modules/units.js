@@ -72,7 +72,7 @@ export function renderUnits(container) {
         <table class="custom-table">
           <thead>
             <tr>
-              <th>Enrollment ID</th>
+              <th>Submission ID</th>
               <th>Participant</th>
               <th>Course / Program</th>
               <th>Training Fee</th>

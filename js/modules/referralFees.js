@@ -127,7 +127,7 @@ export function renderReferralFees(container) {
         <table class="custom-table">
           <thead>
             <tr>
-              <th>Enrollment ID</th>
+              <th>Submission ID</th>
               <th>Participant Name</th>
               <th>Course / Program</th>
               <th>Fee</th>

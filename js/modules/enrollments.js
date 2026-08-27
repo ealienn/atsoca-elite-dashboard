@@ -74,7 +74,7 @@ export function renderEnrollments(container) {
         <table class="custom-table" id="table-referral-enrollments">
           <thead>
             <tr>
-              <th style="color: #002355; font-weight: 800;">Respondent ID</th>
+              <th style="color: #002355; font-weight: 800;">Submission ID</th>
               <th style="color: #002355; font-weight: 800;">Participant Name</th>
               <th style="color: #002355; font-weight: 800;">Duplicate Checker</th>
               <th style="color: #002355; font-weight: 800;">Enrollment Status</th>

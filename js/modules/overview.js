@@ -457,7 +457,7 @@ function renderManagementOverview(container, role) {
           <table class="custom-table" style="width: 100%; font-size: 0.82rem;">
             <thead>
               <tr>
-                <th style="font-weight: 800; font-size: 0.78rem;">RESPONDENT ID</th>
+                <th style="font-weight: 800; font-size: 0.78rem;">SUBMISSION ID</th>
                 <th style="font-weight: 800; font-size: 0.78rem;">PARTICIPANT NAME</th>
                 <th style="font-weight: 800; font-size: 0.78rem;">DUPLICATE CHECKER</th>
                 <th style="font-weight: 800; font-size: 0.78rem;">ENROLLMENT STATUS</th>

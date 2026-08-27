@@ -7,7 +7,7 @@
  * 1. Open your Google Sheet connected to your Google Form.
  * 2. Navigate to Extensions > Apps Script.
  * 3. Replace the script editor contents with this code.
- * 4. Save and click "Deploy" > "New Deployment".
+ * 4. Save and click "Deploy" > "New Deployment" (or Manage Deployments > Edit > New Version).
  * 5. Select type "Web app":
  *    - Execute as: "Me"
  *    - Who has access: "Anyone"
@@ -44,10 +44,11 @@ function doGet(e) {
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       
+      // Column B (Index 1): Submission ID / Respondent ID
       // Column H (Index 7): 'code' column in Google Sheets
       var colB = String(row[1] || '').trim();
       var colH = String(row[7] || '').trim();
-      var colD = String(row[3] || '').trim();
+      var colE = String(row[4] || '').trim();
       var respondentId = colB;
       
       var eliteCode = null;
@@ -61,7 +62,7 @@ function doGet(e) {
 
       // 2. If Column H is empty or non-numeric (e.g. member names entered as text), check names:
       if (!eliteCode && (!colH || isNaN(colH))) {
-        var textTarget = (colH + ' ' + colB + ' ' + colD).toLowerCase();
+        var textTarget = (colH + ' ' + colB + ' ' + colE).toLowerCase();
         if (textTarget.indexOf('joshua') !== -1 || textTarget.indexOf('villafuerte') !== -1) eliteCode = '004';
         else if (textTarget.indexOf('kent') !== -1 || textTarget.indexOf('lontok') !== -1) eliteCode = '005';
         else if (textTarget.indexOf('ce box') !== -1 || textTarget.indexOf('ce.box') !== -1) eliteCode = '006';
@@ -96,14 +97,14 @@ function doGet(e) {
         dateSubmitted = strG || new Date().toISOString().split('T')[0];
       }
 
-      // Column M: Participant Name (Index 12)
-      var participantName = String(row[12] || row[8] || row[11] || row[13] || '').trim() || ('Participant ' + i);
+      // Column N: Participant Name / Complete Name (Index 13)
+      var participantName = String(row[13] || row[12] || row[8] || row[11] || '').trim() || ('Participant ' + i);
       
-      // Column O: School / Company (Index 14)
-      var schoolCompany = String(row[14] || row[10] || row[13] || row[15] || '').trim() || 'N/A';
+      // Column P: School / Company (Index 15)
+      var schoolCompany = String(row[15] || row[14] || row[10] || row[13] || '').trim() || 'N/A';
       
-      // Column R: Course / Program ('COSH' or 'BOSH') (Index 17)
-      var courseChoiceRaw = String(row[17] || '').trim().toUpperCase();
+      // Column S: Course / Program ('COSH' or 'BOSH') (Index 18)
+      var courseChoiceRaw = String(row[18] || row[17] || '').trim().toUpperCase();
       var courseChoice = courseChoiceRaw.indexOf('COSH') !== -1 ? 'COSH' : 'BOSH';
       
       var fee = 0;
@@ -111,23 +112,23 @@ function doGet(e) {
       var balance = 0;
       
       if (courseChoice === 'COSH') {
-        // Column U: COSH Training Fee (Index 20)
-        // Column V: COSH Amount Paid (Index 21)
-        // Column W: COSH Remaining Balance (Index 22)
-        fee = Number(row[20]) || 5000;
-        paid = Number(row[21]) || 0;
-        balance = (row[22] !== undefined && row[22] !== '' && !isNaN(row[22])) ? Number(row[22]) : Math.max(0, fee - paid);
+        // Column V: COSH Training Fee (Index 21)
+        // Column W: COSH Amount Paid (Index 22)
+        // Column X: COSH Remaining Balance (Index 23)
+        fee = Number(row[21] !== undefined && row[21] !== '' ? row[21] : row[20]) || 5000;
+        paid = Number(row[22] !== undefined && row[22] !== '' ? row[22] : row[21]) || 0;
+        balance = (row[23] !== undefined && row[23] !== '' && !isNaN(row[23])) ? Number(row[23]) : Math.max(0, fee - paid);
       } else {
-        // Column Y: BOSH Training Fee (Index 24)
-        // Column Z: BOSH Amount Paid (Index 25)
-        // Column AA: BOSH Remaining Balance (Index 26)
-        fee = Number(row[24]) || 4500;
-        paid = Number(row[25]) || 0;
-        balance = (row[26] !== undefined && row[26] !== '' && !isNaN(row[26])) ? Number(row[26]) : Math.max(0, fee - paid);
+        // Column AA: BOSH Training Fee (Index 26)
+        // Column AB: BOSH Amount Paid (Index 27)
+        // Column AC: BOSH Remaining Balance (Index 28)
+        fee = Number(row[26] !== undefined && row[26] !== '' ? row[26] : row[24]) || 4500;
+        paid = Number(row[27] !== undefined && row[27] !== '' ? row[27] : row[25]) || 0;
+        balance = (row[28] !== undefined && row[28] !== '' && !isNaN(row[28])) ? Number(row[28]) : Math.max(0, fee - paid);
       }
       
-      // Column AC: Payment Status (Index 28)
-      var colAC = String(row[28] || '').trim();
+      // Column AF: Payment Status (Index 31)
+      var colAC = String(row[31] !== undefined && row[31] !== '' ? row[31] : row[28] || '').trim();
       var colACLower = colAC.toLowerCase();
       var paymentStatus = '';
 
@@ -140,7 +141,7 @@ function doGet(e) {
       } else if (colAC !== '') {
         paymentStatus = colAC;
       } else {
-        // Automatic Formula Calculation when Column AC is empty
+        // Automatic Formula Calculation when Payment Status is empty
         if (paid >= fee && fee > 0) {
           paymentStatus = 'Fully Paid';
         } else if (paid > 0 && paid < fee) {
@@ -163,9 +164,11 @@ function doGet(e) {
       var props = PropertiesService.getScriptProperties();
       var savedAvatar = props.getProperty('AVATAR_' + eliteCode);
 
+      var rowUniqueId = respondentId || ('GS-ROW-' + (i + 1));
+
       records.push({
-        id: 'GS-R' + (i + 1) + '-' + (respondentId || 'ID'),
-        rowId: 'GS-R' + (i + 1) + '-' + (respondentId || 'ID'),
+        id: rowUniqueId,
+        rowId: rowUniqueId,
         respondentId: respondentId,
         colB: colB,
         eliteCode: eliteCode,
@@ -221,23 +224,105 @@ function doGet(e) {
 }
 
 /**
- * Handle POST requests to update member profile photos across devices
+ * Handle POST requests (Profile updates, Payment updates, etc.)
  */
 function doPost(e) {
   try {
     var postData = JSON.parse(e.postData.contents);
     var props = PropertiesService.getScriptProperties();
+    var action = postData.action || postData.type;
+    var payload = postData.payload || postData;
     
-    if (postData.action === 'update_profile' || postData.type === 'member') {
-      var payload = postData.payload || postData;
+    // 1. Profile Avatar updates across devices
+    if (action === 'update_profile' || action === 'member') {
       var memberId = payload.id || payload.role;
       if (memberId && payload.avatar) {
         props.setProperty('AVATAR_' + memberId, payload.avatar);
       }
-    }
+      var response = JSON.stringify({ status: 'success', message: 'Profile updated successfully' });
+      return ContentService.createTextOutput(response).setMimeType(ContentService.MimeType.JSON);
+    } 
     
-    var response = JSON.stringify({ status: 'success', message: 'Profile updated successfully' });
-    return ContentService.createTextOutput(response).setMimeType(ContentService.MimeType.JSON);
+    // 2. Two-Way Payment Updates: Dashboard -> Google Sheets
+    if (action === 'update_payment') {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var sheet = ss.getSheetByName("Form Responses 1") || ss.getSheetByName("Form Responses") || ss.getSheetByName("Sheet1") || ss.getSheetByName("Responses") || ss.getActiveSheet();
+      
+      if (!sheet) {
+        throw new Error("Form Responses sheet not found.");
+      }
+
+      var data = sheet.getDataRange().getValues();
+      var targetRowIndex = -1;
+      
+      var searchRespId = String(payload.respondentId || payload.colB || payload.id || '').trim();
+      var searchRowId = String(payload.rowId || payload.id || '').trim();
+      
+      // Try extracting row index if format is "GS-ROW-{rowNum}" or "GS-R{rowNum}"
+      if (searchRowId.indexOf('GS-ROW-') === 0 || searchRowId.indexOf('GS-R') === 0) {
+        var cleanRow = searchRowId.replace('GS-ROW-', '').replace('GS-R', '').split('-')[0];
+        var extractedRow = parseInt(cleanRow, 10);
+        if (!isNaN(extractedRow) && extractedRow >= 2 && extractedRow <= data.length) {
+          targetRowIndex = extractedRow;
+        }
+      }
+
+      // Fallback search by matching Column B (Submission ID / Respondent ID)
+      if (targetRowIndex === -1 && searchRespId) {
+        for (var r = 1; r < data.length; r++) {
+          var colBVal = String(data[r][1] || '').trim();
+          if (colBVal === searchRespId) {
+            targetRowIndex = r + 1; // 1-based row index in Google Sheets
+            break;
+          }
+        }
+      }
+
+      if (targetRowIndex > 1) {
+        var rowData = data[targetRowIndex - 1]; // 0-based array index
+        var courseChoiceRaw = String(rowData[18] || rowData[17] || payload.trainingType || '').trim().toUpperCase();
+        var isCOSH = courseChoiceRaw.indexOf('COSH') !== -1;
+        
+        var fee = Number(payload.investmentFee) || (isCOSH ? (Number(rowData[21] || rowData[20]) || 5000) : (Number(rowData[26] || rowData[24]) || 4500));
+        var paid = Number(payload.paymentMade) || 0;
+        var balance = Math.max(0, fee - paid);
+        
+        var paymentStatus = payload.paymentStatus || '';
+        if (!paymentStatus) {
+          if (balance === 0 && paid > 0) paymentStatus = 'Fully Paid';
+          else if (paid > 0) paymentStatus = 'Partial';
+          else paymentStatus = 'Unpaid';
+        }
+
+        if (isCOSH) {
+          // Column V (Index 21 / Col 22): COSH Fee
+          // Column W (Index 22 / Col 23): COSH Paid
+          // Column X (Index 23 / Col 24): COSH Balance
+          sheet.getRange(targetRowIndex, 22).setValue(fee);
+          sheet.getRange(targetRowIndex, 23).setValue(paid);
+          sheet.getRange(targetRowIndex, 24).setValue(balance);
+        } else {
+          // Column AA (Index 26 / Col 27): BOSH Fee
+          // Column AB (Index 27 / Col 28): BOSH Paid
+          // Column AC (Index 28 / Col 29): BOSH Balance
+          sheet.getRange(targetRowIndex, 27).setValue(fee);
+          sheet.getRange(targetRowIndex, 28).setValue(paid);
+          sheet.getRange(targetRowIndex, 29).setValue(balance);
+        }
+        
+        // Column AF (Index 31 / Col 32): Payment Status
+        sheet.getRange(targetRowIndex, 32).setValue(paymentStatus);
+        
+        SpreadsheetApp.flush();
+        var responseSuccess = JSON.stringify({ status: 'success', message: 'Payment updated in Google Sheets', rowIndex: targetRowIndex });
+        return ContentService.createTextOutput(responseSuccess).setMimeType(ContentService.MimeType.JSON);
+      } else {
+        throw new Error("Target row not found for ID: " + searchRespId);
+      }
+    }
+
+    var defaultResponse = JSON.stringify({ status: 'success', message: 'Request processed' });
+    return ContentService.createTextOutput(defaultResponse).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     var errResponse = JSON.stringify({ status: 'error', message: err.toString() });
     return ContentService.createTextOutput(errResponse).setMimeType(ContentService.MimeType.JSON);

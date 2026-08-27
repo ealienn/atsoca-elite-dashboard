@@ -85,7 +85,7 @@ export function renderPublicEnrollments(container) {
         <table class="custom-table" id="table-public-enrollments">
           <thead>
             <tr>
-              <th>RESPONDENT ID</th>
+              <th>SUBMISSION ID</th>
               <th>Participant Name</th>
               <th>Duplicate Checker</th>
               <th>Enrollment Status</th>
