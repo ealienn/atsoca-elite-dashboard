@@ -34,7 +34,7 @@ export function renderInvites(container) {
         <div style="display: flex; gap: 12px; align-items: center;">
           <input type="text" id="search-invite" class="form-control" placeholder="Search by name, school..." style="width: 220px; padding: 6px 12px;">
           <select id="filter-enroll-status" class="form-control" style="width: 180px; padding: 6px 12px;">
-            <option value="ALL">All Enrollment Status</option>
+            <option value="ALL">Status</option>
             <option value="Enrolled">Enrolled</option>
             <option value="Pending">Pending</option>
             <option value="Not Enrolled">Not Enrolled</option>

@@ -61,11 +61,11 @@ export function renderEnrollments(container) {
         <div class="card-title" style="color: #002355; font-weight: 800;">Referral Payment Ledger</div>
         <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
           <input type="text" id="search-enrollment" class="form-control" placeholder="Search by participant, school..." style="width: 220px; padding: 6px 12px; font-size: 0.85rem;">
-          <select id="filter-enroll-status" class="form-control" style="width: 180px; padding: 6px 12px; font-size: 0.85rem;">
-            <option value="ALL">All Enrollment Status</option>
-            <option value="Enrolled">Enrolled</option>
-            <option value="Pending">Pending</option>
-            <option value="Not Enrolled">Not Enrolled</option>
+          <select id="filter-payment-status" class="form-control" style="width: 180px; padding: 6px 12px; font-size: 0.85rem;">
+            <option value="ALL">Status</option>
+            <option value="Fully Paid">Fully Paid</option>
+            <option value="Partial">Partial</option>
+            <option value="Unpaid">Unpaid</option>
           </select>
         </div>
       </div>
@@ -133,11 +133,11 @@ export function renderEnrollments(container) {
 
   // Search & Filter event listeners
   const searchInput = container.querySelector('#search-enrollment');
-  const enrollFilter = container.querySelector('#filter-enroll-status');
+  const payFilter = container.querySelector('#filter-payment-status');
 
   const filterLedger = () => {
     const query = searchInput ? searchInput.value.toLowerCase() : '';
-    const statusVal = enrollFilter ? enrollFilter.value : 'ALL';
+    const statusVal = payFilter ? payFilter.value : 'ALL';
     const rows = container.querySelectorAll('#table-referral-enrollments tbody tr');
 
     rows.forEach(tr => {
@@ -149,7 +149,7 @@ export function renderEnrollments(container) {
   };
 
   if (searchInput) searchInput.addEventListener('input', filterLedger);
-  if (enrollFilter) enrollFilter.addEventListener('change', filterLedger);
+  if (payFilter) payFilter.addEventListener('change', filterLedger);
 
   if (isFinanceOrAdmin) {
     container.querySelectorAll('.btn-update-pay').forEach(btn => {

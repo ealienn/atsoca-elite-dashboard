@@ -72,11 +72,11 @@ export function renderPublicEnrollments(container) {
         <div class="card-title">All Enrolled Participants Registry</div>
         <div style="display: flex; gap: 12px; align-items: center;">
           <input type="text" id="search-public-enr" class="form-control" placeholder="Search participant or school..." style="width: 240px; padding: 6px 12px;">
-          <select id="filter-payment-status" class="form-control" style="width: 160px; padding: 6px 12px;">
-            <option value="ALL">All Payment Status</option>
-            <option value="Fully Paid">Fully Paid</option>
-            <option value="Partial">Partial</option>
-            <option value="Unpaid">Unpaid</option>
+          <select id="filter-enroll-status" class="form-control" style="width: 180px; padding: 6px 12px;">
+            <option value="ALL">Status</option>
+            <option value="Enrolled">Enrolled</option>
+            <option value="Pending">Pending</option>
+            <option value="Not Enrolled">Not Enrolled</option>
           </select>
         </div>
       </div>
@@ -177,7 +177,7 @@ export function renderPublicEnrollments(container) {
 
   // Filter functionality
   const searchInput = container.querySelector('#search-public-enr');
-  const statusFilter = container.querySelector('#filter-payment-status');
+  const statusFilter = container.querySelector('#filter-enroll-status');
 
   const filterRows = () => {
     const query = searchInput.value.toLowerCase();
@@ -187,7 +187,16 @@ export function renderPublicEnrollments(container) {
     rows.forEach(tr => {
       const text = tr.innerText.toLowerCase();
       const matchQuery = text.includes(query);
-      const matchStatus = statusVal === 'ALL' || tr.innerText.includes(statusVal);
+      let matchStatus = statusVal === 'ALL';
+      if (!matchStatus) {
+        const enrollCell = tr.children[3];
+        const cellText = enrollCell ? enrollCell.innerText.trim() : tr.innerText;
+        if (statusVal === 'Enrolled') {
+          matchStatus = cellText === 'Enrolled';
+        } else {
+          matchStatus = cellText.includes(statusVal);
+        }
+      }
       tr.style.display = (matchQuery && matchStatus) ? '' : 'none';
     });
   };

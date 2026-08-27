@@ -934,52 +934,60 @@ body[data-theme="dark"] .sim-result-label {
   border-radius: var(--radius-full);
   font-weight: 800;
   font-size: 0.8rem;
-  letter-spacing: 0.02em;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-  transition: transform 0.15s ease;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 35, 85, 0.18);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.tier-badge:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(0, 35, 85, 0.28);
 }
 
 .tier-Bronze {
-  background: #b45309 !important;
-  color: #ffffff !important;
-  border: 1px solid #f59e0b !important;
+  background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+  border: 1px solid #64748b !important;
+  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25) !important;
 }
 
 .tier-Silver {
-  background: #64748b !important;
-  color: #ffffff !important;
-  border: 1px solid #94a3b8 !important;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  border: 1px solid #38bdf8 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3) !important;
 }
 
 .tier-Gold,
 .mock-gold-badge {
-  background: #eab308 !important;
-  color: #ffffff !important;
-  border: 1px solid #fde047 !important;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  border: 1px solid #60a5fa !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35) !important;
 }
 
 .tier-Platinum {
-  background: #0ea5e9 !important;
-  color: #ffffff !important;
-  border: 1px solid #38bdf8 !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+  border: 1px solid #93c5fd !important;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.38) !important;
 }
 
 .tier-Diamond {
-  background: #8b5cf6 !important;
-  color: #ffffff !important;
-  border: 1px solid #c084fc !important;
+  background: linear-gradient(135deg, #1e40af 0%, #1e1b4b 100%) !important;
+  border: 1px solid #bfdbfe !important;
+  box-shadow: 0 4px 14px rgba(30, 64, 175, 0.42) !important;
 }
 
 .tier-Associate {
-  background: #2563eb !important;
-  color: #ffffff !important;
-  border: 1px solid #60a5fa !important;
+  background: linear-gradient(135deg, #002355 0%, #021028 100%) !important;
+  border: 1px solid #38bdf8 !important;
+  box-shadow: 0 4px 14px rgba(0, 35, 85, 0.45) !important;
 }
 
 .tier-AssociateManager {
-  background: #059669 !important;
-  color: #ffffff !important;
-  border: 1px solid #34d399 !important;
+  background: linear-gradient(135deg, #091e42 0%, #030712 100%) !important;
+  border: 1px solid #60a5fa !important;
+  box-shadow: 0 4px 16px rgba(9, 30, 66, 0.5) !important;
 }
 
 /* Progress Bar */
@@ -2232,52 +2240,64 @@ body[data-theme="dark"] .header-btn:hover {
 }
 
 /* Tier Badges in Dark Mode */
+body[data-theme="dark"] .tier-badge,
+body[data-theme="dark"] .mock-gold-badge {
+  color: #ffffff !important;
+}
+
 body[data-theme="dark"] .tier-Bronze {
-  background: rgba(245, 158, 11, 0.2) !important;
-  color: #fde047 !important;
-  border: 1px solid #f59e0b !important;
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.7), rgba(51, 65, 85, 0.8)) !important;
+  color: #ffffff !important;
+  border: 1px solid #64748b !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 body[data-theme="dark"] .tier-Silver {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.6), rgba(3, 105, 161, 0.7)) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid #0284c7 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35) !important;
 }
 
 body[data-theme="dark"] .tier-Gold {
-  background: rgba(234, 179, 8, 0.2) !important;
-  color: #fde047 !important;
-  border: 1px solid #eab308 !important;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.6), rgba(29, 78, 216, 0.7)) !important;
+  color: #ffffff !important;
+  border: 1px solid #2563eb !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
 }
 
 body[data-theme="dark"] .tier-Platinum {
-  background: rgba(56, 189, 248, 0.2) !important;
-  color: #38bdf8 !important;
-  border: 1px solid #38bdf8 !important;
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.65), rgba(30, 64, 175, 0.75)) !important;
+  color: #ffffff !important;
+  border: 1px solid #1d4ed8 !important;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.45) !important;
 }
 
 body[data-theme="dark"] .tier-Diamond {
-  background: rgba(139, 92, 246, 0.2) !important;
-  color: #c084fc !important;
-  border: 1px solid #8b5cf6 !important;
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.7), rgba(30, 27, 75, 0.8)) !important;
+  color: #ffffff !important;
+  border: 1px solid #3b82f6 !important;
+  box-shadow: 0 4px 16px rgba(30, 64, 175, 0.5) !important;
 }
 
 body[data-theme="dark"] .tier-Associate {
-  background: rgba(37, 99, 235, 0.2) !important;
-  color: #60a5fa !important;
-  border: 1px solid #2563eb !important;
+  background: linear-gradient(135deg, rgba(0, 35, 85, 0.8), rgba(2, 16, 40, 0.9)) !important;
+  color: #ffffff !important;
+  border: 1px solid #38bdf8 !important;
+  box-shadow: 0 4px 16px rgba(0, 35, 85, 0.55) !important;
 }
 
 body[data-theme="dark"] .tier-AssociateManager {
-  background: rgba(16, 185, 129, 0.2) !important;
-  color: #34d399 !important;
-  border: 1px solid #10b981 !important;
+  background: linear-gradient(135deg, rgba(9, 30, 66, 0.85), rgba(3, 7, 18, 0.95)) !important;
+  color: #ffffff !important;
+  border: 1px solid #60a5fa !important;
+  box-shadow: 0 4px 18px rgba(9, 30, 66, 0.6) !important;
 }
 
 body[data-theme="dark"] .mock-gold-badge {
-  background: rgba(234, 179, 8, 0.2) !important;
-  color: #fde047 !important;
-  border: 1px solid #eab308 !important;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.6), rgba(29, 78, 216, 0.7)) !important;
+  color: #ffffff !important;
+  border: 1px solid #2563eb !important;
 }
 
 /* Status Pills in Dark Mode - Plain Text */

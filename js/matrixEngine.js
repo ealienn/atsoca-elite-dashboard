@@ -6,13 +6,13 @@
 export const UNIT_VALUATION = 4500; // 1 Unit = ₱4,500 Training Fee
 
 export const ELITE_LEVELS = [
-  { name: 'Bronze', minUnits: 1, maxUnits: 50, icon: 'fa-award', badgeColor: '#b45309', bgLight: '#fef3c7' },
-  { name: 'Silver', minUnits: 51, maxUnits: 100, icon: 'fa-medal', badgeColor: '#64748b', bgLight: '#f1f5f9' },
-  { name: 'Gold', minUnits: 101, maxUnits: 150, icon: 'fa-crown', badgeColor: '#eab308', bgLight: '#fef9c3' },
-  { name: 'Platinum', minUnits: 151, maxUnits: 200, icon: 'fa-gem', badgeColor: '#0ea5e9', bgLight: '#e0f2fe' },
-  { name: 'Diamond', minUnits: 201, maxUnits: 350, icon: 'fa-diamond', badgeColor: '#8b5cf6', bgLight: '#f3e8ff' },
-  { name: 'Associate', minUnits: 351, maxUnits: 1500, icon: 'fa-user-shield', badgeColor: '#2563eb', bgLight: '#dbeafe' },
-  { name: 'Associate Manager', minUnits: 1501, maxUnits: Infinity, icon: 'fa-user-tie', badgeColor: '#059669', bgLight: '#d1fae5' }
+  { name: 'Bronze', minUnits: 1, maxUnits: 50, icon: 'fa-award', badgeColor: '#64748b', bgLight: '#f1f5f9' },
+  { name: 'Silver', minUnits: 51, maxUnits: 100, icon: 'fa-medal', badgeColor: '#0284c7', bgLight: '#e0f2fe' },
+  { name: 'Gold', minUnits: 101, maxUnits: 150, icon: 'fa-crown', badgeColor: '#2563eb', bgLight: '#dbeafe' },
+  { name: 'Platinum', minUnits: 151, maxUnits: 200, icon: 'fa-gem', badgeColor: '#1d4ed8', bgLight: '#dbeafe' },
+  { name: 'Diamond', minUnits: 201, maxUnits: 350, icon: 'fa-diamond', badgeColor: '#1e40af', bgLight: '#dbeafe' },
+  { name: 'Associate', minUnits: 351, maxUnits: 1500, icon: 'fa-user-shield', badgeColor: '#002355', bgLight: '#e0f2fe' },
+  { name: 'Associate Manager', minUnits: 1501, maxUnits: Infinity, icon: 'fa-user-tie', badgeColor: '#091e42', bgLight: '#e0f2fe' }
 ];
 
 export const MATRIX_RATES = {
