@@ -34,10 +34,6 @@ export function renderAdmin(container) {
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
         <div>
           <h2>Administrator System Console</h2>
-          <p style="font-size: 0.85rem; opacity: 0.85; margin-top: 4px;">Manage system accounts, assign Elite Member codes, and oversee portal configurations.</p>
-        </div>
-        <div style="display: flex; gap: 12px;">
-          <button class="btn btn-secondary btn-sm" id="btn-reset-db"><i class="fas fa-undo"></i> Reset Database</button>
         </div>
       </div>
     </div>
@@ -215,18 +211,6 @@ export function renderAdmin(container) {
     } else {
       alert(msg);
     }
-  }
-
-  // Reset DB Listener
-  const btnReset = container.querySelector('#btn-reset-db');
-  if (btnReset) {
-    btnReset.addEventListener('click', () => {
-      if (confirm('Are you sure you want to reset the database to initial demo state?')) {
-        db.resetDatabase();
-        alert('Database state has been reset successfully!');
-        renderAdmin(container);
-      }
-    });
   }
 }
 
