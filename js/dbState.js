@@ -588,35 +588,72 @@ class DBState {
   }
 
   assignEliteCode(memberId, newCode) {
-    const member = this.data.members.find(m => m.id === String(memberId));
+    const member = this.data.members.find(m => String(m.id).trim() === String(memberId).trim() || String(m.referralCode).trim() === String(memberId).trim() || String(m.eliteCode).trim() === String(memberId).trim());
     if (!member) return null;
 
     const trimmedCode = String(newCode || '').trim();
     if (!trimmedCode) return null;
 
+    const previousId = member.id;
+    member.id = trimmedCode;
     member.referralCode = trimmedCode;
     member.eliteCode = trimmedCode;
+
+    // Relink active member session ID if active
+    if (this.currentMemberId === previousId) {
+      this.currentMemberId = trimmedCode;
+      localStorage.setItem('atsoca_current_member_id', trimmedCode);
+    }
+
+    // Relink invites
+    (this.data.invites || []).forEach(i => {
+      if (i.referrerId === previousId) {
+        i.referrerId = trimmedCode;
+      }
+    });
+
+    // Relink enrollments
+    (this.data.enrollments || []).forEach(e => {
+      if (e.referrerId === previousId) {
+        e.referrerId = trimmedCode;
+      }
+    });
+
+    // Relink releases
+    (this.data.releases || []).forEach(r => {
+      if (r.eliteMemberId === previousId || r.memberId === previousId) {
+        r.eliteMemberId = trimmedCode;
+        if (r.memberId) r.memberId = trimmedCode;
+      }
+    });
+
+    // Relink notifications
+    (this.data.notifications || []).forEach(n => {
+      if (n.memberId === previousId) {
+        n.memberId = trimmedCode;
+      }
+    });
 
     this.addLog(
       this.activeRole,
       'Assign Elite Code',
       'System Administration',
-      `Assigned Elite Code "${trimmedCode}" to ${member.name} (${member.id})`
+      `Assigned Elite Code & Member ID "${trimmedCode}" to ${member.name} (formerly ${previousId})`
     );
 
     this.addNotification({
       type: 'System Settings',
       title: 'Elite Code Assigned',
-      message: `Administrator assigned Elite Code "${trimmedCode}" to ${member.name}.`,
+      message: `Administrator assigned Elite Code & Member ID "${trimmedCode}" to ${member.name}.`,
       roleTarget: 'Elite Member',
-      memberId: member.id
+      memberId: trimmedCode
     });
 
     if (GOOGLE_SHEETS_WEB_APP_URL) {
       fetch(GOOGLE_SHEETS_WEB_APP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'assign_elite_code', payload: { id: member.id, eliteCode: trimmedCode } }),
+        body: JSON.stringify({ action: 'assign_elite_code', payload: { id: trimmedCode, previousId, eliteCode: trimmedCode } }),
         mode: 'no-cors'
       }).catch(err => console.warn('POST assigned code to Google Sheets:', err));
     }
