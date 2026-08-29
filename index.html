@@ -83,7 +83,7 @@
       <!-- Sidebar User Footer -->
       <div class="sidebar-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 14px; border-top: 1px solid var(--border-color);">
         <div class="sidebar-user-box user-profile-btn" id="sidebar-user-box-click" style="cursor: pointer; flex: 1; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: var(--header-btn-bg, var(--bg-card)); border: 1px solid var(--border-color); border-radius: 30px;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
-          <img src="assets/logo_icon.png" id="current-user-avatar" class="sidebar-user-avatar" alt="Profile Picture" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 3px; box-sizing: border-box; object-fit: contain;">
+          <img src="assets/badges/badge_bronze.png" id="current-user-avatar" class="sidebar-user-avatar" alt="Profile Picture" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 2px; box-sizing: border-box; object-fit: contain;" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
           <div>
             <div class="user-box-name" id="current-user-name" style="font-weight: 800; font-size: 0.85rem; color: var(--text-primary);">Active User</div>
           </div>
@@ -113,7 +113,7 @@
 
           <!-- Separate Distinct User Profile Button Container (id="btn-profile") -->
           <button type="button" class="header-user-box user-profile-btn" id="btn-profile" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: var(--header-btn-bg, var(--bg-card)); border: 1px solid var(--border-color); border-radius: 30px; margin-left: 8px; outline: none;" title="Click to open Profile Settings" onclick="if(window.openProfileModal){window.openProfileModal();} return false;">
-            <img src="assets/logo_icon.png" id="header-user-avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 3px; box-sizing: border-box; object-fit: contain; pointer-events: none;" alt="Profile Picture">
+            <img src="assets/badges/badge_bronze.png" id="header-user-avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 2px; box-sizing: border-box; object-fit: contain; pointer-events: none;" alt="Profile Picture" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
             <span id="header-user-name" style="font-weight: 700; font-size: 0.82rem; color: var(--text-primary); pointer-events: none;">Active User</span>
           </button>
 

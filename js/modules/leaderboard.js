@@ -154,7 +154,7 @@ export function renderLeaderboard(container) {
                           ${m.name}
                           ${isCurrentUser ? '<span class="you-pill-badge">YOU</span>' : ''}
                         </div>
-                        ${isManagement || isCurrentUser ? `<div style="font-size: 0.72rem; color: var(--text-muted);">${m.email} • ID: ${m.id}</div>` : ''}
+                        ${isManagement || isCurrentUser ? `<div style="font-size: 0.72rem; color: var(--text-muted);">${m.email} • Code: <strong>${m.referralCode || m.eliteCode || m.id}</strong></div>` : ''}
                       </div>
                     </div>
                   </td>

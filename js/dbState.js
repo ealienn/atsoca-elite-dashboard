@@ -11,12 +11,13 @@ export const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKf
 const INITIAL_MEMBERS = [
   {
     id: '004',
-    referralCode: 'ATS-REF-004',
+    referralCode: '004',
+    eliteCode: '004',
     name: 'Joshua Villafuerte',
     email: 'joshua.villafuerte@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'assets/logo_icon.png',
+    avatar: 'assets/badges/badge_bronze.png',
     totalUnits: 0.73,
     baselineUnits: 0.73,
     monthlyUnits: 0.73,
@@ -27,12 +28,13 @@ const INITIAL_MEMBERS = [
   },
   {
     id: '005',
-    referralCode: 'ATS-REF-005',
+    referralCode: '005',
+    eliteCode: '005',
     name: 'Kent Bryan Lontok',
     email: 'kent.lontok@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'assets/logo_icon.png',
+    avatar: 'assets/badges/badge_bronze.png',
     totalUnits: 5.91,
     baselineUnits: 5.91,
     monthlyUnits: 5.91,
@@ -43,12 +45,13 @@ const INITIAL_MEMBERS = [
   },
   {
     id: '006',
-    referralCode: 'ATS-REF-006',
+    referralCode: '006',
+    eliteCode: '006',
     name: 'CE Box',
     email: 'ce.box@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'assets/logo_icon.png',
+    avatar: 'assets/badges/badge_bronze.png',
     totalUnits: 1.22,
     baselineUnits: 1.22,
     monthlyUnits: 1.22,
@@ -59,12 +62,13 @@ const INITIAL_MEMBERS = [
   },
   {
     id: '007',
-    referralCode: 'ATS-REF-007',
+    referralCode: '007',
+    eliteCode: '007',
     name: 'Charlene Stephanie Hilvano',
     email: 'charlene.hilvano@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'assets/logo_icon.png',
+    avatar: 'assets/badges/badge_bronze.png',
     totalUnits: 0.33,
     baselineUnits: 0.33,
     monthlyUnits: 0.33,
@@ -75,12 +79,13 @@ const INITIAL_MEMBERS = [
   },
   {
     id: '008',
-    referralCode: 'ATS-REF-008',
+    referralCode: '008',
+    eliteCode: '008',
     name: 'Jenelle Mangubat',
     email: 'jenelle.mangubat@atsoca.ph',
     password: '12345',
     role: 'Elite Member',
-    avatar: 'assets/logo_icon.png',
+    avatar: 'assets/badges/badge_bronze.png',
     totalUnits: 0.67,
     baselineUnits: 0.67,
     monthlyUnits: 0.67,
@@ -176,14 +181,26 @@ class DBState {
             const existing = this.data.members.find(m => m.id === initM.id);
             if (!existing) {
               this.data.members.push(initM);
-            } else if (!existing.avatar || existing.avatar.includes('unsplash') || existing.avatar.includes('avatar_10')) {
-              existing.avatar = 'assets/logo.png';
+            } else if (!existing.avatar || existing.avatar.includes('unsplash') || existing.avatar.includes('avatar_10') || existing.avatar.includes('logo')) {
+              existing.avatar = 'assets/badges/badge_bronze.png';
             }
           });
 
           this.data.members.forEach(m => {
             if (!m.password || m.password === '••••••••') {
               m.password = '12345';
+            }
+            if (m.referralCode && m.referralCode.startsWith('ATS-REF-')) {
+              m.referralCode = m.referralCode.replace('ATS-REF-', '');
+            }
+            if (m.eliteCode && m.eliteCode.startsWith('ATS-REF-')) {
+              m.eliteCode = m.eliteCode.replace('ATS-REF-', '');
+            }
+            if (!m.eliteCode) {
+              m.eliteCode = m.referralCode || m.id;
+            }
+            if (!m.referralCode) {
+              m.referralCode = m.eliteCode;
             }
             if (m.baselineUnits === undefined || m.baselineUnits === null) {
               const initM = INITIAL_MEMBERS.find(im => im.id === m.id);
@@ -508,6 +525,45 @@ class DBState {
 
     // Strict account-level access: return default official member 004
     return this.data.members.find(m => m.id === '004') || INITIAL_MEMBERS[0];
+  }
+
+  assignEliteCode(memberId, newCode) {
+    const member = this.data.members.find(m => m.id === String(memberId));
+    if (!member) return null;
+
+    const trimmedCode = String(newCode || '').trim();
+    if (!trimmedCode) return null;
+
+    member.referralCode = trimmedCode;
+    member.eliteCode = trimmedCode;
+
+    this.addLog(
+      this.activeRole,
+      'Assign Elite Code',
+      'System Administration',
+      `Assigned Elite Code "${trimmedCode}" to ${member.name} (${member.id})`
+    );
+
+    this.addNotification({
+      type: 'System Settings',
+      title: 'Elite Code Assigned',
+      message: `Administrator assigned Elite Code "${trimmedCode}" to ${member.name}.`,
+      roleTarget: 'Elite Member',
+      memberId: member.id
+    });
+
+    if (GOOGLE_SHEETS_WEB_APP_URL) {
+      fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'assign_elite_code', payload: { id: member.id, eliteCode: trimmedCode } }),
+        mode: 'no-cors'
+      }).catch(err => console.warn('POST assigned code to Google Sheets:', err));
+    }
+
+    this.save();
+    this.notify();
+    return member;
   }
 
   updateMemberProfile(memberId, profileData) {

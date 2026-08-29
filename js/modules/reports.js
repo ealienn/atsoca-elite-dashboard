@@ -60,11 +60,11 @@ export function renderReports(container) {
             <div class="card elite-folder-card" data-member-code="${m.id}" style="position: relative; overflow: hidden; padding: 20px; cursor: pointer; border-left: 4px solid var(--accent-blue);">
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                  <img src="assets/logo_icon.png" class="user-avatar-img reports-card-avatar" alt="${m.name}" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 3px; box-sizing: border-box; object-fit: contain; filter: brightness(0) invert(1);">
+                  <img src="${typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(mTier.name) : 'assets/badges/badge_bronze.png'}" class="user-avatar-img reports-card-avatar" alt="${m.name}" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--text-primary); padding: 2px; box-sizing: border-box; object-fit: contain;" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
                   <div>
                     <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">${m.name}</div>
                     <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">
-                      Code: <strong style="color: var(--text-primary);">[${m.id}]</strong>
+                      Code: <strong style="color: var(--text-primary);">[${m.referralCode || m.eliteCode || m.id}]</strong>
                     </div>
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export function renderReports(container) {
         <div class="card" style="margin-bottom: 24px; background: var(--box-inner-bg); border: 1px solid var(--border-color);">
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <img src="assets/logo_icon.png" class="user-avatar-img reports-dossier-avatar" alt="${targetMember.name}" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid #ffffff; padding: 4px; box-sizing: border-box; object-fit: contain; filter: brightness(0) invert(1);">
+              <img src="${typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(tier.name) : 'assets/badges/badge_bronze.png'}" class="user-avatar-img reports-dossier-avatar" alt="${targetMember.name}" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid #ffffff; padding: 2px; box-sizing: border-box; object-fit: contain;" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
               <div>
                 <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-primary); font-weight: 800; display: flex; align-items: center; gap: 8px;">
                   ${targetMember.name}
@@ -194,7 +194,7 @@ export function renderReports(container) {
         </div>
 
         <div style="margin-bottom: 12px; font-weight: 800; font-size: 0.92rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">
-          Individual Matrix Reports Scoped to Code [${targetMember.id}] ${targetMember.name}:
+          Individual Matrix Reports Scoped to Code [${targetMember.referralCode || targetMember.eliteCode || targetMember.id}] ${targetMember.name}:
         </div>
 
         <!-- 5 Individual Matrix Reports Grid -->
@@ -581,6 +581,8 @@ function exportIndividualPDF(type, targetMemberId, start, end) {
 
   const printWin = window.open('', '_blank');
   const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const mLevel = getEliteLevel(activeMember ? activeMember.totalUnits : 0);
+  const badgeAsset = typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(mLevel.name) : 'assets/badges/badge_bronze.png';
 
   printWin.document.write(`
     <!DOCTYPE html>
@@ -604,9 +606,12 @@ function exportIndividualPDF(type, targetMemberId, start, end) {
     </head>
     <body>
       <div class="header-bar">
-        <div>
-          <div class="logo-title">ATSOCA ELITE DASHBOARD</div>
-          <div class="report-name">${title}</div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <img src="${badgeAsset}" style="width: 48px; height: 48px; object-fit: contain;" onerror="this.style.display='none';">
+          <div>
+            <div class="logo-title">ATSOCA ELITE DASHBOARD</div>
+            <div class="report-name">${title}</div>
+          </div>
         </div>
         <div class="meta-info">
           <div><strong>Generated Date:</strong> ${dateStr}</div>
@@ -707,6 +712,8 @@ function exportCompiledPDF(targetMemberId, start, end) {
 
   const printWin = window.open('', '_blank');
   const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const mLevel = getEliteLevel(activeMember ? activeMember.totalUnits : 0);
+  const badgeAsset = typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(mLevel.name) : 'assets/badges/badge_bronze.png';
 
   printWin.document.write(`
     <!DOCTYPE html>
@@ -731,9 +738,12 @@ function exportCompiledPDF(targetMemberId, start, end) {
     </head>
     <body>
       <div class="header-bar">
-        <div>
-          <div class="logo-title">ATSOCA ELITE DASHBOARD</div>
-          <div class="report-name">COMPILED MASTER REPORTS DOSSIER FOR ${memberLabel}</div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <img src="${badgeAsset}" style="width: 48px; height: 48px; object-fit: contain;" onerror="this.style.display='none';">
+          <div>
+            <div class="logo-title">ATSOCA ELITE DASHBOARD</div>
+            <div class="report-name">COMPILED MASTER REPORTS DOSSIER FOR ${memberLabel}</div>
+          </div>
         </div>
         <div class="meta-info">
           <div><strong>Generated Date:</strong> ${dateStr}</div>

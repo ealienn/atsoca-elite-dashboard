@@ -28,7 +28,7 @@ function renderEliteMemberOverview(container) {
   const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || {
     id: '004',
     name: 'Joshua Villafuerte',
-    referralCode: 'ATS-REF-004',
+    referralCode: '004',
     totalUnits: 0.73,
     monthlyUnits: 0.73,
     pendingFees: 0,
@@ -215,7 +215,7 @@ function renderManagementOverview(container, role) {
           <thead>
             <tr>
               <th>ELITE ACCOUNT</th>
-              <th>MEMBER ID</th>
+              <th>ELITE CODE</th>
               <th>CALCULATED TIER</th>
               <th>SUBMITTED INVITES</th>
               <th>TOTAL UNITS</th>
@@ -226,23 +226,24 @@ function renderManagementOverview(container, role) {
           <tbody>
             ${members.map(m => {
               const tier = getEliteLevel(m.totalUnits);
-              const mInvites = allInvites.filter(i => i.referrerId === m.id || (i.referrerName && i.referrerName.toLowerCase() === m.name.toLowerCase()));
+              const mInvites = allInvites.filter(i => i.referrerId === m.id || i.referrerId === m.referralCode || i.referrerId === m.eliteCode || (i.referrerName && i.referrerName.toLowerCase() === m.name.toLowerCase()));
               const mVerified = mInvites.filter(i => i.verificationStatus === 'Verified').length;
               const mEnrolled = mInvites.filter(i => i.enrollmentStatus === 'Enrolled').length;
               const mPending = mInvites.filter(i => i.verificationStatus === 'Pending').length;
+              const assignedCode = m.referralCode || m.eliteCode || m.id;
 
               return `
                 <tr data-member-id="${m.id}" data-tier="${tier.name}">
                   <td>
                     <div style="display: flex; align-items: center; gap: 12px;">
-                      <img src="${m.avatar}" alt="${m.name}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                      <img src="${typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(tier.name) : 'assets/badges/badge_bronze.png'}" alt="${m.name}" class="tier-badge-img" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
                       <div>
                         <div style="font-weight: 800; color: var(--text-primary); font-size: 0.88rem;">${m.name}</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td><code>${m.id}</code></td>
+                  <td><code>${assignedCode}</code></td>
                   <td>
                     <span class="tier-badge tier-${tier.name.replace(/\s+/g, '')}" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-weight: 700; font-size: 0.76rem; padding: 4px 12px; border-radius: 14px;">
                       <i class="fas ${tier.icon}"></i> ${tier.name}
@@ -405,7 +406,7 @@ function renderManagementOverview(container, role) {
       <div style="background: var(--box-inner-bg); border: 1px solid var(--box-inner-border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
           <div style="display: flex; align-items: center; gap: 16px;">
-            <img src="${targetMember.avatar}" alt="${targetMember.name}" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #002355;">
+            <img src="${typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(tier.name) : 'assets/badges/badge_bronze.png'}" alt="${targetMember.name}" class="tier-badge-img" style="width: 56px; height: 56px; border-radius: 50%; object-fit: contain; border: 3px solid #002355;" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
             <div>
               <h3 style="margin: 0; font-size: 1.25rem; color: #002355; font-weight: 800; display: flex; align-items: center; gap: 8px;">
                 ${targetMember.name}

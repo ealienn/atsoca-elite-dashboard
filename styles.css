@@ -990,6 +990,19 @@ body[data-theme="dark"] .sim-result-label {
   box-shadow: 0 4px 16px rgba(9, 30, 66, 0.5) !important;
 }
 
+/* 7-Tier Badge Avatar Container Styling */
+.tier-badge-img,
+.reports-card-avatar,
+.reports-dossier-avatar,
+.user-avatar-img,
+.member-avatar-img,
+#header-user-avatar,
+#current-user-avatar {
+  object-fit: contain !important;
+  background: var(--bg-card, transparent);
+  transition: transform 0.2s ease;
+}
+
 /* Progress Bar */
 .progress-container {
   width: 100%;

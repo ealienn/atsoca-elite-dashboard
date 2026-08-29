@@ -20,24 +20,16 @@ export function renderProfileModal(container, onSaveSuccess = null) {
   }
 
   container.innerHTML = `
-    <!-- Prominent Profile Picture with Camera Icon Overlay (Reference Design) -->
+    <!-- Static Profile Picture Display -->
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">
-      <div id="profile-avatar-trigger" style="position: relative; width: 110px; height: 110px; cursor: pointer;" title="Click to upload profile photo">
-        <img src="${account.avatar || 'assets/logo.png'}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
-        
-        <!-- Camera Icon Overlay Badge -->
-        <div style="position: absolute; bottom: 2px; right: 2px; width: 34px; height: 34px; background: var(--bg-card, #ffffff); color: var(--text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.3); border: 2px solid var(--border-color);">
-          <i class="fas fa-camera" style="font-size: 0.95rem; color: var(--text-primary);"></i>
-        </div>
+      <div style="position: relative; width: 100px; height: 100px; margin-bottom: 8px;">
+        <img src="${account.avatar || 'assets/logo.png'}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
       </div>
-
-      <!-- Hidden File Input for Device Upload -->
-      <input type="file" id="modal-prof-file-input" accept="image/*" style="display: none;">
-      <input type="hidden" id="modal-prof-avatar-url" value="${account.avatar || ''}">
-
-      <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; font-weight: 600;">
-        Click photo or camera icon to upload new picture
-      </div>
+      ${!isManagementRole ? `
+        <span style="background: rgba(2, 132, 199, 0.12); color: var(--accent-blue); padding: 4px 12px; border-radius: 20px; font-family: monospace; font-weight: 800; font-size: 0.85rem; border: 1px solid rgba(2, 132, 199, 0.3); display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fas fa-barcode"></i> Assigned Elite Code: ${account.referralCode || account.eliteCode || account.id}
+        </span>
+      ` : ''}
     </div>
 
     <!-- Alert Notification -->
@@ -138,33 +130,6 @@ export function renderProfileModal(container, onSaveSuccess = null) {
     </form>
   `;
 
-  // Bind Photo Upload & Camera Trigger
-  const avatarTrigger = container.querySelector('#profile-avatar-trigger');
-  const fileInput = container.querySelector('#modal-prof-file-input');
-  const avatarUrlInput = container.querySelector('#modal-prof-avatar-url');
-  const avatarPreview = container.querySelector('#modal-profile-preview-avatar');
-
-  if (avatarTrigger && fileInput) {
-    avatarTrigger.addEventListener('click', () => {
-      fileInput.click();
-    });
-  }
-
-  if (fileInput) {
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const dataUrl = event.target.result;
-          if (avatarPreview) avatarPreview.src = dataUrl;
-          if (avatarUrlInput) avatarUrlInput.value = dataUrl;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-
   // Handle Form Save
   const form = container.querySelector('#modal-form-edit-profile');
   const btnCancel = container.querySelector('#modal-btn-cancel-profile');
@@ -183,7 +148,7 @@ export function renderProfileModal(container, onSaveSuccess = null) {
       const email = container.querySelector('#modal-prof-email').value;
       const phone = container.querySelector('#modal-prof-phone').value;
       const password = container.querySelector('#modal-prof-password').value;
-      const avatar = avatarPreview ? avatarPreview.src : (avatarUrlInput ? avatarUrlInput.value : '');
+      const avatar = account.avatar || 'assets/logo.png';
 
       if (isManagementRole) {
         const department = container.querySelector('#modal-prof-dept') ? container.querySelector('#modal-prof-dept').value : '';

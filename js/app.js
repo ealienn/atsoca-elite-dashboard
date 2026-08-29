@@ -18,6 +18,52 @@ import { renderReports } from './modules/reports.js';
 import { renderAdmin } from './modules/admin.js';
 import { renderProfileModal } from './modules/profile.js';
 
+/**
+ * 7-TIER BADGE ASSET DICTIONARY & RESOLVER HELPER
+ */
+export const TIER_BADGES = {
+  "Bronze": "assets/badges/badge_bronze.png",
+  "Silver": "assets/badges/badge_silver.png",
+  "Gold": "assets/badges/badge_gold.png",
+  "Platinum": "assets/badges/badge_platinum.png",
+  "Diamond": "assets/badges/badge_diamond.png",
+  "Associate": "assets/badges/badge_associate.png",
+  "Associate Manager": "assets/badges/badge_associate_manager.png",
+
+  // Aliases matching uppercase strings & prompt paths
+  "BRONZE": "assets/badges/badge_bronze.png",
+  "SILVER": "assets/badges/badge_silver.png",
+  "GOLD": "assets/badges/badge_gold.png",
+  "PLATINUM": "assets/badges/badge_platinum.png",
+  "DIAMOND": "assets/badges/badge_diamond.png",
+  "ASSOCIATE": "assets/badges/badge_associate.png",
+  "ASSOCIATE MANAGER": "assets/badges/badge_associate_manager.png",
+
+  "assets/badges/BRONZE.png": "assets/badges/badge_bronze.png",
+  "assets/badges/SILVER.png": "assets/badges/badge_silver.png",
+  "assets/badges/GOLD.png": "assets/badges/badge_gold.png",
+  "assets/badges/PLATINUM.png": "assets/badges/badge_platinum.png",
+  "assets/badges/DIAMOND.png": "assets/badges/badge_diamond.png",
+  "assets/badges/ASSOCIATE.png": "assets/badges/badge_associate.png",
+  "assets/badges/ASSOCIATE MANAGER.png": "assets/badges/badge_associate_manager.png"
+};
+
+export function getTierBadgeAsset(tierNameOrPath) {
+  if (!tierNameOrPath) return 'assets/badges/badge_bronze.png';
+  if (TIER_BADGES[tierNameOrPath]) return TIER_BADGES[tierNameOrPath];
+  const str = String(tierNameOrPath).trim();
+  for (const k of Object.keys(TIER_BADGES)) {
+    if (k.toLowerCase() === str.toLowerCase()) return TIER_BADGES[k];
+  }
+  if (str.includes('/')) return str;
+  return 'assets/badges/badge_bronze.png';
+}
+
+if (typeof window !== 'undefined') {
+  window.TIER_BADGES = TIER_BADGES;
+  window.getTierBadgeAsset = getTierBadgeAsset;
+}
+
 class AppController {
   constructor() {
     this.currentTab = 'overview';
@@ -35,6 +81,14 @@ class AppController {
     try { this.subscribeState(); } catch (e) { console.warn('subscribeState:', e); }
     try { this.renderActiveTab(); } catch (e) { console.warn('renderActiveTab:', e); }
     try { this.updateNotificationBadge(); } catch (e) { console.warn('updateNotificationBadge:', e); }
+  }
+
+  subscribeState() {
+    db.subscribe(() => {
+      this.updateProfileWidget();
+      this.renderActiveTab();
+      this.updateNotificationBadge();
+    });
   }
 
   cacheElements() {
@@ -69,8 +123,8 @@ class AppController {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('atsoca_theme', theme);
 
-    const allLogosAndAvatars = document.querySelectorAll('.brand-logo-img, .sidebar-logo-img, .top-logo-mark-img, .sidebar-user-avatar, #current-user-avatar, #header-user-avatar, #modal-profile-preview-avatar, img[src*="logo"]');
-    allLogosAndAvatars.forEach(img => {
+    const brandLogos = document.querySelectorAll('.brand-logo-img, .sidebar-logo-img, .top-logo-mark-img');
+    brandLogos.forEach(img => {
       if (theme === 'light') {
         img.src = 'assets/logo.png';
       } else {
@@ -919,13 +973,20 @@ class AppController {
       this.populateMemberSelect();
       this.updateAdminNavVisibility();
       if (!db || db.activeRole === 'Elite Member') {
-        const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Joshua Villafuerte', avatar: 'assets/logo.png', totalUnits: 0.73 };
+        const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Joshua Villafuerte', avatar: 'assets/badges/badge_bronze.png', totalUnits: 0.73 };
         const level = getEliteLevel(member ? member.totalUnits : 0.73);
+        const badgeSrc = getTierBadgeAsset(level.name);
         if (this.currentUserName) this.currentUserName.innerText = member ? member.name : 'Joshua Villafuerte';
         if (this.currentUserRole) this.currentUserRole.innerText = `${level.name} Partner`;
-        if (this.currentUserAvatar && member && member.avatar) this.currentUserAvatar.src = member.avatar;
+        if (this.currentUserAvatar) {
+          this.currentUserAvatar.src = badgeSrc;
+          this.currentUserAvatar.onerror = () => { this.currentUserAvatar.src = 'assets/logo_icon.png'; };
+        }
         if (this.headerUserName) this.headerUserName.innerText = member ? member.name : 'Joshua Villafuerte';
-        if (this.headerUserAvatar && member && member.avatar) this.headerUserAvatar.src = member.avatar;
+        if (this.headerUserAvatar) {
+          this.headerUserAvatar.src = badgeSrc;
+          this.headerUserAvatar.onerror = () => { this.headerUserAvatar.src = 'assets/logo_icon.png'; };
+        }
         if (this.memberSelect) this.memberSelect.style.display = 'inline-block';
       } else {
         const mgmtAccount = (db && typeof db.getManagementProfile === 'function' ? db.getManagementProfile(db.activeRole) : null) || { name: 'Management', avatar: 'assets/logo.png' };
