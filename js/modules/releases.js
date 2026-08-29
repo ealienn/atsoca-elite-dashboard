@@ -2,15 +2,23 @@
  * Referral Fee Release Workflow Module Component
  */
 import { db } from '../dbState.js';
-import { formatPHP } from '../matrixEngine.js';
+import { formatPHP, getEliteLevel } from '../matrixEngine.js';
 
 export function renderReleases(container) {
   if (!container) return;
   const isFinanceOrAdmin = (db && (db.activeRole === 'Finance' || db.activeRole === 'Administrator'));
+  const isEliteMember = (db && db.activeRole === 'Elite Member');
   const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || { id: '004', name: 'Joshua Villafuerte' };
   const allReleases = (db && db.data && Array.isArray(db.data.releases)) ? db.data.releases : [];
+  const members = (db && db.data && Array.isArray(db.data.members)) ? db.data.members : [];
 
-  const releases = allReleases.filter(r => r && (db && db.activeRole === 'Elite Member' ? (r.eliteMemberId === member.id || (r.eliteMemberName && member.name && r.eliteMemberName.toLowerCase() === member.name.toLowerCase())) : true));
+  const sortedMembers = [...members].sort((a, b) => {
+    const codeA = String(a.referralCode || a.eliteCode || a.id || '').trim();
+    const codeB = String(b.referralCode || b.eliteCode || b.id || '').trim();
+    return codeA.localeCompare(codeB, undefined, { numeric: true, sensitivity: 'base' });
+  });
+
+  const releases = allReleases.filter(r => r && (isEliteMember ? (r.eliteMemberId === member.id || (r.eliteMemberName && member.name && r.eliteMemberName.toLowerCase() === member.name.toLowerCase())) : true));
 
   container.innerHTML = `
     <div class="welcome-banner-card">
@@ -18,11 +26,71 @@ export function renderReleases(container) {
         <div>
           <h2>Referral Fee Release Workflow</h2>
         </div>
-        ${db.activeRole === 'Elite Member' ? `
-          <button class="btn btn-emerald" id="open-release-modal"><i class="fas fa-paper-plane"></i> Submit Payout Request</button>
-        ` : ''}
       </div>
     </div>
+
+    ${isEliteMember ? `
+      <!-- Available Payout Request Banner Card for Elite Member -->
+      <div class="card stat-card emerald" style="margin-bottom: 24px; padding: 22px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 16px;">
+        <div>
+          <span style="font-size: 0.76rem; font-weight: 800; color: #059669; text-transform: uppercase; letter-spacing: 0.05em; display: block;">AVAILABLE PAYOUT REQUEST</span>
+          <div style="font-size: 2.2rem; font-weight: 900; color: #059669; margin-top: 4px; line-height: 1.1;">${formatPHP(member.availableForRelease)}</div>
+          <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 4px;">Based on total computed referral fees from your referred enrollments</small>
+        </div>
+        <button class="btn btn-emerald" id="open-release-modal" style="font-weight: 800; padding: 12px 22px; font-size: 0.95rem;"><i class="fas fa-paper-plane"></i> Submit Payout Request</button>
+      </div>
+    ` : `
+      <!-- Available Payout Requests Summary Table Per Elite Member for Admin, Finance, and Elite Manager -->
+      <div class="card" style="margin-bottom: 28px;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div class="card-title"><i class="fas fa-coins" style="color: var(--accent-emerald); margin-right: 8px;"></i> Summary of Available Payout Requests per Elite Member</div>
+          <span style="font-size: 0.78rem; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #059669; padding: 5px 14px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3);">
+            System Total Available: ${formatPHP(sortedMembers.reduce((sum, m) => sum + (Number(m.availableForRelease) || 0), 0))}
+          </span>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Elite Code</th>
+                <th>Elite Member</th>
+                <th>Calculated Tier</th>
+                <th>Total Referral Fee Pool</th>
+                <th>Released Fees</th>
+                <th>Pending Releases</th>
+                <th>Available Payout Request</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sortedMembers.map(m => {
+                const fin = (db && typeof db.getMemberFinancials === 'function') ? db.getMemberFinancials(m.id) : null;
+                const available = fin ? fin.availableForRelease : (Number(m.availableForRelease) || 0);
+                const tier = getEliteLevel(m.totalUnits);
+                return `
+                  <tr>
+                    <td><code>${m.referralCode || m.eliteCode || m.id}</code></td>
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${typeof db.getMemberAvatar === 'function' ? db.getMemberAvatar(m) : 'assets/badges/badge_bronze.png'}" alt="${m.name}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src='assets/badges/badge_bronze.png';">
+                        <div>
+                          <strong>${m.name}</strong>
+                          <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="mock-gold-badge" style="background: ${tier.badgeColor}; color: #ffffff;">${tier.name}</span></td>
+                    <td><strong>${formatPHP(fin ? fin.earnedReferralFees : available)}</strong></td>
+                    <td><span style="color: var(--text-muted);">${formatPHP(fin ? fin.releasedFees : 0)}</span></td>
+                    <td><span style="color: var(--accent-amber); font-weight: 700;">${formatPHP(fin ? fin.pendingFees : 0)}</span></td>
+                    <td><strong style="color: #059669; font-size: 1.05rem;">${formatPHP(available)}</strong></td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `}
 
     <!-- Workflow Pipeline Step Indicator -->
     <div class="card" style="margin-bottom: 28px;">

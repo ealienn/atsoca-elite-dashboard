@@ -175,8 +175,8 @@ class DBState {
         if (this.data && this.data.members && Array.isArray(this.data.members)) {
           // Sync default official members by email/id if missing
           INITIAL_MEMBERS.forEach(initM => {
-            const existing = this.data.members.find(m => 
-              (m.email && initM.email && m.email.toLowerCase().trim() === initM.email.toLowerCase().trim()) || 
+            const existing = this.data.members.find(m =>
+              (m.email && initM.email && m.email.toLowerCase().trim() === initM.email.toLowerCase().trim()) ||
               String(m.id).trim() === String(initM.id).trim()
             );
             if (!existing) {
@@ -220,6 +220,9 @@ class DBState {
         this.resetDatabase();
       }
     }
+
+    // Ensure all member financial metrics (available payout request, payments collected) are 100% synced
+    this.syncAllMemberFinancials();
 
     // Ensure active currentMemberId is valid
     const activeMember = (this.data.members || []).find(m => m.id === this.currentMemberId);
@@ -434,7 +437,7 @@ class DBState {
           });
         }
       }
-    } catch(e) {}
+    } catch (e) { }
     return sum;
   }
 
@@ -513,7 +516,11 @@ class DBState {
   }
 
   getCurrentMember() {
-    return this.data.members.find(m => m.id === this.currentMemberId) || this.data.members.find(m => m.id === '004') || INITIAL_MEMBERS[0];
+    const member = (this.data.members || []).find(m => String(m.id).trim() === String(this.currentMemberId).trim()) || (this.data.members || [])[0] || INITIAL_MEMBERS[0];
+    if (member && member.id) {
+      this.syncMemberFinancials(member.id);
+    }
+    return member;
   }
 
   getMemberAvatar(member) {
@@ -536,44 +543,77 @@ class DBState {
     return 'assets/badges/badge_bronze.png';
   }
 
-  getMemberFinancials(memberId) {
-    const member = (this.data.members || []).find(m => String(m.id) === String(memberId) || m.referralCode === String(memberId) || m.eliteCode === String(memberId)) || this.getCurrentMember();
-    if (!member) return { paymentsCollected: 0, availableForRelease: 0, pendingFees: 0, releasedFees: 0 };
+  syncAllMemberFinancials() {
+    if (!this.data || !Array.isArray(this.data.members)) return;
+    this.data.members.forEach(m => {
+      this.syncMemberFinancials(m.id);
+    });
+  }
+
+  syncMemberFinancials(memberId) {
+    const member = (this.data.members || []).find(m => String(m.id).trim() === String(memberId).trim() || String(m.referralCode).trim() === String(memberId).trim() || String(m.eliteCode).trim() === String(memberId).trim());
+    if (!member) return null;
 
     const mId = member.id;
     const mCode = member.referralCode || member.eliteCode || mId;
+    const levelInfo = getEliteLevel(member ? member.totalUnits : 0);
 
     // Find all enrollments referred by this member
-    const memberEnrollments = (this.data.enrollments || []).filter(e => 
-      e.isReferred && (e.referrerId === mId || e.referrerId === mCode || (e.referrerName && e.referrerName.toLowerCase() === member.name.toLowerCase()))
+    const memberEnrollments = (this.data.enrollments || []).filter(e =>
+      e && e.isReferred && (
+        String(e.referrerId).trim() === String(mId).trim() || 
+        String(e.referrerId).trim() === String(mCode).trim() || 
+        (e.referrerName && member.name && e.referrerName.toLowerCase().trim() === member.name.toLowerCase().trim())
+      )
     );
 
-    // Sum actual payments collected
-    let actualPaid = memberEnrollments.reduce((sum, e) => sum + (Number(e.paymentMade || 0)), 0);
+    // Sum total paid by referred participants
+    const actualPaid = memberEnrollments.reduce((sum, e) => sum + (Number(e.paymentMade || 0)), 0);
 
-    // Calculate total releases
-    const memberReleases = (this.data.releases || []).filter(r => r.eliteMemberId === mId || r.memberId === mId || (r.eliteMemberName && r.eliteMemberName.toLowerCase() === member.name.toLowerCase()));
+    // Compute total earned referral fees based strictly on amount paid (paymentMade)
+    const totalComputedReferralFee = memberEnrollments.reduce((sum, e) => {
+      const amountPaid = Number(e.paymentMade || 0);
+      const calc = calculateReferralFee(amountPaid, levelInfo ? levelInfo.name : 'Bronze');
+      return sum + (calc ? Number(calc.referralFee || 0) : 0);
+    }, 0);
+
+    const memberReleases = (this.data.releases || []).filter(r => 
+      r && (
+        String(r.eliteMemberId).trim() === String(mId).trim() || 
+        String(r.memberId).trim() === String(mId).trim() || 
+        (r.eliteMemberName && member.name && r.eliteMemberName.toLowerCase().trim() === member.name.toLowerCase().trim())
+      )
+    );
     const releasedFees = memberReleases.filter(r => r.processingStatus === 'Released').reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
     const pendingFees = memberReleases.filter(r => r.processingStatus === 'Submitted' || r.processingStatus === 'Pending' || r.processingStatus === 'Approved').reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
 
-    if (memberEnrollments.length > 0 && actualPaid > 0) {
-      const netAvailable = Math.max(0, actualPaid - releasedFees - pendingFees);
-      member.availableForRelease = netAvailable;
-      member.releasedFees = releasedFees;
-      member.pendingFees = pendingFees;
-      return { member, paymentsCollected: actualPaid, availableForRelease: netAvailable, pendingFees, releasedFees };
+    let netAvailable = 0;
+    let totalFeePool = 0;
+
+    if (memberEnrollments.length > 0 && totalComputedReferralFee > 0) {
+      netAvailable = Math.max(0, totalComputedReferralFee - releasedFees - pendingFees);
+      totalFeePool = totalComputedReferralFee;
+    } else {
+      netAvailable = Math.max(0, (Number(member.availableForRelease) || 0));
+      totalFeePool = netAvailable + releasedFees + pendingFees;
     }
 
-    const available = Number(member.availableForRelease) || 0;
-    const totalCollected = available + releasedFees + pendingFees;
+    member.availableForRelease = netAvailable;
+    member.releasedFees = releasedFees;
+    member.pendingFees = pendingFees;
 
     return {
       member,
-      paymentsCollected: totalCollected,
-      availableForRelease: available,
-      pendingFees: member.pendingFees || 0,
-      releasedFees: member.releasedFees || 0
+      paymentsCollected: actualPaid,
+      earnedReferralFees: totalFeePool,
+      availableForRelease: netAvailable,
+      pendingFees,
+      releasedFees
     };
+  }
+
+  getMemberFinancials(memberId) {
+    return this.syncMemberFinancials(memberId);
   }
 
   addMember(memberData) {
@@ -916,8 +956,8 @@ class DBState {
   }
 
   updateEnrollmentPayment(enrollmentId, paymentAmount, newTotalInvestment = null) {
-    const enr = (this.data.enrollments || []).find(e => 
-      String(e.id) === String(enrollmentId) || 
+    const enr = (this.data.enrollments || []).find(e =>
+      String(e.id) === String(enrollmentId) ||
       String(e.respondentId) === String(enrollmentId)
     );
     if (!enr) return;
@@ -939,8 +979,8 @@ class DBState {
     }
 
     // Sync matching invite record if present
-    const inv = (this.data.invites || []).find(i => 
-      String(i.id) === String(enrollmentId) || 
+    const inv = (this.data.invites || []).find(i =>
+      String(i.id) === String(enrollmentId) ||
       String(i.respondentId) === String(enr.respondentId || enrollmentId)
     );
     if (inv) {
