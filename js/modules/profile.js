@@ -23,7 +23,7 @@ export function renderProfileModal(container, onSaveSuccess = null) {
     <!-- Static Profile Picture Display -->
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">
       <div style="position: relative; width: 100px; height: 100px; margin-bottom: 8px;">
-        <img src="${account.avatar || 'assets/logo.png'}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+        <img src="${typeof db.getMemberAvatar === 'function' && !isManagementRole ? db.getMemberAvatar(account) : (account.avatar || 'assets/logo.png')}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
       </div>
       ${!isManagementRole ? `
         <span style="background: rgba(2, 132, 199, 0.12); color: var(--accent-blue); padding: 4px 12px; border-radius: 20px; font-family: monospace; font-weight: 800; font-size: 0.85rem; border: 1px solid rgba(2, 132, 199, 0.3); display: inline-flex; align-items: center; gap: 6px;">

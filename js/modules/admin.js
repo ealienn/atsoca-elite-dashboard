@@ -70,35 +70,35 @@ export function renderAdmin(container) {
               const tier = getEliteLevel(m.totalUnits);
               const assignedCode = m.referralCode || m.eliteCode || m.id;
               return `
-                <tr>
-                  <td><code>${m.id}</code></td>
-                  <td>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <img src="${m.avatar || 'assets/badges/badge_bronze.png'}" alt="${m.name}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);" onerror="this.onerror=null; this.src='assets/badges/badge_bronze.png';">
-                      <div>
-                        <strong>${m.name}</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>
+                  <tr>
+                    <td><code>${m.id}</code></td>
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${typeof db.getMemberAvatar === 'function' ? db.getMemberAvatar(m) : (m.avatar || 'assets/badges/badge_bronze.png')}" alt="${m.name}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);" onerror="this.onerror=null; this.src='assets/badges/badge_bronze.png';">
+                        <div>
+                          <strong>${m.name}</strong>
+                          <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td><span class="mock-gold-badge" style="background: ${tier.badgeColor}; color: #ffffff;">${tier.name}</span></td>
-                  <td>
-                    <span class="badge-elite-code" style="background: rgba(2, 132, 199, 0.12); color: var(--accent-blue); padding: 5px 10px; border-radius: 6px; font-family: monospace; font-weight: 800; font-size: 0.88rem; border: 1px solid rgba(2, 132, 199, 0.28); display: inline-flex; align-items: center;">
-                      ${assignedCode}
-                    </span>
-                  </td>
-                  <td>
-                    <button type="button" class="btn btn-sm btn-primary btn-open-assign-modal" data-id="${m.id}" data-name="${m.name}" data-code="${assignedCode}" style="padding: 5px 12px; font-size: 0.8rem;">
-                      Assign Code
-                    </button>
-                  </td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+                    </td>
+                    <td><span class="mock-gold-badge" style="background: ${tier.badgeColor}; color: #ffffff;">${tier.name}</span></td>
+                    <td>
+                      <span class="badge-elite-code" style="background: rgba(2, 132, 199, 0.12); color: var(--accent-blue); padding: 5px 10px; border-radius: 6px; font-family: monospace; font-weight: 800; font-size: 0.88rem; border: 1px solid rgba(2, 132, 199, 0.28); display: inline-flex; align-items: center;">
+                        ${assignedCode}
+                      </span>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-sm btn-primary btn-open-assign-modal" data-id="${m.id}" data-name="${m.name}" data-code="${assignedCode}" style="padding: 5px 12px; font-size: 0.8rem;">
+                        Assign Code
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
     <!-- Modal: Assign Code Interactive Dialog -->
     <div class="modal-overlay" id="modal-assign-elite-code">
@@ -111,7 +111,7 @@ export function renderAdmin(container) {
           <input type="hidden" id="modal-assign-member-id" value="">
           
           <div style="background: var(--header-btn-bg); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 18px; display: flex; align-items: center; gap: 12px;">
-            <img id="modal-assign-member-avatar" src="${members[0] ? (members[0].avatar || 'assets/badges/badge_bronze.png') : 'assets/badges/badge_bronze.png'}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue);" onerror="this.onerror=null; this.src='assets/badges/badge_bronze.png';">
+            <img id="modal-assign-member-avatar" src="${members[0] ? (typeof db.getMemberAvatar === 'function' ? db.getMemberAvatar(members[0]) : (members[0].avatar || 'assets/badges/badge_bronze.png')) : 'assets/badges/badge_bronze.png'}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue);" onerror="this.onerror=null; this.src='assets/badges/badge_bronze.png';">
             <div>
               <div id="modal-assign-member-name" style="font-weight: 800; font-size: 1rem;">${members[0] ? members[0].name : ''}</div>
             </div>
@@ -148,7 +148,7 @@ export function renderAdmin(container) {
     const targetMember = members.find(m => m && String(m.id).trim() === String(id).trim());
     const memberName = targetMember ? targetMember.name : (fallbackName || 'Elite Member');
     const memberCode = targetMember ? (targetMember.referralCode || targetMember.eliteCode || targetMember.id) : (fallbackCode || id);
-    const memberAvatar = targetMember ? (targetMember.avatar || 'assets/badges/badge_bronze.png') : 'assets/badges/badge_bronze.png';
+    const memberAvatar = targetMember ? (typeof db.getMemberAvatar === 'function' ? db.getMemberAvatar(targetMember) : targetMember.avatar) : 'assets/badges/badge_bronze.png';
 
     if (modalMemId) modalMemId.value = id;
     if (modalMemName) modalMemName.innerText = memberName;

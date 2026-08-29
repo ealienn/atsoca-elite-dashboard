@@ -515,6 +515,26 @@ class DBState {
     return this.data.members.find(m => m.id === this.currentMemberId) || this.data.members.find(m => m.id === '004') || INITIAL_MEMBERS[0];
   }
 
+  getMemberAvatar(member) {
+    if (!member) return 'assets/badges/badge_bronze.png';
+    if (member.avatar && (member.avatar.startsWith('data:') || member.avatar.startsWith('http://') || member.avatar.startsWith('https://'))) {
+      return member.avatar;
+    }
+    const level = getEliteLevel(member.totalUnits || 0);
+    const tierName = level ? level.name : 'Bronze';
+    if (typeof window !== 'undefined' && typeof window.getTierBadgeAsset === 'function') {
+      return window.getTierBadgeAsset(tierName);
+    }
+    const t = String(tierName).toLowerCase();
+    if (t.includes('silver')) return 'assets/badges/badge_silver.png';
+    if (t.includes('gold')) return 'assets/badges/badge_gold.png';
+    if (t.includes('platinum')) return 'assets/badges/badge_platinum.png';
+    if (t.includes('diamond')) return 'assets/badges/badge_diamond.png';
+    if (t.includes('associate manager')) return 'assets/badges/badge_associate_manager.png';
+    if (t.includes('associate')) return 'assets/badges/badge_associate.png';
+    return 'assets/badges/badge_bronze.png';
+  }
+
   addMember(memberData) {
     const OFFICIAL_MEMBER_IDS = ['004', '005', '006', '007', '008'];
     let matched = this.data.members.find(m => m.email && memberData.email && m.email.toLowerCase() === memberData.email.toLowerCase());

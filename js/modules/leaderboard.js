@@ -148,7 +148,7 @@ export function renderLeaderboard(container) {
                   </td>
                   <td>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                      <img src="${m.avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" alt="${m.name}">
+                      <img src="${typeof db.getMemberAvatar === 'function' ? db.getMemberAvatar(m) : m.avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" alt="${m.name}">
                       <div>
                         <div style="font-weight: 800; font-size: 0.84rem; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
                           ${m.name}
@@ -238,7 +238,7 @@ function renderPodiumCard(member, rank, type, badgeTitle, isManagement = false) 
   return `
     <div class="podium-card podium-${type}" style="${styles.cardStyle}">
       <div style="position: relative; display: inline-block;">
-        <img src="${member.avatar}" alt="${member.name}" style="${styles.avatarStyle}">
+        <img src="${typeof db.getMemberAvatar === 'function' ? db.getMemberAvatar(member) : member.avatar}" alt="${member.name}" style="${styles.avatarStyle}">
         <span style="position: absolute; top: -10px; right: -8px; font-size: 1.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">${styles.crown}</span>
       </div>
       <div style="margin-top: 4px;">

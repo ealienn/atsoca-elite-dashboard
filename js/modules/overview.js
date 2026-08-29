@@ -236,7 +236,7 @@ function renderManagementOverview(container, role) {
                 <tr data-member-id="${m.id}" data-tier="${tier.name}">
                   <td>
                     <div style="display: flex; align-items: center; gap: 12px;">
-                      <img src="${typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(tier.name) : 'assets/badges/badge_bronze.png'}" alt="${m.name}" class="tier-badge-img" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
+                      <img src="${typeof db.getMemberAvatar === 'function' ? db.getMemberAvatar(m) : (typeof window.getTierBadgeAsset === 'function' ? window.getTierBadgeAsset(tier.name) : 'assets/badges/badge_bronze.png')}" alt="${m.name}" class="tier-badge-img" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src='assets/logo_icon.png';">
                       <div>
                         <div style="font-weight: 800; color: var(--text-primary); font-size: 0.88rem;">${m.name}</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>

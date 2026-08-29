@@ -976,7 +976,7 @@ class AppController {
         const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Joshua Villafuerte', avatar: 'assets/badges/badge_bronze.png', totalUnits: 0.73 };
         const level = getEliteLevel(member ? member.totalUnits : 0.73);
         const badgeSrc = getTierBadgeAsset(level.name);
-        const profileSrc = (member && member.avatar && member.avatar.trim()) ? member.avatar : badgeSrc;
+        const profileSrc = (db && typeof db.getMemberAvatar === 'function') ? db.getMemberAvatar(member) : badgeSrc;
         if (this.currentUserName) this.currentUserName.innerText = member ? member.name : 'Joshua Villafuerte';
         if (this.currentUserRole) this.currentUserRole.innerText = `${level.name} Partner`;
         if (this.currentUserAvatar) {
