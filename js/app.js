@@ -651,16 +651,11 @@ class AppController {
       const btnOpenRelease = e.target.closest('#open-release-modal, #btn-quick-release');
       if (btnOpenRelease) {
         e.preventDefault();
-        const modal = document.querySelector('#modal-release-request');
-        const emailInput = document.querySelector('#release-referrer-email');
-        const amountInput = document.querySelector('#release-amount');
-        const member = db.getCurrentMember();
-        if (emailInput && member) emailInput.value = member.email || 'joshua.villafuerte@atsoca.ph';
-        if (amountInput && member) amountInput.value = member.availableForRelease || 24050;
+        const modal = document.querySelector('#modal-request-release');
         if (modal) {
           window.activeModalState = window.activeModalState || {};
           window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
-          window.activeModalState.activeModalIds.add('modal-release-request');
+          window.activeModalState.activeModalIds.add('modal-request-release');
           modal.classList.add('active');
         }
         return;

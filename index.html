@@ -412,7 +412,7 @@
     <div class="modal-overlay" id="modal-edit-user-profile">
       <div class="modal-content" style="max-width: 680px; width: 90%; max-height: 90vh; overflow-y: auto;">
         <div class="modal-header">
-          <h3><i class="fas fa-user-circle" style="color: var(--accent-blue);"></i> Edit Account Profile & Settings</h3>
+          <h3>Edit Account Profile & Settings</h3>
           <button class="modal-close" id="close-modal-user-profile">&times;</button>
         </div>
         <div id="modal-user-profile-body">
@@ -460,43 +460,6 @@
           <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
             <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
             <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Invite</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal: Request Referral Fee Release -->
-    <div class="modal-overlay" id="modal-release-request">
-      <div class="modal-content" style="max-width: 520px;">
-        <div class="modal-header">
-          <h3><i class="fas fa-hand-holding-usd" style="color: var(--accent-emerald);"></i> Submit Referral Fee Release Request</h3>
-          <button class="modal-close" id="close-modal-release-request">&times;</button>
-        </div>
-        <form id="form-submit-release-request">
-          <div class="form-group">
-            <label>Partner / Referrer Email Address</label>
-            <input type="email" class="form-control" id="release-referrer-email" required readonly style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">
-          </div>
-          <div class="form-group">
-            <label>Amount Requested (₱) *</label>
-            <input type="number" class="form-control" id="release-amount" required min="100" step="100" placeholder="e.g. 28400">
-          </div>
-          <div class="form-group">
-            <label>Preferred Disbursement Method *</label>
-            <select class="form-control" id="release-disbursement-method" required>
-              <option value="GCash (0917-***-8821)">GCash Mobile Wallet</option>
-              <option value="Bank Transfer (BDO - 0048-****-1192)">BDO Unibank Transfer</option>
-              <option value="Bank Transfer (BPI - 1920-****-44)">BPI Bank Transfer</option>
-              <option value="Maya Wallet">Maya Mobile Wallet</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Notes / Request Remarks</label>
-            <input type="text" class="form-control" id="release-notes" placeholder="e.g. Submitted for July 2nd Half Referral Fee Earnings">
-          </div>
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-            <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
-            <button type="submit" class="btn btn-emerald"><i class="fas fa-paper-plane"></i> Submit Request</button>
           </div>
         </form>
       </div>

@@ -118,7 +118,7 @@ export function renderAdmin(container) {
           </div>
 
           <div class="form-group" style="margin-bottom: 16px;">
-            <label style="font-weight: 700;">New Assigned Elite Code</label>
+            <label style="font-weight: 700;">Elite Code</label>
             <input type="text" class="form-control" id="modal-assign-code-input" required style="font-family: monospace; font-weight: 800; text-transform: uppercase; font-size: 1.05rem;">
           </div>
 

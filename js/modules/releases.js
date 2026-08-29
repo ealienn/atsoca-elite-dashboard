@@ -113,13 +113,13 @@ export function renderReleases(container) {
     <div class="modal-overlay" id="modal-request-release">
       <div class="modal-content">
         <div class="modal-header">
-          <h3><i class="fas fa-hand-holding-usd" style="color: var(--accent-emerald);"></i> Submit Referral Fee Release Request</h3>
+          <h3>Submit Referral Fee Release Request</h3>
           <button class="modal-close" id="close-modal-release">&times;</button>
         </div>
         <form id="form-request-release">
-          <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 14px; border-radius: var(--radius-md); margin-bottom: 16px;">
-            <div style="font-size: 0.78rem; color: var(--accent-emerald); font-weight: 700; text-transform: uppercase;">Available for Release</div>
-            <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff;">${formatPHP(member.availableForRelease)}</div>
+          <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 14px; border-radius: var(--radius-md); margin-bottom: 16px;">
+            <div style="font-size: 0.78rem; color: #059669; font-weight: 800; text-transform: uppercase;">Available for Release</div>
+            <div style="font-size: 1.6rem; font-weight: 900; color: #059669;">${formatPHP(member.availableForRelease)}</div>
           </div>
           <div class="form-group">
             <label>Requested Payout Amount (₱)</label>
@@ -135,7 +135,7 @@ export function renderReleases(container) {
           </div>
           <div class="form-group">
             <label>Account Details / Remarks</label>
-            <textarea class="form-control" id="rel-notes" rows="2" placeholder="e.g. Account Number: 0048-****-1192"></textarea>
+            <textarea class="form-control" id="rel-notes" rows="2"></textarea>
           </div>
           <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
             <button type="button" class="btn btn-secondary" id="cancel-request-release">Cancel</button>

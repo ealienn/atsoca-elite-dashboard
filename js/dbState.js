@@ -535,6 +535,46 @@ class DBState {
     return 'assets/badges/badge_bronze.png';
   }
 
+  getMemberFinancials(memberId) {
+    const member = (this.data.members || []).find(m => String(m.id) === String(memberId) || m.referralCode === String(memberId) || m.eliteCode === String(memberId)) || this.getCurrentMember();
+    if (!member) return { paymentsCollected: 0, availableForRelease: 0, pendingFees: 0, releasedFees: 0 };
+
+    const mId = member.id;
+    const mCode = member.referralCode || member.eliteCode || mId;
+
+    // Find all enrollments referred by this member
+    const memberEnrollments = (this.data.enrollments || []).filter(e => 
+      e.isReferred && (e.referrerId === mId || e.referrerId === mCode || (e.referrerName && e.referrerName.toLowerCase() === member.name.toLowerCase()))
+    );
+
+    // Sum actual payments collected
+    let actualPaid = memberEnrollments.reduce((sum, e) => sum + (Number(e.paymentMade || 0)), 0);
+
+    // Calculate total releases
+    const memberReleases = (this.data.releases || []).filter(r => r.eliteMemberId === mId || r.memberId === mId || (r.eliteMemberName && r.eliteMemberName.toLowerCase() === member.name.toLowerCase()));
+    const releasedFees = memberReleases.filter(r => r.processingStatus === 'Released').reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+    const pendingFees = memberReleases.filter(r => r.processingStatus === 'Submitted' || r.processingStatus === 'Pending' || r.processingStatus === 'Approved').reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+
+    if (memberEnrollments.length > 0 && actualPaid > 0) {
+      const netAvailable = Math.max(0, actualPaid - releasedFees - pendingFees);
+      member.availableForRelease = netAvailable;
+      member.releasedFees = releasedFees;
+      member.pendingFees = pendingFees;
+      return { member, paymentsCollected: actualPaid, availableForRelease: netAvailable, pendingFees, releasedFees };
+    }
+
+    const available = Number(member.availableForRelease) || 0;
+    const totalCollected = available + releasedFees + pendingFees;
+
+    return {
+      member,
+      paymentsCollected: totalCollected,
+      availableForRelease: available,
+      pendingFees: member.pendingFees || 0,
+      releasedFees: member.releasedFees || 0
+    };
+  }
+
   addMember(memberData) {
     const OFFICIAL_MEMBER_IDS = ['004', '005', '006', '007', '008'];
     let matched = this.data.members.find(m => m.email && memberData.email && m.email.toLowerCase() === memberData.email.toLowerCase());

@@ -18,9 +18,12 @@ export function renderEnrollments(container) {
     return e.isReferred;
   });
 
-  const totalFee = enrollments.reduce((sum, e) => sum + (Number(e ? e.investmentFee : 0) || 0), 0);
-  const totalPaid = enrollments.reduce((sum, e) => sum + (Number(e ? e.paymentMade : 0) || 0), 0);
-  const totalBal = enrollments.reduce((sum, e) => sum + (Number(e ? e.balance : 0) || 0), 0);
+  const fin = (db && typeof db.getMemberFinancials === 'function') ? db.getMemberFinancials(member.id) : null;
+  const rawPaid = enrollments.reduce((sum, e) => sum + (Number(e ? e.paymentMade : 0) || 0), 0);
+  const totalPaid = (db && db.activeRole === 'Elite Member' && fin) ? fin.paymentsCollected : (rawPaid > 0 ? rawPaid : (fin ? fin.paymentsCollected : 0));
+  const rawFee = enrollments.reduce((sum, e) => sum + (Number(e ? e.investmentFee : 0) || 0), 0);
+  const totalFee = rawFee > 0 ? rawFee : totalPaid;
+  const totalBal = Math.max(0, totalFee - totalPaid);
 
   container.innerHTML = `
     <div class="welcome-banner-card">

@@ -26,9 +26,14 @@ export function renderProfileModal(container, onSaveSuccess = null) {
         <img src="${typeof db.getMemberAvatar === 'function' && !isManagementRole ? db.getMemberAvatar(account) : (account.avatar || 'assets/logo.png')}" id="modal-profile-preview-avatar" alt="${account.name}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
       </div>
       ${!isManagementRole ? `
-        <span style="background: rgba(2, 132, 199, 0.12); color: var(--accent-blue); padding: 4px 12px; border-radius: 20px; font-family: monospace; font-weight: 800; font-size: 0.85rem; border: 1px solid rgba(2, 132, 199, 0.3); display: inline-flex; align-items: center; gap: 6px;">
-          <i class="fas fa-barcode"></i> Assigned Elite Code: ${account.referralCode || account.eliteCode || account.id}
-        </span>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 4px;">
+          <span style="background: rgba(2, 132, 199, 0.12); color: var(--accent-blue); padding: 4px 14px; border-radius: 20px; font-family: monospace; font-weight: 800; font-size: 0.85rem; border: 1px solid rgba(2, 132, 199, 0.3); display: inline-flex; align-items: center; gap: 6px;">
+            Elite Code: ${account.referralCode || account.eliteCode || account.id}
+          </span>
+          <div style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald); padding: 8px 18px; border-radius: 24px; font-weight: 800; font-size: 0.95rem; border: 1px solid rgba(16, 185, 129, 0.3); display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
+            Available Payout Request: ₱${(Number(account.availableForRelease) || 0).toLocaleString()}
+          </div>
+        </div>
       ` : ''}
     </div>
 
@@ -44,29 +49,29 @@ export function renderProfileModal(container, onSaveSuccess = null) {
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div>
             <div class="form-group">
-              <label><i class="fas fa-user-shield"></i> Account Name</label>
+              <label>Account Name</label>
               <input type="text" id="modal-prof-name" class="form-control" value="${account.name}" required placeholder="Enter account name">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-envelope"></i> Official Email</label>
+              <label>Official Email</label>
               <input type="email" id="modal-prof-email" class="form-control" value="${account.email}" required placeholder="e.g. admin@atsoca.ph">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-sitemap"></i> Department / Scope</label>
+              <label>Department / Scope</label>
               <input type="text" id="modal-prof-dept" class="form-control" value="${account.department || 'Operations'}" placeholder="e.g. Operations, Finance, Systems">
             </div>
           </div>
 
           <div>
             <div class="form-group">
-              <label><i class="fas fa-phone"></i> Contact Number</label>
+              <label>Contact Number</label>
               <input type="text" id="modal-prof-phone" class="form-control" value="${account.phone || '0917-888-1029'}" placeholder="e.g. 0917-123-4567">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-key"></i> Management Password</label>
+              <label>Management Password</label>
               <input type="password" id="modal-prof-password" class="form-control" value="${account.password || '12345'}" required placeholder="Set password">
               <small style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 4px; display: block;">Default password is 12345.</small>
             </div>
@@ -77,44 +82,44 @@ export function renderProfileModal(container, onSaveSuccess = null) {
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div>
             <div class="form-group">
-              <label><i class="fas fa-user"></i> Full Name</label>
+              <label>Full Name</label>
               <input type="text" id="modal-prof-name" class="form-control" value="${account.name}" required placeholder="Enter full name">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-envelope"></i> Email Address</label>
+              <label>Email Address</label>
               <input type="email" id="modal-prof-email" class="form-control" value="${account.email}" required placeholder="e.g. name@atsoca.ph">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-phone"></i> Phone Number</label>
+              <label>Phone Number</label>
               <input type="text" id="modal-prof-phone" class="form-control" value="${account.phone || '0917-555-0192'}" placeholder="e.g. 0917-123-4567">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-key"></i> Password</label>
+              <label>Password</label>
               <input type="password" id="modal-prof-password" class="form-control" value="${account.password || '12345'}" required placeholder="Set password">
             </div>
           </div>
 
           <div>
             <div class="form-group">
-              <label><i class="fas fa-mobile-alt"></i> GCash Mobile Number</label>
+              <label>GCash Mobile Number</label>
               <input type="text" id="modal-prof-gcash" class="form-control" value="${account.gcashNumber || '0917-882-9041'}" placeholder="e.g. 0917-123-4567">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-university"></i> Bank Name</label>
+              <label>Bank Name</label>
               <input type="text" id="modal-prof-bank-name" class="form-control" value="${account.bankName || 'BDO Unibank'}" placeholder="e.g. BDO, BPI">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-id-card"></i> Bank Account Holder Name</label>
+              <label>Bank Account Holder Name</label>
               <input type="text" id="modal-prof-bank-account-name" class="form-control" value="${account.bankAccountName || account.name}" placeholder="Exact account name">
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-list-ol"></i> Bank Account Number</label>
+              <label>Bank Account Number</label>
               <input type="text" id="modal-prof-bank-account-num" class="form-control" value="${account.bankAccountNumber || '0048-9012-3456'}" placeholder="Account number">
             </div>
           </div>
