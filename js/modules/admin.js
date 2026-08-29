@@ -66,7 +66,11 @@ export function renderAdmin(container) {
             </tr>
           </thead>
           <tbody>
-            ${members.map(m => {
+            ${[...members].sort((a, b) => {
+              const codeA = String(a.referralCode || a.eliteCode || a.id || '').trim();
+              const codeB = String(b.referralCode || b.eliteCode || b.id || '').trim();
+              return codeA.localeCompare(codeB, undefined, { numeric: true, sensitivity: 'base' });
+            }).map(m => {
               const tier = getEliteLevel(m.totalUnits);
               const assignedCode = m.referralCode || m.eliteCode || m.id;
               return `
@@ -191,7 +195,7 @@ export function renderAdmin(container) {
       const updated = db.assignEliteCode(mId, newCode);
       closeModal();
       if (updated) {
-        window.lastAssignedMemberId = mId;
+        window.lastAssignedMemberId = updated.id;
         renderAdmin(container);
         showToast(`Successfully assigned Elite Code "${newCode}" to ${updated.name}!`);
       }

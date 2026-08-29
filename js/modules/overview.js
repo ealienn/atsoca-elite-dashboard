@@ -224,7 +224,11 @@ function renderManagementOverview(container, role) {
             </tr>
           </thead>
           <tbody>
-            ${members.map(m => {
+            ${[...members].sort((a, b) => {
+              const codeA = String(a.referralCode || a.eliteCode || a.id || '').trim();
+              const codeB = String(b.referralCode || b.eliteCode || b.id || '').trim();
+              return codeA.localeCompare(codeB, undefined, { numeric: true, sensitivity: 'base' });
+            }).map(m => {
               const tier = getEliteLevel(m.totalUnits);
               const mInvites = allInvites.filter(i => i.referrerId === m.id || i.referrerId === m.referralCode || i.referrerId === m.eliteCode || (i.referrerName && i.referrerName.toLowerCase() === m.name.toLowerCase()));
               const mVerified = mInvites.filter(i => i.verificationStatus === 'Verified').length;

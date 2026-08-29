@@ -173,14 +173,14 @@ class DBState {
       try {
         this.data = JSON.parse(raw);
         if (this.data && this.data.members && Array.isArray(this.data.members)) {
-          // Strictly retain ONLY official 004 to 008 members
-          this.data.members = this.data.members.filter(m => m && OFFICIAL_MEMBER_IDS.includes(m.id));
-
-          // Ensure all 5 official members are present and sync updated avatar URLs from source code
+          // Sync default official members by email/id if missing
           INITIAL_MEMBERS.forEach(initM => {
-            const existing = this.data.members.find(m => m.id === initM.id);
+            const existing = this.data.members.find(m => 
+              (m.email && initM.email && m.email.toLowerCase().trim() === initM.email.toLowerCase().trim()) || 
+              String(m.id).trim() === String(initM.id).trim()
+            );
             if (!existing) {
-              this.data.members.push(initM);
+              this.data.members.push({ ...initM });
             } else if (!existing.avatar || existing.avatar.includes('unsplash') || existing.avatar.includes('avatar_10') || existing.avatar.includes('logo')) {
               existing.avatar = 'assets/badges/badge_bronze.png';
             }
@@ -222,9 +222,10 @@ class DBState {
     }
 
     // Ensure active currentMemberId is valid
-    if (!OFFICIAL_MEMBER_IDS.includes(this.currentMemberId)) {
-      this.currentMemberId = '004';
-      localStorage.setItem('atsoca_current_member_id', '004');
+    const activeMember = (this.data.members || []).find(m => m.id === this.currentMemberId);
+    if (!activeMember && this.data.members && this.data.members.length > 0) {
+      this.currentMemberId = this.data.members[0].id;
+      localStorage.setItem('atsoca_current_member_id', this.currentMemberId);
     }
 
     if (GOOGLE_SHEETS_WEB_APP_URL) {
@@ -500,11 +501,11 @@ class DBState {
   }
 
   setRole(role, memberId = '004') {
-    const OFFICIAL_MEMBER_IDS = ['004', '005', '006', '007', '008'];
     const OFFICIAL_ROLES = ['Administrator', 'Elite Manager', 'Finance', 'Elite Member'];
-
     this.activeRole = OFFICIAL_ROLES.includes(role) ? role : 'Administrator';
-    this.currentMemberId = OFFICIAL_MEMBER_IDS.includes(memberId) ? memberId : '004';
+
+    const validMember = (this.data.members || []).find(m => String(m.id).trim() === String(memberId).trim() || String(m.referralCode).trim() === String(memberId).trim() || String(m.eliteCode).trim() === String(memberId).trim());
+    this.currentMemberId = validMember ? validMember.id : (this.data.members && this.data.members[0] ? this.data.members[0].id : '004');
 
     localStorage.setItem('atsoca_active_role', this.activeRole);
     localStorage.setItem('atsoca_current_member_id', this.currentMemberId);
