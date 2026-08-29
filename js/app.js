@@ -976,16 +976,17 @@ class AppController {
         const member = (db && typeof db.getCurrentMember === 'function' ? db.getCurrentMember() : null) || (db && db.data && db.data.members && db.data.members[0]) || { name: 'Joshua Villafuerte', avatar: 'assets/badges/badge_bronze.png', totalUnits: 0.73 };
         const level = getEliteLevel(member ? member.totalUnits : 0.73);
         const badgeSrc = getTierBadgeAsset(level.name);
+        const profileSrc = (member && member.avatar && member.avatar.trim()) ? member.avatar : badgeSrc;
         if (this.currentUserName) this.currentUserName.innerText = member ? member.name : 'Joshua Villafuerte';
         if (this.currentUserRole) this.currentUserRole.innerText = `${level.name} Partner`;
         if (this.currentUserAvatar) {
-          this.currentUserAvatar.src = badgeSrc;
-          this.currentUserAvatar.onerror = () => { this.currentUserAvatar.src = 'assets/logo_icon.png'; };
+          this.currentUserAvatar.src = profileSrc;
+          this.currentUserAvatar.onerror = () => { this.currentUserAvatar.src = badgeSrc; };
         }
         if (this.headerUserName) this.headerUserName.innerText = member ? member.name : 'Joshua Villafuerte';
         if (this.headerUserAvatar) {
-          this.headerUserAvatar.src = badgeSrc;
-          this.headerUserAvatar.onerror = () => { this.headerUserAvatar.src = 'assets/logo_icon.png'; };
+          this.headerUserAvatar.src = profileSrc;
+          this.headerUserAvatar.onerror = () => { this.headerUserAvatar.src = badgeSrc; };
         }
         if (this.memberSelect) this.memberSelect.style.display = 'inline-block';
       } else {

@@ -73,8 +73,13 @@ export function renderAdmin(container) {
                 <tr>
                   <td><code>${m.id}</code></td>
                   <td>
-                    <strong>${m.name}</strong>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <img src="${m.avatar || 'assets/badges/badge_bronze.png'}" alt="${m.name}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);" onerror="this.onerror=null; this.src='assets/badges/badge_bronze.png';">
+                      <div>
+                        <strong>${m.name}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</div>
+                      </div>
+                    </div>
                   </td>
                   <td><span class="mock-gold-badge" style="background: ${tier.badgeColor}; color: #ffffff;">${tier.name}</span></td>
                   <td>
@@ -106,9 +111,9 @@ export function renderAdmin(container) {
           <input type="hidden" id="modal-assign-member-id" value="">
           
           <div style="background: var(--header-btn-bg); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 18px; display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-user-circle" style="font-size: 2rem; color: var(--accent-blue);"></i>
+            <img id="modal-assign-member-avatar" src="${members[0] ? (members[0].avatar || 'assets/badges/badge_bronze.png') : 'assets/badges/badge_bronze.png'}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue);" onerror="this.onerror=null; this.src='assets/badges/badge_bronze.png';">
             <div>
-              <div id="modal-assign-member-name" style="font-weight: 800; font-size: 1rem;">Member Name</div>
+              <div id="modal-assign-member-name" style="font-weight: 800; font-size: 1rem;">${members[0] ? members[0].name : ''}</div>
             </div>
           </div>
 
@@ -136,12 +141,19 @@ export function renderAdmin(container) {
   const modalInput = container.querySelector('#modal-assign-code-input');
   const modalMemId = container.querySelector('#modal-assign-member-id');
   const modalMemName = container.querySelector('#modal-assign-member-name');
+  const modalMemAvatar = container.querySelector('#modal-assign-member-avatar');
 
-  const openModal = (id, name, currentCode) => {
+  const openModal = (id, fallbackName = '', fallbackCode = '') => {
     if (!modal) return;
-    modalMemId.value = id;
-    modalMemName.innerText = name;
-    modalInput.value = currentCode;
+    const targetMember = members.find(m => m && String(m.id).trim() === String(id).trim());
+    const memberName = targetMember ? targetMember.name : (fallbackName || 'Elite Member');
+    const memberCode = targetMember ? (targetMember.referralCode || targetMember.eliteCode || targetMember.id) : (fallbackCode || id);
+    const memberAvatar = targetMember ? (targetMember.avatar || 'assets/badges/badge_bronze.png') : 'assets/badges/badge_bronze.png';
+
+    if (modalMemId) modalMemId.value = id;
+    if (modalMemName) modalMemName.innerText = memberName;
+    if (modalMemAvatar) modalMemAvatar.src = memberAvatar;
+    if (modalInput) modalInput.value = memberCode;
 
     window.activeModalState = window.activeModalState || {};
     window.activeModalState.activeModalIds = window.activeModalState.activeModalIds || new Set();
